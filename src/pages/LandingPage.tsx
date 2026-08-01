@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Code, Rocket, Shield } from "lucide-react";
+import { Sparkles, Brain, Code, Rocket, Shield, Target, Lock, Users } from "lucide-react";
+import ScrollStack, { ScrollStackItem } from "@/components/ui/ScrollStack";
 
 export function LandingPage() {
   return (
@@ -61,27 +62,61 @@ export function LandingPage() {
           </Link>
         </div>
 
-        {/* Feature Highlights placeholder for React Bits later */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-32 text-left w-full max-w-6xl">
-          <div className="p-8 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-md shadow-sm hover:shadow-md transition-all">
-            <Brain className="h-10 w-10 text-primary mb-4" />
-            <h3 className="text-xl font-bold mb-3">AI Resume Parsing</h3>
-            <p className="text-muted-foreground">Upload your resume and let our Gemini-powered AI extract your core skills, strengths, and weaknesses instantly.</p>
-          </div>
-          <div className="p-8 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-md shadow-sm hover:shadow-md transition-all">
-            <Code className="h-10 w-10 text-violet-500 mb-4" />
-            <h3 className="text-xl font-bold mb-3">Smart Matchmaking</h3>
-            <p className="text-muted-foreground">Create projects with specific requirements and let the orchestrator find the best students across your campus.</p>
-          </div>
-          <div className="p-8 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-md shadow-sm hover:shadow-md transition-all">
-            <Shield className="h-10 w-10 text-emerald-500 mb-4" />
-            <h3 className="text-xl font-bold mb-3">Verified Skills</h3>
-            <p className="text-muted-foreground">Endorsements, hackathons, and certifications help prove your capabilities to future teammates and employers.</p>
-          </div>
+        {/* Feature Highlights using ScrollStack */}
+        <div className="mt-20 w-full max-w-4xl">
+          <h2 className="text-3xl font-bold mb-8 text-center">Platform Features</h2>
+          <ScrollStack
+            itemDistance={100}
+            itemScale={0.03}
+            itemStackDistance={30}
+            stackPosition="20%"
+            scaleEndPosition="10%"
+            baseScale={0.85}
+            scaleDuration={0.5}
+            rotationAmount={0}
+            blurAmount={0}
+            useWindowScroll={true}
+          >
+            <ScrollStackItem itemClassName="bg-gradient-to-br from-card/80 to-card border border-primary/20 backdrop-blur-md !p-8 !rounded-3xl flex flex-col justify-center shadow-lg dark:shadow-primary/5">
+              <Brain className="h-12 w-12 text-primary mb-6" />
+              <h3 className="text-2xl font-bold mb-4">AI Resume Parsing</h3>
+              <p className="text-lg text-muted-foreground">Upload your resume and let our Gemini-powered AI extract your core skills, strengths, and weaknesses instantly.</p>
+            </ScrollStackItem>
+
+            <ScrollStackItem itemClassName="bg-gradient-to-br from-card/80 to-card border border-violet-500/20 backdrop-blur-md !p-8 !rounded-3xl flex flex-col justify-center shadow-lg dark:shadow-violet-500/5">
+              <Users className="h-12 w-12 text-violet-500 mb-6" />
+              <h3 className="text-2xl font-bold mb-4">Smart Matchmaking</h3>
+              <p className="text-lg text-muted-foreground">Create projects with specific requirements and let the orchestrator find the best students across your campus.</p>
+            </ScrollStackItem>
+
+            <ScrollStackItem itemClassName="bg-gradient-to-br from-card/80 to-card border border-emerald-500/20 backdrop-blur-md !p-8 !rounded-3xl flex flex-col justify-center shadow-lg dark:shadow-emerald-500/5">
+              <Target className="h-12 w-12 text-emerald-500 mb-6" />
+              <h3 className="text-2xl font-bold mb-4">AI Career Roadmap</h3>
+              <p className="text-lg text-muted-foreground">Get personalized step-by-step guidance based on your dream role. Let AI break down complex goals into manageable tasks.</p>
+            </ScrollStackItem>
+
+            <ScrollStackItem itemClassName="bg-gradient-to-br from-card/80 to-card border border-blue-500/20 backdrop-blur-md !p-8 !rounded-3xl flex flex-col justify-center shadow-lg dark:shadow-blue-500/5">
+              <Code className="h-12 w-12 text-blue-500 mb-6" />
+              <h3 className="text-2xl font-bold mb-4">Project Orchestration</h3>
+              <p className="text-lg text-muted-foreground">Manage roles, tasks, and deadlines in one place. Streamline your collaboration from ideation to deployment.</p>
+            </ScrollStackItem>
+
+            <ScrollStackItem itemClassName="bg-gradient-to-br from-card/80 to-card border border-amber-500/20 backdrop-blur-md !p-8 !rounded-3xl flex flex-col justify-center shadow-lg dark:shadow-amber-500/5">
+              <Shield className="h-12 w-12 text-amber-500 mb-6" />
+              <h3 className="text-2xl font-bold mb-4">Verified Skills</h3>
+              <p className="text-lg text-muted-foreground">Endorsements, hackathons, and certifications help prove your capabilities to future teammates and employers.</p>
+            </ScrollStackItem>
+
+            <ScrollStackItem itemClassName="bg-gradient-to-br from-card/80 to-card border border-rose-500/20 backdrop-blur-md !p-8 !rounded-3xl flex flex-col justify-center shadow-lg dark:shadow-rose-500/5">
+              <Lock className="h-12 w-12 text-rose-500 mb-6" />
+              <h3 className="text-2xl font-bold mb-4">Secure & Private</h3>
+              <p className="text-lg text-muted-foreground">Your data is kept safe. Resume content is processed through the Gemini API solely to generate insights for you, never to train global models.</p>
+            </ScrollStackItem>
+          </ScrollStack>
         </div>
       </main>
 
-      <footer className="relative z-10 border-t border-border/40 bg-background/50 py-12 mt-20">
+      <footer className="relative z-10 border-t border-border/40 bg-background/50 py-12 mt-40">
         <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -90,7 +125,8 @@ export function LandingPage() {
           <p className="text-sm text-muted-foreground">© 2026 SkillSync AI. All rights reserved.</p>
           <div className="flex items-center gap-6 text-sm text-muted-foreground font-medium">
             <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+            <Link to="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
+            <Link to="/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </footer>

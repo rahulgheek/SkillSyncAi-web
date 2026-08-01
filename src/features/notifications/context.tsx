@@ -50,7 +50,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // A trick is to use a polyfill or just let the backend accept a token query param.
     // For this boilerplate, let's assume it works with cookies or we append the token.
     const token = localStorage.getItem("token");
-    const sse = new EventSource(`http://localhost:8080/api/v1/notifications/stream?token=${token}`);
+    const sse = new EventSource(`https://skillsyncai-kkip.onrender.com/api/v1/notifications/stream?token=${token}`);
 
     sse.addEventListener("notification", (event) => {
       try {

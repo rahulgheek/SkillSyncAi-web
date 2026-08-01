@@ -84,7 +84,7 @@ export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null
     if (!token) return;
 
     const client = new Client({
-      brokerURL: "ws://localhost:8080/ws",
+      brokerURL: "wss://skillsyncai-kkip.onrender.com/ws",
       connectHeaders: { Authorization: `Bearer ${token}` },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,

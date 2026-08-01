@@ -59,15 +59,22 @@ export function PrivacyPolicy() {
 
             <h2>3. Information Sharing</h2>
             <p>
-              We do not share your personal information with third parties except as necessary to provide our services 
-              (e.g., sharing your public profile with other users on the platform for matchmaking purposes) or to comply with the law.
+              We do not share your personal information with third parties except as necessary to provide our services. 
+              Information that you choose to make public, such as your profile, skills, previous projects, and portfolio links, may be visible to other authenticated users of the platform for matchmaking purposes, or to comply with the law.
             </p>
 
             <h2>4. Third-Party Services (Google and Gemini AI)</h2>
             <p>
-              Our application uses Google OAuth for authentication. We strictly adhere to Google's API Services User Data Policy.
-              We also use Google Gemini AI to analyze your uploaded resume and generate career roadmaps. Your resume text is processed by Gemini AI strictly for generating these insights and is not used to train global AI models.
+              Our application uses Google OAuth in accordance with Google's OAuth implementation guidelines and requests only the permissions necessary for authentication.
             </p>
+            <p>
+              We also use Google Gemini AI to analyze your uploaded resume and generate career insights. Resume content is processed through the Gemini API solely to generate insights for the user. Uploaded resumes are stored securely and are used only for profile generation, AI-based skill extraction, and career guidance features.
+            </p>
+            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded-r-lg mt-4">
+              <p className="text-yellow-700 dark:text-yellow-200 text-sm m-0">
+                <strong>AI Disclaimer:</strong> AI-generated recommendations, skill analyses, and career roadmaps are intended to assist users and should not be considered professional or career advice.
+              </p>
+            </div>
 
             <h2>5. Data Security</h2>
             <p>
@@ -75,21 +82,26 @@ export function PrivacyPolicy() {
               However, despite our safeguards, no internet transmission is 100% secure.
             </p>
 
-            <h2>6. Your Rights</h2>
+            <h2>6. Data Retention</h2>
             <p>
-              You have the right to access, correct, or delete your personal data. You can manage your profile information directly within the application dashboard.
+              We retain user information only for as long as necessary to provide our services. Users may request deletion of their account and associated data at any time.
             </p>
 
-            <h2>7. Contact Us</h2>
+            <h2>7. Account Deletion</h2>
             <p>
-              If you have questions or comments about this policy, please contact us at support@skillsyncai.com.
+              Users may request deletion of their account, after which their personal information and uploaded files will be removed from the platform, except where retention is required for technical or legal reasons.
+            </p>
+
+            <h2>8. Contact Us</h2>
+            <p>
+              If you have questions or comments about this policy, please contact us at <a href="mailto:rahulgheek@gmail.com" className="text-primary hover:underline">rahulgheek@gmail.com</a>
             </p>
           </CardContent>
         </Card>
       </main>
 
       <footer className="relative z-10 border-t border-border/40 bg-background/50 py-8 mt-12 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} SkillSync AI. All rights reserved.
+        &copy; {new Date().getFullYear()} SkillSync AI. All rights reserved.
       </footer>
     </div>
   );

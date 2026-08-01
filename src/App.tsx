@@ -25,6 +25,8 @@ import { SearchProfiles } from "./pages/SearchProfiles";
 import { AiRoadmap } from "./pages/AiRoadmap";
 import { LandingPage } from "./pages/LandingPage";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { TermsOfService } from "./pages/TermsOfService";
+import { CookiePolicy } from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/oauth2/callback" element={<OAuth2Callback />} />
             
             <Route path="/" element={<AuthLayout />}>
