@@ -17,7 +17,7 @@ interface NotificationContextType {
 const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const queryClient = useQueryClient();
   const [liveUnreadCount, setLiveUnreadCount] = useState<number>(0);
 
@@ -49,7 +49,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // wait, we are using JWT. EventSource doesn't send Authorization header.
     // A trick is to use a polyfill or just let the backend accept a token query param.
     // For this boilerplate, let's assume it works with cookies or we append the token.
-    const token = localStorage.getItem("token");
     const sse = new EventSource(`https://skillsyncai-kkip.onrender.com/api/v1/notifications/stream?token=${token}`);
 
     sse.addEventListener("notification", (event) => {
@@ -96,7 +95,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return () => {
       sse.close();
     };
-  }, [isAuthenticated, queryClient]);
+  }, [isAuthenticated, token, queryClient]);
 
   const handleMarkAsRead = async (id: string) => {
     await markAsRead(id);
