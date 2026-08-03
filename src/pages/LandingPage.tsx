@@ -1,9 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "@/features/auth/context";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Brain, Code, Rocket, Shield, Target, Lock, Users } from "lucide-react";
 import ScrollStack, { ScrollStackItem } from "@/components/ui/ScrollStack";
 
 export function LandingPage() {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/20">
       {/* Dynamic Background Elements */}
