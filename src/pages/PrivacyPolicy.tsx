@@ -94,7 +94,10 @@ export function PrivacyPolicy() {
 
             <h2>8. Contact Us</h2>
             <p>
-              If you have questions or comments about this policy, please contact us at <a href="mailto:rahulgheek@gmail.com" className="text-primary hover:underline">rahulgheek@gmail.com</a>
+              Please note that anyone can sign in on this site using any email address for demonstration and testing purposes.
+            </p>
+            <p>
+              If you have questions or comments about this policy, please contact us at <a href="mailto:demotesting2200@gmail.com" className="text-primary hover:underline">demotesting2200@gmail.com</a>
             </p>
           </CardContent>
         </Card>

@@ -38,7 +38,7 @@ export function TermsOfService() {
 
             <h2>2. User Accounts</h2>
             <p>
-              You must be a university student or affiliate to use this platform. You are responsible for maintaining the confidentiality of your account credentials.
+              Anyone can sign in on the site through any email address for testing and demonstration purposes. You are responsible for maintaining the confidentiality of your account credentials.
             </p>
 
             <h2>3. AI Disclaimer</h2>
