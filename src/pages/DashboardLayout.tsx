@@ -1,6 +1,5 @@
 import { Outlet, useNavigate, Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { useAuth } from "@/features/auth/context";
 import { Home, Compass, Map, FolderKanban, MessageSquare, Bell, LogOut, Sparkles, User, Search, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -109,12 +108,6 @@ export function DashboardLayout() {
       {/* Main Content */}
       <main className="relative z-10 ml-64 flex-1">
         <header className="sticky top-0 z-10 flex h-16 items-center justify-end px-8 backdrop-blur-md border-b border-border/40 bg-background/50">
-          
-          {/* Add Connection Status Here */}
-          <div className="mr-auto">
-            <ConnectionStatus />
-          </div>
-
           <div className="relative">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

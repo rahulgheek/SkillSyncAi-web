@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/features/auth/context";
 import { NotificationProvider } from "@/features/notifications/context";
 import { Toaster } from "@/components/ui/sonner";
+import { ConnectionStatus } from "@/components/ConnectionStatus";
 
 import { AuthLayout } from "./pages/AuthLayout";
 import { Login } from "./pages/Login";
@@ -66,6 +67,9 @@ function App() {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
           <Toaster richColors position="top-right" />
+          <div className="fixed bottom-6 right-6 z-[100]">
+            <ConnectionStatus />
+          </div>
         </NotificationProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -10,7 +10,7 @@ export function ConnectionStatus() {
     
     const checkConnection = async () => {
       try {
-        const response = await api.get('/api/auth/login', { validateStatus: () => true });
+        const response = await api.get(`/api/auth/ping?ping=${Date.now()}`, { validateStatus: () => true });
         
         if (!mounted) return;
 

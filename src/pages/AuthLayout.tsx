@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { Sparkles } from "lucide-react";
-import { ConnectionStatus } from "@/components/ConnectionStatus";
 
 export function AuthLayout() {
   return (
@@ -9,10 +8,6 @@ export function AuthLayout() {
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       <div className="pointer-events-none absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[120px]"></div>
       <div className="pointer-events-none absolute bottom-1/4 right-1/4 h-[500px] w-[500px] translate-x-1/3 translate-y-1/3 rounded-full bg-violet-500/20 blur-[120px]"></div>
-
-      <div className="absolute top-4 right-4 z-50">
-        <ConnectionStatus />
-      </div>
 
       <div className="relative z-10 w-full max-w-md px-4 py-12">
         <div className="mb-8 flex flex-col items-center justify-center gap-4">
