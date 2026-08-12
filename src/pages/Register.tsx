@@ -1,16 +1,23 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RegisterForm } from "@/features/auth/components/RegisterForm";
+import { FadeIn } from "@/components/ui/animated/FadeIn";
 
 export function Register() {
   return (
-    <Card className="border-none bg-transparent shadow-none">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
-        <CardDescription className="text-base">Start collaborating on real student projects</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <RegisterForm />
-      </CardContent>
-    </Card>
+    <div className="w-full">
+      <div className="flex flex-col items-start mb-6">
+        <FadeIn delay={0.2}>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground mb-1">
+            Create an account
+          </h1>
+        </FadeIn>
+        <FadeIn delay={0.3}>
+          <p className="text-sm text-muted-foreground font-medium">
+            Join the community and start building.
+          </p>
+        </FadeIn>
+      </div>
+
+      <RegisterForm />
+    </div>
   );
 }

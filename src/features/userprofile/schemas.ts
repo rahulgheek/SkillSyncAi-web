@@ -77,6 +77,7 @@ export const profileResponseSchema = z.object({
   achievements: z.array(achievementSchema).optional(),
   isPublic: z.boolean().optional(),
   aiInsights: aiInsightsSchema.optional(),
+  insightsOutdated: z.boolean().optional(),
   stats: z.object({
     connections: z.number(),
     profileViews: z.number(),

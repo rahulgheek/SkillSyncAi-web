@@ -12,8 +12,8 @@
 }
 
 .scroll-stack-inner {
-  /* Reduced bottom padding from 50rem to 10rem to remove massive extra space */
-  padding: 20vh 5rem 10rem;
+  /* Removed top padding entirely to close the gap */
+  padding: 0 5rem 10rem;
   min-height: 100vh;
 }
 
@@ -32,14 +32,13 @@
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
   height: 20rem;
   width: 100%;
-  margin: 30px 0;
+  margin: 0;
   padding: 3rem;
   border-radius: 40px;
   box-sizing: border-box;
   /* Improve mobile performance */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  position: relative;
 }
 
 .scroll-stack-end {

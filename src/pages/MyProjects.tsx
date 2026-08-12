@@ -7,6 +7,8 @@ import ManageApplicationsModal from "@/features/projects/components/ManageApplic
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { FadeIn } from "@/components/ui/animated/FadeIn";
+import Folder from "@/components/ui/react-bits/Folder";
 
 export function MyProjects() {
   const [selectedProject, setSelectedProject] = useState<any>(null);
@@ -39,89 +41,102 @@ export function MyProjects() {
   const projects = projectsPage?.content || [];
 
   return (
-    <div className="mx-auto max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <FadeIn delay={0.1} className="mx-auto max-w-6xl">
       <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
             <FolderKanban className="h-10 w-10 text-primary" />
-            My Projects
+            My <span className="font-handwriting text-primary text-5xl inline-block -rotate-2 ml-1">Projects</span>
           </h1>
           <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
             Manage your published projects, view applications, and find AI matches.
           </p>
         </div>
-        <Button 
-          onClick={() => navigate('/projects/new')}
-          className="rounded-full shadow-sm hover:shadow-md transition-all gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
-        >
-          Create New Project
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden sm:block">
+            <span className="text-sm font-semibold text-primary block">Create New</span>
+            <span className="text-xs text-muted-foreground block">Click folder to start</span>
+          </div>
+          <div className="relative h-20 w-24 flex items-center justify-center -mt-4 cursor-pointer" onClick={() => navigate('/projects/new')}>
+             <Folder size={1.2} color="#6366f1" />
+          </div>
+        </div>
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-dashed border-border/60 bg-muted/10">
-          <FolderKanban className="w-16 h-16 text-muted-foreground opacity-20 mb-4" />
-          <h3 className="text-xl font-bold mb-2">No projects yet</h3>
-          <p className="text-muted-foreground mb-6">Create your first project to start recruiting team members.</p>
-          <Button onClick={() => navigate('/projects/new')}>Create Project</Button>
+        <div className="flex flex-col items-center justify-center py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100 mt-8">
+          <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
+            <FolderKanban className="h-12 w-12 text-primary" />
+          </div>
+          <h3 className="text-3xl font-black mb-3 text-foreground">No projects yet</h3>
+          <p className="text-lg font-medium text-muted-foreground max-w-md mb-8">
+            Create your first project to start recruiting team members.
+          </p>
+          <Button onClick={() => navigate('/projects/new')} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 font-bold">
+            Create Project
+          </Button>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {projects.map((project: any) => (
-            <div key={project.id} className="p-6 border border-border/50 rounded-xl bg-card shadow-sm hover:shadow-md flex flex-col justify-between group relative transition-all">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
-                onClick={() => {
-                  if(confirm("Are you sure you want to permanently delete this project?")) {
-                    deleteMutation.mutate(project.id);
-                  }
-                }}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-              
-              <div>
-                <div className="flex items-center gap-3 mb-2 pr-10">
-                  <h3 
-                    className="text-xl font-bold cursor-pointer hover:text-primary transition-colors truncate"
-                    onClick={() => navigate(`/projects/${project.id}`)}
-                  >
-                    {project.title}
-                  </h3>
-                  {project.status === 'IN_PROGRESS' && (
-                    <Badge variant="default" className="bg-emerald-500 hover:bg-emerald-600">
-                      Team Full
-                    </Badge>
-                  )}
-                  {project.status === 'RECRUITING' && (
-                    <Badge variant="outline" className="text-indigo-500 border-indigo-200 bg-indigo-50 dark:bg-indigo-500/10">
-                      Recruiting
-                    </Badge>
-                  )}
+        <div className="grid gap-6 md:grid-cols-2 mt-8">
+          {projects.map((project: any, idx: number) => (
+            <FadeIn key={project.id} delay={0.2 + idx * 0.1} className="h-full">
+              <div className="bg-white rounded-[2rem] border border-gray-100 p-8 h-full flex flex-col justify-between shadow-xl shadow-gray-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 relative group overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10 z-10 rounded-full h-10 w-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if(confirm("Are you sure you want to permanently delete this project?")) {
+                      deleteMutation.mutate(project.id);
+                    }
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+                
+                <div className="relative z-10 mt-2">
+                  <div className="flex items-center gap-3 mb-4 pr-10">
+                    <h3 
+                      className="text-2xl font-black cursor-pointer hover:text-primary transition-colors truncate"
+                      onClick={() => navigate(`/projects/${project.id}`)}
+                    >
+                      {project.title}
+                    </h3>
+                    {project.status === 'IN_PROGRESS' && (
+                      <Badge className="bg-green-500 hover:bg-green-600 text-white font-bold border-0">
+                        Team Full
+                      </Badge>
+                    )}
+                    {project.status === 'RECRUITING' && (
+                      <Badge className="bg-primary text-white font-bold border-0 shadow-sm shadow-primary/20 hover:bg-primary/90">
+                        Recruiting
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <p className="text-base font-medium text-muted-foreground line-clamp-2 mb-8">{project.description}</p>
                 </div>
                 
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-6">{project.description}</p>
+                <div className="flex flex-col sm:flex-row gap-4 mt-auto pt-6 border-t border-gray-100 relative z-10">
+                  <Button 
+                    onClick={() => setSelectedProject(project)}
+                    className="flex-1 rounded-xl h-12 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 font-bold transition-transform hover:-translate-y-1"
+                    disabled={project.status === 'IN_PROGRESS'}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" /> AI Matches
+                  </Button>
+                  <Button
+                    onClick={() => setManageProject(project)}
+                    variant="outline"
+                    className="flex-1 rounded-xl h-12 border-gray-200 hover:border-primary hover:bg-primary/5 hover:text-primary font-bold shadow-sm transition-all hover:-translate-y-1"
+                  >
+                    <Inbox className="w-4 h-4 mr-2" /> Candidates
+                  </Button>
+                </div>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 mt-4 pt-4 border-t border-border/40">
-                <Button 
-                  onClick={() => setSelectedProject(project)}
-                  className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-sm border-0"
-                  disabled={project.status === 'IN_PROGRESS'}
-                >
-                  <Sparkles className="w-4 h-4 mr-2" /> AI Matches
-                </Button>
-                <Button
-                  onClick={() => setManageProject(project)}
-                  variant="outline"
-                  className="flex-1 border-primary/20 hover:bg-primary/5"
-                >
-                  <Inbox className="w-4 h-4 mr-2" /> Candidates
-                </Button>
-              </div>
-            </div>
+            </FadeIn>
           ))}
         </div>
       )}
@@ -141,6 +156,6 @@ export function MyProjects() {
           onClose={() => setManageProject(null)} 
         />
       )}
-    </div>
+    </FadeIn>
   );
 }

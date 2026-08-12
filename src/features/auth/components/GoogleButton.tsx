@@ -10,10 +10,9 @@ export function GoogleButton({ disabled }: { disabled?: boolean }) {
     window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
   };
   return (
-    <Button
+    <button
       type="button"
-      variant="outline"
-      className="w-full"
+      className="w-full bg-white hover:bg-gray-100 text-black border border-transparent h-12 rounded-xl flex items-center justify-center font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
       onClick={handleClick}
       disabled={disabled}
     >
@@ -35,7 +34,7 @@ export function GoogleButton({ disabled }: { disabled?: boolean }) {
           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"
         />
       </svg>
-      Continue with Google
-    </Button>
+      <span className="text-black font-semibold tracking-wide">Continue with Google</span>
+    </button>
   );
 }

@@ -11,40 +11,42 @@ export function ProfileHero({ profile, isOwnProfile = true }: { profile: Profile
   const avatarUrl = profile.profilePictureUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + profile.userId;
 
   return (
-    <div className="relative bg-card rounded-2xl border border-border overflow-hidden shadow-sm transition-all">
+    <div className="relative bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-xl shadow-gray-200/50 transition-all">
       {/* Banner */}
-      <div className="h-48 w-full bg-gradient-to-r from-gray-100 to-gray-200" />
+      <div className="h-48 w-full bg-gradient-to-r from-primary/10 to-accent/10 relative">
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
+      </div>
       
       <div className="px-8 pb-8 pt-0 relative">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end -mt-16 md:-mt-20 space-y-4 md:space-y-0 relative z-10">
           <div className="flex items-end gap-5">
             <div className="relative">
-              <div className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-background overflow-hidden bg-white shadow-sm">
+              <div className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-white overflow-hidden bg-white shadow-md">
                 <img src={avatarUrl} alt={profile.fullName} className="h-full w-full object-cover" />
               </div>
               {profile.availability && (
-                <div className="absolute bottom-2 right-2 h-5 w-5 bg-green-500 rounded-full border-2 border-background" title={profile.availability} />
+                <div className="absolute bottom-3 right-3 h-6 w-6 bg-green-500 rounded-full border-4 border-white shadow-sm" title={profile.availability} />
               )}
             </div>
             <div className="pb-2">
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-3xl font-bold text-foreground tracking-tight">{profile.fullName}</h1>
-                {(profile.isVerified ?? true) && <CheckCircle className="h-5 w-5 text-blue-500" />}
+                <h1 className="text-3xl font-black text-foreground tracking-tight">{profile.fullName}</h1>
+                {(profile.isVerified ?? true) && <CheckCircle className="h-6 w-6 text-blue-500" />}
               </div>
-              <p className="text-lg text-secondary-foreground font-medium">{profile.currentRole || "Software Engineering Student"}</p>
+              <p className="text-lg text-muted-foreground font-bold">{profile.currentRole || "Software Engineering Student"}</p>
             </div>
           </div>
           
           <div className="flex gap-3 pt-4 md:pt-0">
             {isOwnProfile ? (
               <>
-                <Button variant="outline" className="gap-2 rounded-full px-6 bg-white hover:bg-gray-50 border-gray-200">
+                <Button variant="outline" className="gap-2 rounded-xl px-6 bg-white hover:bg-gray-50 border-gray-200 font-bold shadow-sm h-11">
                   <Share className="h-4 w-4" /> Share
                 </Button>
                 <EditProfileModal profile={profile} />
               </>
             ) : (
-              <Button asChild className="gap-2 rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button asChild className="gap-2 rounded-xl px-8 h-11 bg-primary text-white hover:bg-primary/90 font-bold shadow-md shadow-primary/20">
                 <Link to={`/messages?userId=${profile.userId}`}>
                   <MessageSquare className="h-4 w-4" /> Message
                 </Link>
@@ -53,18 +55,18 @@ export function ProfileHero({ profile, isOwnProfile = true }: { profile: Profile
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
+        <div className="mt-8 flex flex-wrap gap-5 text-sm font-bold text-muted-foreground">
           {profile.location && (
-            <div className="flex items-center gap-1.5">
-              <MapPin className="h-4 w-4" /> {profile.location}
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-primary" /> {profile.location}
             </div>
           )}
-          <div className="flex items-center gap-1.5">
-            <GraduationCap className="h-4 w-4" /> {profile.major || "Computer Science"} {profile.graduationYear ? `'${profile.graduationYear.toString().slice(2)}` : ""}
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-accent" /> {profile.major || "Computer Science"} {profile.graduationYear ? `'${profile.graduationYear.toString().slice(2)}` : ""}
           </div>
           {profile.availability && (
-            <div className="flex items-center gap-1.5">
-              <Briefcase className="h-4 w-4" /> {profile.availability}
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-blue-500" /> {profile.availability}
             </div>
           )}
         </div>

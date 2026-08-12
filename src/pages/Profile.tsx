@@ -11,6 +11,7 @@ import { ProjectsTab } from "@/features/userprofile/sections/tabs/ProjectsTab";
 import { AchievementsTab } from "@/features/userprofile/sections/tabs/AchievementsTab";
 import { AiInsightsTab } from "@/features/userprofile/sections/tabs/AiInsightsTab";
 import { ProfileCompletionTracker } from "@/features/userprofile/components/ProfileCompletionTracker";
+import { FadeIn } from "@/components/ui/animated/FadeIn";
 
 export function Profile() {
   const { data: profile, isLoading, isError } = useQuery({
@@ -31,26 +32,30 @@ export function Profile() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 bg-secondary min-h-screen">
-      <div className="space-y-6">
-        <ProfileHero profile={profile} />
-        <QuickStats profile={profile} />
+    <div className="max-w-6xl mx-auto py-4 md:py-8 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen overflow-hidden">
+      <div className="space-y-8">
+        <FadeIn delay={0.1}>
+          <ProfileHero profile={profile} />
+        </FadeIn>
+        <FadeIn delay={0.2}>
+          <QuickStats profile={profile} />
+        </FadeIn>
 
-        <div className="pt-6">
+        <div className="pt-8">
           <Tabs defaultValue="overview" className="w-full">
-            <div className="sticky top-0 z-40 bg-secondary pt-2 pb-4">
-              <TabsList className="w-full justify-start overflow-x-auto bg-transparent border-b border-border rounded-none h-auto p-0 space-x-6">
+            <FadeIn delay={0.3} className="sticky top-0 z-40 bg-gray-50 pt-2 pb-6">
+              <TabsList className="w-full justify-start overflow-x-auto bg-transparent border-b border-gray-200 rounded-none h-auto p-0 space-x-8 hide-scrollbar">
                 {["overview", "skills", "projects", "achievements", "insights"].map(tab => (
                   <TabsTrigger 
                     key={tab}
                     value={tab} 
-                    className="capitalize bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-1 py-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground transition-all"
+                    className="capitalize bg-transparent border-b-[3px] border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-2 py-4 text-base font-bold text-muted-foreground hover:text-foreground data-[state=active]:text-primary transition-all"
                   >
                     {tab === "insights" ? "AI Insights" : tab}
                   </TabsTrigger>
                 ))}
               </TabsList>
-            </div>
+            </FadeIn>
             
             <div className="mt-8">
               <TabsContent value="overview" className="m-0 mt-2 focus-visible:outline-none animate-in slide-in-from-bottom-2 fade-in-50">

@@ -1,4 +1,4 @@
-import { ProfileResponse } from "../../../schemas";
+import { ProfileResponse } from "../../schemas";
 import { AchievementsManager } from "../../components/AchievementsManager";
 
 export function AchievementsTab({ profile, isOwnProfile = true }: { profile: ProfileResponse, isOwnProfile?: boolean }) {

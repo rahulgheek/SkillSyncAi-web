@@ -1,4 +1,4 @@
-import { ProfileResponse } from "../../../schemas";
+import { ProfileResponse } from "../../schemas";
 import { SkillsManager } from "../../components/SkillsManager";
 
 export function SkillsTab({ profile, isOwnProfile = true }: { profile: ProfileResponse, isOwnProfile?: boolean }) {

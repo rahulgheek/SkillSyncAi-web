@@ -29,6 +29,10 @@ import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import { CookiePolicy } from "./pages/CookiePolicy";
 
+import { ExplorePage } from "./pages/ExplorePage";
+import { AboutPage } from "./pages/AboutPage";
+import { ContactPage } from "./pages/ContactPage";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -38,6 +42,9 @@ function App() {
         <NotificationProvider>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />

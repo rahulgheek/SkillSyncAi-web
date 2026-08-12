@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "@/features/auth/context";
-import { Home, Compass, Map, FolderKanban, MessageSquare, Bell, LogOut, Sparkles, User, Search, FileText } from "lucide-react";
+import { Home, Compass, Map, FolderKanban, MessageSquare, Bell, LogOut, Sparkles, User, Search, FileText, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getMyProfile } from "@/features/userprofile/api";
@@ -15,6 +15,7 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { formatDistanceToNow } from "date-fns";
 
 export function DashboardLayout() {
@@ -56,20 +57,20 @@ export function DashboardLayout() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-background/95">
-      {/* Dynamic Background Elements */}
-      <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-      <div className="pointer-events-none fixed top-0 right-0 h-[600px] w-[600px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/10 blur-[120px]"></div>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Playful Background Elements */}
+      <div className="pointer-events-none fixed top-0 right-0 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/5 blur-[120px]"></div>
+      <div className="pointer-events-none fixed bottom-0 left-0 h-[600px] w-[600px] translate-y-1/3 -translate-x-1/3 rounded-full bg-accent/5 blur-[100px]"></div>
 
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-20 flex h-full w-64 flex-col border-r border-border/40 bg-card/40 backdrop-blur-xl">
-        <div className="flex h-16 items-center px-6 border-b border-border/40">
+      {/* Desktop Sidebar */}
+      <aside className="fixed left-0 top-0 z-20 hidden md:flex h-full w-64 flex-col border-r border-gray-200 bg-white">
+        <div className="flex h-16 items-center px-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-violet-600 shadow-md">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary shadow-sm shadow-primary/20">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
             <Link to="/dashboard" className="flex items-center gap-2 px-2 py-4">
-              <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">SkillSync AI</span>
+              <span className="text-xl font-black tracking-tight text-foreground">SkillSync</span>
             </Link>
           </div>
         </div>
@@ -81,34 +82,72 @@ export function DashboardLayout() {
               <Link
                 key={item.label}
                 to={item.to}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary ${isActive ? 'bg-primary/15 text-primary shadow-sm' : 'text-muted-foreground'}`}
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-gray-50 hover:text-foreground'}`}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-5 w-5" />
                 {item.label}
               </Link>
             )
           })}
         </nav>
 
-        <div className="border-t border-border/40 p-4">
+        <div className="border-t border-gray-100 p-4">
           <Button 
             variant="ghost" 
-            className="w-full justify-start gap-3 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            className="w-full justify-start gap-3 text-muted-foreground hover:bg-red-50 hover:text-red-600 font-bold rounded-xl"
             onClick={() => {
               logout();
               navigate("/login", { replace: true });
             }}
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-5 w-5" />
             Sign Out
           </Button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="relative z-10 ml-64 flex-1">
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-end px-8 backdrop-blur-md border-b border-border/40 bg-background/50">
-          <div className="relative">
+      <main className="relative z-10 md:ml-64 flex-1 w-full max-w-full overflow-x-hidden">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between md:justify-end px-4 md:px-8 border-b border-gray-200 bg-white/80 backdrop-blur-xl">
+          
+          {/* Mobile Navigation Trigger */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-0 bg-white">
+                <div className="flex h-16 items-center px-6 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary shadow-sm shadow-primary/20">
+                      <Sparkles className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-xl font-black tracking-tight text-foreground">SkillSync</span>
+                  </div>
+                </div>
+                <nav className="flex-1 space-y-1 px-4 py-6">
+                  {navItems.map((item) => {
+                    const isActive = location.pathname === item.to;
+                    return (
+                      <Link
+                        key={item.label}
+                        to={item.to}
+                        className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-gray-50 hover:text-foreground'}`}
+                      >
+                        <item.icon className="h-5 w-5" />
+                        {item.label}
+                      </Link>
+                    )
+                  })}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="relative">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full relative">
@@ -164,21 +203,22 @@ export function DashboardLayout() {
           </div>
           
           {profile && (
-            <div className="ml-6 flex items-center gap-3 border-l border-border/40 pl-6">
-              <span className="text-sm font-semibold text-foreground">{profile.fullName}</span>
+            <div className="ml-6 flex items-center gap-3 border-l border-gray-200 pl-6">
+              <span className="text-sm font-extrabold text-foreground">{profile.fullName}</span>
               <Link to="/profile">
-                <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/80 to-violet-500 ring-2 ring-background cursor-pointer hover:ring-primary/50 transition-all overflow-hidden flex items-center justify-center">
+                <div className="h-10 w-10 rounded-full bg-primary/10 ring-2 ring-transparent cursor-pointer hover:ring-primary/20 transition-all overflow-hidden flex items-center justify-center">
                   {profile.profilePictureUrl ? (
                     <img src={profile.profilePictureUrl} alt={profile.fullName} className="h-full w-full object-cover" />
                   ) : (
-                    <span className="text-white text-xs font-bold">{profile.fullName.charAt(0).toUpperCase()}</span>
+                    <span className="text-primary text-sm font-black">{profile.fullName.charAt(0).toUpperCase()}</span>
                   )}
                 </div>
               </Link>
             </div>
           )}
+          </div>
         </header>
-        <div className="p-8">
+        <div className="p-4 md:p-8 overflow-x-hidden">
           <Outlet />
         </div>
       </main>

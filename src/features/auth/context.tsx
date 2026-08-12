@@ -102,15 +102,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   const exchangeOAuth2Code = useCallback(async (code: string) => {
-    const response = await fetch(`https://skillsyncai-kkip.onrender.com/api/auth/oauth2/exchange?code=${code}`);
-    if (!response.ok) {
-      throw new Error("Failed to exchange OAuth2 code");
-    }
-    const data = await response.json();
-    if (data.token) {
-      login(data.token);
-    } else {
-      throw new Error("No token received from OAuth2 exchange");
+    try {
+      const response = await api.get(`/api/auth/oauth2/exchange?code=${code}`);
+      const data = response.data;
+      if (data.token) {
+        login(data.token);
+      } else {
+        throw new Error("No token received from OAuth2 exchange");
+      }
+    } catch (err) {
+      console.error("Failed to exchange OAuth2 code", err);
+      throw err;
     }
   }, [login]);
 

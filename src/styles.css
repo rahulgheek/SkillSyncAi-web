@@ -4,20 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
- */
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,91 +28,64 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 :root {
-  --radius: 12px;
+  --radius: 24px;
+  /* Light theme: Playful, Bright */
   --background: #FFFFFF;
-  --foreground: #111827;
+  --foreground: #1F2937;
   --card: #FFFFFF;
-  --card-foreground: #111827;
+  --card-foreground: #1F2937;
   --popover: #FFFFFF;
-  --popover-foreground: #111827;
+  --popover-foreground: #1F2937;
   
-  /* Primary brand color for important actions only */
-  --primary: #111827;
+  /* Primary: Vibrant Purple */
+  --primary: #8B5CF6;
   --primary-foreground: #FFFFFF;
   
-  /* Secondary bg */
-  --secondary: #FAFAFA;
-  --secondary-foreground: #111827;
+  /* Secondary: Soft Purple/Lilac */
+  --secondary: #DDD6FE;
+  --secondary-foreground: #1F2937;
   
-  --muted: #FAFAFA;
-  --muted-foreground: #9CA3AF;
+  /* Muted */
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
   
-  --accent: #FAFAFA;
-  --accent-foreground: #111827;
+  /* Accent: Bright Yellow */
+  --accent: #FCD34D;
+  --accent-foreground: #1F2937;
   
-  --destructive: #ef4444;
+  --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   
   --border: #E5E7EB;
   --input: #E5E7EB;
-  --ring: #111827;
-  
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #111827;
-  --sidebar-primary: #111827;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #FAFAFA;
-  --sidebar-accent-foreground: #111827;
-  --sidebar-border: #E5E7EB;
-  --sidebar-ring: #111827;
+  --ring: #8B5CF6;
 }
 
+/* We will not support dark mode for this specific playful design unless explicitly needed, 
+   but we leave variables here just in case */
 .dark {
   --background: #111827;
-  --foreground: #FFFFFF;
-  --card: #111827;
-  --card-foreground: #FFFFFF;
-  --popover: #111827;
-  --popover-foreground: #FFFFFF;
-  
-  --primary: #FFFFFF;
-  --primary-foreground: #111827;
-  
-  --secondary: #1f2937;
-  --secondary-foreground: #FFFFFF;
-  
-  --muted: #1f2937;
+  --foreground: #F9FAFB;
+  --card: #1F2937;
+  --card-foreground: #F9FAFB;
+  --popover: #1F2937;
+  --popover-foreground: #F9FAFB;
+  --primary: #8B5CF6;
+  --primary-foreground: #FFFFFF;
+  --secondary: #4C1D95;
+  --secondary-foreground: #F9FAFB;
+  --muted: #374151;
   --muted-foreground: #9CA3AF;
-  
-  --accent: #1f2937;
-  --accent-foreground: #FFFFFF;
-  
-  --destructive: #ef4444;
-  --destructive-foreground: #111827;
-  
+  --accent: #FBBF24;
+  --accent-foreground: #111827;
+  --destructive: #7F1D1D;
+  --destructive-foreground: #F9FAFB;
   --border: #374151;
   --input: #374151;
-  --ring: #FFFFFF;
-  
-  --sidebar: #111827;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #FFFFFF;
-  --sidebar-primary-foreground: #111827;
-  --sidebar-accent: #1f2937;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #374151;
-  --sidebar-ring: #FFFFFF;
+  --ring: #8B5CF6;
 }
 
 @layer base {
@@ -137,5 +96,6 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: 'Nunito', sans-serif;
   }
 }

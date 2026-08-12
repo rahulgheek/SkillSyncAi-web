@@ -1,7 +1,5 @@
 import { ProfileResponse } from "../schemas";
 import { Code2, Trophy, Users, Eye } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-
 export function QuickStats({ profile }: { profile: ProfileResponse }) {
   const stats = [
     {
@@ -27,19 +25,17 @@ export function QuickStats({ profile }: { profile: ProfileResponse }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
       {stats.map((stat, i) => (
-        <Card key={i} className="border-border bg-card hover:border-gray-300 transition-colors shadow-sm">
-          <CardContent className="p-5 flex items-center gap-4">
-            <div className="p-3 bg-gray-50 rounded-xl text-foreground">
-              <stat.icon className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-2xl font-semibold tracking-tight text-foreground">{stat.value}</p>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-0.5">{stat.label}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <div key={i} className="bg-white rounded-[2rem] border border-gray-100 p-6 flex items-center gap-5 shadow-lg shadow-gray-200/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group">
+          <div className="p-4 bg-primary/10 rounded-2xl text-primary shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <stat.icon className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-3xl font-black tracking-tight text-foreground">{stat.value}</p>
+            <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1">{stat.label}</p>
+          </div>
+        </div>
       ))}
     </div>
   );

@@ -81,13 +81,13 @@ export function NotesDashboard() {
     <div
       key={note.id}
       onClick={() => handleOpenEditor(note)}
-      className="group relative flex flex-col justify-between p-5 rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:border-primary/30 cursor-pointer overflow-hidden"
+      className="group relative flex flex-col justify-between p-6 rounded-[2rem] border border-gray-100 bg-white shadow-lg shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
     >
-      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary/50 to-violet-500/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <div>
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 className="font-black text-xl line-clamp-1 group-hover:text-primary transition-colors">
             {note.title}
           </h3>
           <div className="flex items-center gap-1">
@@ -108,27 +108,27 @@ export function NotesDashboard() {
           </div>
         </div>
         
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+        <p className="text-base font-medium text-muted-foreground line-clamp-3 mb-5">
           {note.content}
         </p>
 
         {note.aiSummary && (
-          <div className="mb-4 p-2.5 rounded bg-primary/5 border border-primary/10 text-xs text-foreground/80 line-clamp-2">
-            <span className="font-semibold text-primary mr-1">AI:</span> 
+          <div className="mb-5 p-3 rounded-2xl bg-primary/5 border border-primary/10 text-sm font-medium text-foreground line-clamp-2">
+            <span className="font-black text-primary mr-1">AI:</span> 
             {note.aiSummary}
           </div>
         )}
       </div>
 
       <div className="mt-4 flex items-center justify-between">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-2">
           {note.tags.slice(0, 2).map(tag => (
-            <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+            <Badge key={tag} variant="secondary" className="text-xs px-2.5 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 border-0 font-bold">
               {tag}
             </Badge>
           ))}
           {note.tags.length > 2 && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+            <Badge variant="secondary" className="text-xs px-2.5 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 border-0 font-bold">
               +{note.tags.length - 2}
             </Badge>
           )}
@@ -145,36 +145,36 @@ export function NotesDashboard() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">My Notes</h1>
-          <p className="text-muted-foreground mt-1">Capture ideas, summarize with AI, and stay organized.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight">My <span className="font-handwriting text-primary text-5xl inline-block -rotate-2">Notes</span></h1>
+          <p className="text-lg font-medium text-muted-foreground mt-2">Capture ideas, summarize with AI, and stay organized.</p>
         </div>
-        <Button onClick={() => handleOpenEditor()} className="gap-2 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white shadow-md">
-          <Plus className="h-4 w-4" />
+        <Button onClick={() => handleOpenEditor()} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 text-base font-bold">
+          <Plus className="h-5 w-5" />
           New Note
         </Button>
       </div>
 
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="relative max-w-xl">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
-          placeholder="Search notes..."
+          placeholder="Search your notes..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 bg-card/50 backdrop-blur-sm border-border/50"
+          className="pl-12 h-14 rounded-full bg-white border-gray-200 shadow-sm focus-visible:ring-primary/20 text-base font-medium"
         />
       </div>
 
       {notes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border rounded-2xl border-dashed border-border/50 bg-card/20">
-          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <FileText className="h-8 w-8 text-primary" />
+        <div className="flex flex-col items-center justify-center py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100">
+          <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
+            <FileText className="h-12 w-12 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">No notes yet</h3>
-          <p className="text-muted-foreground max-w-sm mb-6">
+          <h3 className="text-3xl font-black mb-3 text-foreground">No notes yet</h3>
+          <p className="text-lg font-medium text-muted-foreground max-w-md mb-8">
             Create your first note to start organizing your thoughts. You can even use AI to summarize long notes!
           </p>
-          <Button onClick={() => handleOpenEditor()} variant="outline" className="gap-2">
-            <Plus className="h-4 w-4" />
+          <Button onClick={() => handleOpenEditor()} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 font-bold">
+            <Plus className="h-5 w-5" />
             Create Note
           </Button>
         </div>
