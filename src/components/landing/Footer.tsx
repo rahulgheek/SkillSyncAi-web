@@ -17,7 +17,7 @@ const SOCIAL_LINKS = ["Twitter", "LinkedIn", "GitHub"];
 
 export function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-[#1e1b4b] pt-20 pb-12">
+    <footer className="relative z-10 border-t border-white/10 bg-[#050505] pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         <div className="col-span-1 md:col-span-2">
           <div className="flex items-center gap-3 mb-6">

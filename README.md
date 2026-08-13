@@ -1,75 +1,49 @@
-# React + TypeScript + Vite
+# SkillSyncWeb - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SkillSyncWeb is the modern, responsive, and highly interactive frontend client for the SkillSync AI platform. It is built to seamlessly orchestrate team building and talent connection using a premium, animated interface.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project is built using the following modern web technologies:
 
-## React Compiler
+- **Framework**: [React 19](https://react.dev/) and [Vite](https://vitejs.dev/)
+- **Routing**: [React Router v7](https://reactrouter.com/) (and TanStack Router integrations)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Primitives**: [Radix UI](https://www.radix-ui.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) and [tw-animate-css](https://github.com/tw-animate-css/tw-animate-css)
+- **Data Fetching & State**: [TanStack Query](https://tanstack.com/query/latest) (React Query) and [Axios](https://axios-http.com/)
+- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) and [Zod](https://zod.dev/)
+- **Data Visualization**: [Recharts](https://recharts.org/)
+- **Real-Time Communication**: [@stomp/stompjs](https://stomp-js.github.io/) (WebSockets)
+- **3D / Visuals**: [Three.js](https://threejs.org/) and Ogl
+- **Utilities**: `date-fns`, `clsx`, `tailwind-merge`, `lucide-react`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Important Concepts Used
 
-## Expanding the ESLint configuration
+- **Modular Architecture**: The codebase is organized into modular feature slices (e.g., `src/features/auth`, `src/features/projects`) to maintain scalability and separation of concerns.
+- **Premium Design System**: Utilizes a highly customized Tailwind CSS v4 `@theme` configuration with semantic CSS variables (e.g., `--primary`, `--background`) to support dynamic, high-contrast light and dark themes.
+- **OAuth2 & JWT Authentication**: Context-driven authentication (`AuthContext`) handling secure token storage, OAuth2 callback exchange, and automatic token hydration.
+- **Micro-Animations & Smooth Scrolling**: Leverages Framer Motion for scroll-reveals (`Reveal`, `FadeIn`) and Lenis for smooth scrolling, enhancing user engagement without sacrificing performance.
+- **Form Validation**: Strict schema-based validation using Zod integrated with React Hook Form to ensure data integrity before dispatching API requests.
+- **Real-time Event Streaming**: STOMP over WebSockets for live updates and notifications directly from the backend Kafka streams.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or pnpm
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+3. Build for production:
+   ```bash
+   npm run build
+   ```

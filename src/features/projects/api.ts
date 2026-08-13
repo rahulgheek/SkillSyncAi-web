@@ -37,6 +37,7 @@ export interface ProjectResponse {
   applicationDeadline: string;
   ownerId: string;
   requiredSkills: RequiredSkill[];
+  createdAt?: string;
 }
 
 export interface OwnerInfo {
