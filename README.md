@@ -64,27 +64,17 @@ The frontend communicates with the Spring Boot backend through REST APIs and Web
 
 A typical user journey looks like:
 
-Landing Page
-     ↓
-Authentication
-     ↓
-Profile Setup
-     ↓
-Skills / Resume / Projects
-     ↓
-Explore Projects & People
-     ↓
-Create or Join a Project
-     ↓
-Discover Suitable Teammates
-     ↓
-View Profiles & Experience
-     ↓
-Message / Collaborate
-     ↓
-Build the Team
-     ↓
-Work Together
+1. Landing Page
+2. Authentication
+3. Profile Setup
+4. Skills / Resume / Projects
+5. Explore Projects & People
+6. Create or Join a Project
+7. Discover Suitable Teammates
+8. View Profiles & Experience
+9. Message / Collaborate
+10. Build the Team
+11. Work Together
 
 The UI is designed to make this journey feel continuous rather than like a collection of disconnected CRUD screens.
 
@@ -252,15 +242,7 @@ SkillSyncWeb uses:
 for real-time communication with the backend.
 
 A typical real-time flow is:
-Spring Boot Backend
-        ↓
-WebSocket / STOMP
-        ↓
-SkillSyncWeb
-        ↓
-React State / Query Cache
-        ↓
-Updated UI
+Spring Boot Backend → WebSocket / STOMP → SkillSyncWeb → React State / Query Cache → Updated UI
 
 This architecture is useful for messaging, notifications, team events, and asynchronous backend workflows.
 
@@ -330,17 +312,7 @@ The combination provides:
 - Reduced unnecessary re-renders
 
 Example flow:
-User Input
-    ↓
-React Hook Form
-    ↓
-Zod Validation
-    ↓
-Validated Request
-    ↓
-Axios
-    ↓
-Spring Boot API
+User Input → React Hook Form → Zod Validation → Validated Request → Axios → Spring Boot API
 
 Invalid data is rejected on the client before unnecessary API requests are made. Server-side validation remains the final authority.
 
@@ -632,8 +604,7 @@ The objective is not only to create visually attractive pages, but to build a fr
 ## Author
 
 **Rahul Gheek**
-Computer Science Engineering Student
-Backend / Java Developer
+Computer Science Engineering Student Java Developer
 
 **Focus Areas**
 - Java
