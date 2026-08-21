@@ -37,7 +37,12 @@ export function LoginForm() {
       navigate(to);
     } catch (err) {
       const e = normalizeError(err);
-      toast.error(e.message || "Invalid email or password");
+      if (e.message && e.message.toLowerCase().includes("verify")) {
+        toast.error("Please verify your email first.");
+        navigate(`/verify?email=${encodeURIComponent(values.email)}`);
+      } else {
+        toast.error(e.message || "Invalid email or password");
+      }
     } finally {
       setSubmitting(false);
     }

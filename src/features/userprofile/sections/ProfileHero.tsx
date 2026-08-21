@@ -5,7 +5,10 @@ import { EditProfileModal } from "../components/EditProfileModal";
 import { MapPin, Briefcase, GraduationCap, CheckCircle, Share } from "lucide-react";
 
 import { Link } from "react-router-dom";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Mail } from "lucide-react";
+import { useAuth } from "@/features/auth/context";
+
+import { tokenStorage } from "@/lib/token-storage";
 
 export function ProfileHero({ profile, isOwnProfile = true }: { profile: ProfileResponse, isOwnProfile?: boolean }) {
   const avatarUrl = profile.profilePictureUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + profile.userId;
@@ -34,6 +37,11 @@ export function ProfileHero({ profile, isOwnProfile = true }: { profile: Profile
                 {(profile.isVerified ?? true) && <CheckCircle className="h-6 w-6 text-blue-500" />}
               </div>
               <p className="text-lg text-muted-foreground font-bold">{profile.currentRole || "Software Engineering Student"}</p>
+              {isOwnProfile && profile.email && (
+                <div className="flex items-center gap-1.5 mt-1 text-sm font-semibold text-muted-foreground bg-gray-50/50 px-2 py-1 rounded-md border border-gray-100 w-fit">
+                  <Mail className="h-3.5 w-3.5" /> {profile.email}
+                </div>
+              )}
             </div>
           </div>
           

@@ -19,6 +19,11 @@ export async function verifyOtp(input: { email: string; otp: string }): Promise<
   return typeof res.data === "string" ? res.data : "Account verified successfully";
 }
 
+export async function resendOtp(input: { email: string }): Promise<string> {
+  const res = await api.post<string>("/api/auth/resend-otp", input);
+  return typeof res.data === "string" ? res.data : "OTP resent successfully";
+}
+
 export async function login(input: {
   email: string;
   password: string;

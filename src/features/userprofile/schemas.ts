@@ -53,6 +53,7 @@ export const aiInsightsSchema = z.object({
 export const profileResponseSchema = z.object({
   userId: z.string().uuid(),
   fullName: z.string(),
+  email: z.string().optional(),
   bio: z.string().nullable().optional(),
   profilePictureUrl: z.string().nullable().optional(),
   resumeUrl: z.string().nullable().optional(),

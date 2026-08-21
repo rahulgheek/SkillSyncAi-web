@@ -35,19 +35,34 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+
+  const parseUserFromToken = (jwt: string) => {
+    try {
+      const base64Url = jwt.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(base64));
+      return { id: payload.userId || "", email: payload.sub || "" };
+    } catch (e) {
+      console.error("Failed to parse JWT", e);
+      return null;
+    }
+  };
 
   const refetchUser = useCallback(async () => {
     const currentToken = tokenStorage.get();
     if (!currentToken) return;
+    
+    // Always ensure email is preserved from the token!
+    const tokenUser = parseUserFromToken(currentToken);
+    
     try {
       const response = await api.get("/api/v1/profile/me");
       if (response.data && response.data.data && response.data.data.userId) {
-        setUser(prev => ({ 
+        setUser({ 
           id: response.data.data.userId, 
-          email: prev?.email || response.data.data.email || "" 
-        }));
+          email: tokenUser?.email || "" 
+        });
       }
     } catch (e) {
       console.error("Failed to fetch user profile for ID", e);
@@ -59,15 +74,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedToken = tokenStorage.get();
     setToken(storedToken);
     if (storedToken) {
-      try {
-        const base64Url = storedToken.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
-        if (payload.userId) {
-          setUser({ id: payload.userId, email: payload.sub });
-        }
-      } catch (e) {
-        console.error("Failed to parse JWT", e);
+      const parsedUser = parseUserFromToken(storedToken);
+      if (parsedUser) {
+        setUser(parsedUser);
       }
       refetchUser(); // Always fetch to guarantee we have userId even if backend wasn't recompiled
     }
@@ -77,18 +86,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback((newToken: string) => {
     tokenStorage.set(newToken);
     setToken(newToken);
-    try {
-      const base64Url = newToken.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const payload = JSON.parse(atob(base64));
-      if (payload.userId) {
-        setUser({ id: payload.userId, email: payload.sub });
-      } else {
-        // Fallback to fetching profile if backend wasn't recompiled
-        refetchUser();
-      }
-    } catch (e) {
-      console.error("Failed to parse JWT on login", e);
+    const parsedUser = parseUserFromToken(newToken);
+    if (parsedUser && parsedUser.id) {
+      setUser(parsedUser);
+    } else {
+      if (parsedUser) setUser(parsedUser);
       refetchUser();
     }
   }, [refetchUser]);
