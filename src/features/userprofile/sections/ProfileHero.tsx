@@ -19,7 +19,7 @@ export function ProfileHero({ profile, isOwnProfile = true }: { profile: Profile
       <div className="h-48 w-full bg-gradient-to-r from-primary/10 to-accent/10 relative">
         <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
       </div>
-      
+
       <div className="px-8 pb-8 pt-0 relative">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end -mt-16 md:-mt-20 space-y-4 md:space-y-0 relative z-10">
           <div className="flex items-end gap-5">
@@ -44,7 +44,7 @@ export function ProfileHero({ profile, isOwnProfile = true }: { profile: Profile
               )}
             </div>
           </div>
-          
+
           <div className="flex gap-3 pt-4 md:pt-0">
             {isOwnProfile ? (
               <>
