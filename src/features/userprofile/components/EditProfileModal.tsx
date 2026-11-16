@@ -30,12 +30,12 @@ export function EditProfileModal({ profile }: EditProfileModalProps) {
         </DialogHeader>
         
         <Tabs defaultValue="basic" className="mt-4">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="basic">Basic Info</TabsTrigger>
-              <TabsTrigger value="picture">Picture</TabsTrigger>
-              <TabsTrigger value="socials">Socials</TabsTrigger>
-              <TabsTrigger value="resume">Resume</TabsTrigger>
-              <TabsTrigger value="achievements">Awards</TabsTrigger>
+            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 p-1 sm:grid-cols-5">
+              <TabsTrigger value="basic" className="h-auto py-2 text-xs sm:text-sm">Basic Info</TabsTrigger>
+              <TabsTrigger value="picture" className="h-auto py-2 text-xs sm:text-sm">Picture</TabsTrigger>
+              <TabsTrigger value="socials" className="h-auto py-2 text-xs sm:text-sm">Socials</TabsTrigger>
+              <TabsTrigger value="resume" className="h-auto py-2 text-xs sm:text-sm">Resume</TabsTrigger>
+              <TabsTrigger value="achievements" className="h-auto py-2 text-xs sm:text-sm">Awards</TabsTrigger>
             </TabsList>
           <TabsContent value="basic" className="mt-4 space-y-4">
             <EditProfileForm profile={profile} />

@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/context";
 import { Home, Compass, Map, FolderKanban, MessageSquare, Bell, LogOut, Sparkles, User, Search, FileText, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ export function DashboardLayout() {
   const { unreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -112,13 +113,13 @@ export function DashboardLayout() {
           
           {/* Mobile Navigation Trigger */}
           <div className="md:hidden">
-            <Sheet>
+            <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="Open navigation menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0 bg-white">
+              <SheetContent side="left" className="flex w-72 flex-col p-0 bg-white">
                 <div className="flex h-16 items-center px-6 border-b border-gray-100">
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary shadow-sm shadow-primary/20">
@@ -134,6 +135,7 @@ export function DashboardLayout() {
                       <Link
                         key={item.label}
                         to={item.to}
+                        onClick={() => setMobileNavOpen(false)}
                         className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-gray-50 hover:text-foreground'}`}
                       >
                         <item.icon className="h-5 w-5" />
@@ -142,6 +144,21 @@ export function DashboardLayout() {
                     )
                   })}
                 </nav>
+
+                <div className="mt-auto border-t border-gray-100 p-4">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 rounded-xl font-bold text-muted-foreground hover:bg-red-50 hover:text-red-600"
+                    onClick={() => {
+                      setMobileNavOpen(false);
+                      logout();
+                      navigate("/login", { replace: true });
+                    }}
+                  >
+                    <LogOut className="h-5 w-5" />
+                    Sign Out
+                  </Button>
+                </div>
               </SheetContent>
             </Sheet>
           </div>
@@ -159,7 +176,7 @@ export function DashboardLayout() {
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuContent align="end" className="w-72 sm:w-80">
                 <div className="flex items-center justify-between p-2">
                   <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                   {unreadCount > 0 && (
@@ -184,10 +201,10 @@ export function DashboardLayout() {
                         }}
                       >
                         <div className="flex items-center justify-between w-full mb-1">
-                          <span className={`text-sm font-semibold ${!notification.isRead ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          <span className={`text-sm font-semibold truncate pr-2 ${!notification.isRead ? 'text-foreground' : 'text-muted-foreground'}`}>
                             {notification.title}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-muted-foreground shrink-0">
                             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                           </span>
                         </div>
@@ -203,8 +220,8 @@ export function DashboardLayout() {
           </div>
           
           {profile && (
-            <div className="ml-6 flex items-center gap-3 border-l border-gray-200 pl-6">
-              <span className="text-sm font-extrabold text-foreground">{profile.fullName}</span>
+            <div className="ml-2 flex items-center gap-2 border-l border-gray-200 pl-2 sm:ml-6 sm:gap-3 sm:pl-6">
+              <span className="hidden sm:inline max-w-40 truncate text-sm font-extrabold text-foreground">{profile.fullName}</span>
               <Link to="/profile">
                 <div className="h-10 w-10 rounded-full bg-primary/10 ring-2 ring-transparent cursor-pointer hover:ring-primary/20 transition-all overflow-hidden flex items-center justify-center">
                   {profile.profilePictureUrl ? (

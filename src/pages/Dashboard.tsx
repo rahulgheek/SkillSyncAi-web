@@ -76,38 +76,38 @@ export function Dashboard() {
     <FadeIn delay={0.1} className="mx-auto max-w-6xl">
       <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
-            Welcome back, <span className="font-handwriting text-primary text-5xl md:text-6xl inline-block -rotate-2 -translate-y-1">{firstName}</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground break-words">
+            Welcome back, <span className="font-handwriting text-primary text-4xl sm:text-5xl md:text-6xl inline-block -rotate-2 -translate-y-1">{firstName}</span>
           </h1>
           <p className="mt-4 text-lg text-muted-foreground font-medium max-w-2xl">
             Here is what's happening with your projects and AI learning roadmap today. Let's make some progress.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Link to="/projects/new">
-            <Button className="h-11 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 gap-2 text-base">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <Link to="/projects/new" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto h-11 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 gap-2 text-base justify-center">
               <Plus className="w-5 h-5 mr-1 inline-block" /> Create Project
             </Button>
           </Link>
-          <Link to="/profile">
-            <Button variant="outline" className="rounded-full shadow-sm hover:shadow-md transition-all gap-2">
+          <Link to="/profile" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto rounded-full shadow-sm hover:shadow-md transition-all gap-2 justify-center">
               View Profile <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         {widgets.map((widget, idx) => (
           <FadeIn key={idx} delay={0.2 + idx * 0.1}>
-            <div className="h-full group cursor-pointer bg-white rounded-[2rem] p-8 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all border border-gray-100 relative overflow-hidden flex flex-col">
+            <div className="h-full group cursor-pointer bg-white rounded-[2rem] p-6 sm:p-8 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all border border-gray-100 relative overflow-hidden flex flex-col">
               <div className={`absolute -right-12 -top-12 h-40 w-40 rounded-full opacity-10 group-hover:scale-150 transition-transform duration-700 bg-gradient-to-br ${widget.color.split(' text-')[0]}`} />
               
               <div className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg ${widget.color}`}>
                 <widget.icon className="h-7 w-7" />
               </div>
-              <h3 className="text-2xl font-black mb-2 text-foreground">{widget.title}</h3>
-              <p className="text-base text-muted-foreground font-medium mb-8 flex-1">{widget.description}</p>
+              <h3 className="text-xl sm:text-2xl font-black mb-2 text-foreground">{widget.title}</h3>
+              <p className="text-base text-muted-foreground font-medium mb-6 sm:mb-8 flex-1">{widget.description}</p>
               
               <div className="flex items-center text-sm font-bold text-primary transition-colors group-hover:text-primary/80 mt-auto">
                 Explore <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-2" />
@@ -117,13 +117,13 @@ export function Dashboard() {
         ))}
       </div>
       
-      <FadeIn delay={0.6} className="mt-12 rounded-[2.5rem] border border-gray-100 bg-white p-8 md:p-12 shadow-xl shadow-gray-200/50 relative overflow-hidden">
+      <FadeIn delay={0.6} className="mt-8 sm:mt-12 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 bg-white p-5 sm:p-8 md:p-12 shadow-xl shadow-gray-200/50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-accent" />
-        <div className="flex items-center gap-4 mb-8">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <ListTodo className="w-8 h-8" />
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="p-2.5 sm:p-3 bg-primary/10 text-primary rounded-xl">
+            <ListTodo className="w-7 h-7 sm:w-8 sm:h-8" />
           </div>
-          <h2 className="text-3xl font-black">My To-Do List</h2>
+          <h2 className="text-2xl sm:text-3xl font-black">My To-Do List</h2>
         </div>
         
         {isTodosLoading ? (
@@ -131,7 +131,7 @@ export function Dashboard() {
             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
           </div>
         ) : !todos || todos.length === 0 ? (
-          <div className="text-center p-12 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
+          <div className="text-center p-8 sm:p-12 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
             <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500 opacity-50" />
             <p className="text-xl font-bold text-foreground">All caught up!</p>
             <p className="text-base font-medium text-muted-foreground mt-2">Generate a new AI roadmap or create projects to get more tasks.</p>

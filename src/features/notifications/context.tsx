@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMyNotifications, getUnreadCount, markAsRead, markAllAsRead, NotificationResponse } from "./api";
 import { useAuth } from "@/features/auth/context";
 import { toast } from "sonner";
-import { api } from "@/lib/api/axios";
+import { API_BASE_URL } from "@/lib/api/axios";
 
 interface NotificationContextType {
   notifications: NotificationResponse[];
@@ -49,7 +49,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // wait, we are using JWT. EventSource doesn't send Authorization header.
     // A trick is to use a polyfill or just let the backend accept a token query param.
     // For this boilerplate, let's assume it works with cookies or we append the token.
-    const sse = new EventSource(`https://skillsyncai-kkip.onrender.com/api/v1/notifications/stream?token=${token}`);
+    const sse = new EventSource(
+      `${API_BASE_URL}/api/v1/notifications/stream?token=${encodeURIComponent(token ?? "")}`,
+    );
 
     sse.addEventListener("notification", (event) => {
       try {

@@ -44,11 +44,11 @@ export function MyProjects() {
     <FadeIn delay={0.1} className="mx-auto max-w-6xl">
       <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
-            <FolderKanban className="h-10 w-10 text-primary" />
-            My <span className="font-handwriting text-primary text-5xl inline-block -rotate-2 ml-1">Projects</span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground flex flex-wrap items-center gap-2 sm:gap-3">
+            <FolderKanban className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+            My <span className="font-handwriting text-primary text-4xl sm:text-5xl inline-block -rotate-2 ml-1">Projects</span>
           </h1>
-          <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
+          <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl">
             Manage your published projects, view applications, and find AI matches.
           </p>
         </div>
@@ -57,19 +57,19 @@ export function MyProjects() {
             <span className="text-sm font-semibold text-primary block">Create New</span>
             <span className="text-xs text-muted-foreground block">Click folder to start</span>
           </div>
-          <div className="relative h-20 w-24 flex items-center justify-center -mt-4 cursor-pointer" onClick={() => navigate('/projects/new')}>
+          <div className="relative h-16 w-20 sm:h-20 sm:w-24 flex items-center justify-center -mt-2 sm:-mt-4 cursor-pointer" onClick={() => navigate('/projects/new')}>
              <Folder size={1.2} color="#6366f1" />
           </div>
         </div>
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100 mt-8">
-          <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
-            <FolderKanban className="h-12 w-12 text-primary" />
+        <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100 mt-8">
+          <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
+            <FolderKanban className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
           </div>
-          <h3 className="text-3xl font-black mb-3 text-foreground">No projects yet</h3>
-          <p className="text-lg font-medium text-muted-foreground max-w-md mb-8">
+          <h3 className="text-2xl sm:text-3xl font-black mb-3 text-foreground">No projects yet</h3>
+          <p className="text-base sm:text-lg font-medium text-muted-foreground max-w-md mb-8 px-4">
             Create your first project to start recruiting team members.
           </p>
           <Button onClick={() => navigate('/projects/new')} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 font-bold">
@@ -80,12 +80,12 @@ export function MyProjects() {
         <div className="grid gap-6 md:grid-cols-2 mt-8">
           {projects.map((project: any, idx: number) => (
             <FadeIn key={project.id} delay={0.2 + idx * 0.1} className="h-full">
-              <div className="bg-white rounded-[2rem] border border-gray-100 p-8 h-full flex flex-col justify-between shadow-xl shadow-gray-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 relative group overflow-hidden">
+              <div className="bg-white rounded-[2rem] border border-gray-100 p-5 sm:p-8 h-full flex flex-col justify-between shadow-xl shadow-gray-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 relative group overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10 z-10 rounded-full h-10 w-10"
+                  className="absolute top-4 right-4 sm:top-6 sm:right-6 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity text-destructive hover:bg-destructive/10 z-10 rounded-full h-10 w-10"
                   onClick={(e) => {
                     e.stopPropagation();
                     if(confirm("Are you sure you want to permanently delete this project?")) {
@@ -97,9 +97,9 @@ export function MyProjects() {
                 </Button>
                 
                 <div className="relative z-10 mt-2">
-                  <div className="flex items-center gap-3 mb-4 pr-10">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 pr-10">
                     <h3 
-                      className="text-2xl font-black cursor-pointer hover:text-primary transition-colors truncate"
+                      className="text-xl sm:text-2xl font-black cursor-pointer hover:text-primary transition-colors truncate"
                       onClick={() => navigate(`/projects/${project.id}`)}
                     >
                       {project.title}

@@ -37,19 +37,19 @@ export function SearchProfiles() {
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-4 border-b border-border pb-6">
-          <div className="p-3 bg-primary/10 rounded-xl">
-            <Users className="w-8 h-8 text-primary" />
+        <div className="flex items-start sm:items-center gap-3 sm:gap-4 border-b border-border pb-6">
+          <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl shrink-0">
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
           </div>
-          <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-              Discover <span className="font-handwriting text-primary text-5xl md:text-6xl inline-block -rotate-2 -translate-y-1">People</span>
+          <div className="min-w-0">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
+              Discover <span className="font-handwriting text-primary text-4xl sm:text-5xl md:text-6xl inline-block -rotate-2 -translate-y-1">People</span>
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg font-medium">Search for students, view their public profiles, and connect.</p>
+            <p className="text-muted-foreground mt-2 text-base sm:text-lg font-medium">Search for students, view their public profiles, and connect.</p>
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-4 mb-8">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
             <Input 
@@ -59,7 +59,7 @@ export function SearchProfiles() {
               className="pl-12 py-7 text-lg rounded-2xl shadow-md shadow-gray-200/50 border-gray-100 bg-white focus-visible:ring-primary/20"
             />
           </div>
-          <Button type="submit" size="lg" className="h-[58px] px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white text-lg shadow-md shadow-primary/20 font-bold">
+          <Button type="submit" size="lg" className="h-[58px] w-full sm:w-auto px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white text-lg shadow-md shadow-primary/20 font-bold">
             Search
           </Button>
         </form>
@@ -101,7 +101,7 @@ export function SearchProfiles() {
                             {profile.bio || "No bio available."}
                           </p>
                           
-                          <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground mt-auto">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-bold text-muted-foreground mt-auto">
                             {profile.location && (
                               <div className="flex items-center gap-1.5 truncate">
                                 <MapPin className="h-3.5 w-3.5 text-primary" /> {profile.location}

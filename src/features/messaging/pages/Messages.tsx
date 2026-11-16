@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getInbox, ChatInboxItemDto } from "../api";
@@ -6,7 +6,7 @@ import { useChat } from "../hooks/useChat";
 import { useAuth } from "@/features/auth/context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import { Send, Loader2, MessageSquare, User, Hash } from "lucide-react";
+import { Send, Loader2, MessageSquare, User, Hash, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -20,10 +20,10 @@ export default function Messages() {
 
   const urlName = searchParams.get("name");
 
+  // No polling: useChat invalidates this query when a message arrives or is sent.
   const { data: inbox, isLoading: isInboxLoading } = useQuery({
     queryKey: ["inbox"],
     queryFn: getInbox,
-    refetchInterval: 5000, // Poll every 5s for now to keep inbox fresh
   });
 
   const chatName = useMemo(() => {
@@ -55,12 +55,12 @@ export default function Messages() {
   };
 
   return (
-    <div className="bg-gray-50 p-4 md:p-6 min-h-[calc(100vh-4rem)]">
-      <div className="flex h-[calc(100vh-8rem)] max-w-6xl mx-auto bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-        {/* Sidebar Inbox */}
-        <div className="w-80 border-r border-gray-100 flex flex-col h-full shrink-0 bg-white">
-          <div className="p-6 border-b border-gray-100 shrink-0 flex items-center justify-between">
-            <h2 className="text-3xl font-extrabold tracking-tight">My <span className="font-handwriting text-primary text-4xl inline-block -rotate-2">Messages</span></h2>
+    <div className="bg-gray-50 p-3 sm:p-4 md:p-6">
+      <div className="flex h-[calc(100dvh-8rem)] sm:h-[calc(100dvh-9rem)] md:h-[calc(100vh-11rem)] max-w-6xl mx-auto bg-white rounded-3xl md:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+        {/* Sidebar Inbox. On mobile it is the master view. */}
+        <div className={`${activeId ? "hidden md:flex" : "flex"} w-full md:w-80 border-r border-gray-100 flex-col h-full shrink-0 bg-white`}>
+          <div className="p-4 sm:p-6 border-b border-gray-100 shrink-0 flex items-center justify-between">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">My <span className="font-handwriting text-primary text-3xl sm:text-4xl inline-block -rotate-2">Messages</span></h2>
           </div>
         
         <div className="flex-1 overflow-y-auto">
@@ -106,34 +106,44 @@ export default function Messages() {
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-full min-w-0">
+      {/* Main Chat Area. On mobile it is the detail view, opened by selecting a conversation. */}
+      <div className={`${activeId ? "flex" : "hidden md:flex"} flex-1 flex-col h-full min-w-0`}>
         {activeId ? (
           <>
-            <div className="p-5 border-b border-gray-100 bg-white flex justify-between items-center shrink-0 shadow-sm z-10 relative">
-              <div className="flex items-center gap-4">
-                <Avatar className="w-12 h-12 shrink-0 border-2 border-white shadow-sm">
+            <div className="p-3 sm:p-5 border-b border-gray-100 bg-white flex justify-between items-center gap-2 shrink-0 shadow-sm z-10 relative">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSearchParams({})}
+                  className="md:hidden shrink-0 -ml-1"
+                  aria-label="Back to conversations"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <Avatar className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 border-2 border-white shadow-sm">
                   <AvatarFallback className="bg-primary/10 text-primary font-bold">
                     {activeType === "PROJECT" ? <Hash className="w-6 h-6"/> : <User className="w-6 h-6"/>}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <h3 className="font-black text-lg text-foreground">{inbox?.find(i => i.id === activeId)?.name || "Loading..."}</h3>
+                <div className="min-w-0">
+                  <h3 className="font-black text-base sm:text-lg text-foreground truncate">{chatName}</h3>
                   <span className="text-xs font-bold text-muted-foreground">
                     {activeType === "PROJECT" ? "Team Chat" : "Direct Message"}
                   </span>
                 </div>
               </div>
-              <div className="text-xs font-bold bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+              <div className="shrink-0 text-xs font-bold bg-gray-50 px-2 sm:px-3 py-1.5 rounded-full border border-gray-100">
                 {isConnected ? (
-                  <span className="text-green-500 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/> Connected</span>
+                  <span className="text-green-500 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/><span className="hidden sm:inline">Connected</span></span>
                 ) : (
-                  <span className="text-amber-500 flex items-center gap-2"><Loader2 className="w-3 h-3 animate-spin"/> Connecting</span>
+                  <span className="text-amber-500 flex items-center gap-2"><Loader2 className="w-3 h-3 animate-spin"/><span className="hidden sm:inline">Connecting</span></span>
                 )}
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50/50">
               {isLoadingHistory ? (
                 <div className="flex justify-center items-center h-full"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground"/></div>
               ) : messages.length === 0 ? (
@@ -173,7 +183,7 @@ export default function Messages() {
                           </Avatar>
                         )}
                       </div>
-                      <div className={`flex flex-col max-w-[75%] ${isMe ? "items-end" : "items-start"}`}>
+                      <div className={`flex flex-col max-w-[85%] sm:max-w-[75%] ${isMe ? "items-end" : "items-start"}`}>
                         {!isMe && showAvatar && (
                           <span className="text-xs text-muted-foreground ml-1 mb-1 font-medium">
                             {msg.senderName}
@@ -193,7 +203,7 @@ export default function Messages() {
               )}
             </div>
 
-            <div className="p-5 bg-white border-t border-gray-100 shrink-0">
+            <div className="p-4 sm:p-5 bg-white border-t border-gray-100 shrink-0">
               <form onSubmit={handleSend} className="flex gap-3 max-w-4xl mx-auto">
                 <Input 
                   value={content}
@@ -209,11 +219,11 @@ export default function Messages() {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-gray-50/50">
+          <div className="flex flex-col items-center justify-center h-full px-4 text-center text-muted-foreground bg-gray-50/50">
             <div className="p-6 bg-white rounded-full shadow-xl shadow-gray-200/50 mb-6">
               <MessageSquare className="w-12 h-12 text-primary/50" />
             </div>
-            <h3 className="text-2xl font-black text-foreground">Your Messages</h3>
+            <h3 className="text-xl sm:text-2xl font-black text-foreground">Your Messages</h3>
             <p className="text-base font-medium mt-2">Select a conversation from the sidebar to start chatting.</p>
           </div>
         )}

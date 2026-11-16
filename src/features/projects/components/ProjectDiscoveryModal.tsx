@@ -64,20 +64,20 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-background/95 backdrop-blur-md border-border/50">
-        <div className="p-6 pb-4 border-b border-border/50 bg-gradient-to-r from-blue-500/10 to-cyan-500/10">
+      <DialogContent className="flex max-h-[90dvh] w-[calc(100vw-1rem)] max-w-4xl flex-col overflow-hidden rounded-2xl border-border/50 bg-background/95 p-0 backdrop-blur-md sm:w-full sm:rounded-lg">
+        <div className="border-b border-border/50 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 p-4 pb-4 sm:p-6">
           <DialogHeader>
-            <div className="flex items-center gap-2 mb-2 text-primary">
+            <div className="mb-2 flex items-center gap-2 text-primary">
               <Sparkles className="w-5 h-5" />
-              <span className="font-semibold tracking-wider uppercase text-sm">AI Discovery</span>
+              <span className="text-xs font-semibold uppercase tracking-wider sm:text-sm">AI Discovery</span>
             </div>
-            <DialogTitle className="text-3xl font-bold">Recommended Projects</DialogTitle>
-            <DialogDescription className="text-base mt-2 text-foreground/80">
+            <DialogTitle className="text-2xl font-bold sm:text-3xl">Recommended Projects</DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-foreground/80 sm:text-base">
               Our AI has analyzed your skills and achievements and matched them against all active projects to find the best fit for you.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="mt-6 flex justify-between items-center">
+          <div className="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
               {recommendations.length > 0 
                 ? `Showing top ${recommendations.length} AI-ranked projects.` 
@@ -86,7 +86,7 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
             <Button 
               onClick={() => generateMutation.mutate()} 
               disabled={generateMutation.isPending || isGenerating}
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg transition-all duration-300 hover:scale-105"
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-cyan-700 sm:w-auto sm:hover:scale-105"
             >
               {isGenerating ? (
                 <>
@@ -103,22 +103,22 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-muted/20">
+        <div className="flex-1 overflow-y-auto bg-muted/20 p-4 sm:p-6">
           {isLoading && !isGenerating ? (
             <div className="flex flex-col items-center justify-center h-48 space-y-4">
               <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
               <p className="text-muted-foreground animate-pulse">Loading previous AI recommendations...</p>
             </div>
           ) : isGenerating ? (
-            <div className="flex flex-col items-center justify-center py-20 space-y-6">
+            <div className="flex flex-col items-center justify-center space-y-6 py-12 sm:py-20">
               <div className="relative w-24 h-24">
                 <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full animate-ping"></div>
                 <div className="absolute inset-2 border-4 border-cyan-500/50 rounded-full animate-spin"></div>
                 <BrainCircuit className="absolute inset-0 m-auto w-10 h-10 text-primary animate-pulse" />
               </div>
               <div className="text-center">
-                <h3 className="text-xl font-medium text-foreground mb-2">Groq AI is analyzing projects...</h3>
-                <p className="text-muted-foreground">Evaluating semantic matches based on your skills and achievements.</p>
+                <h3 className="mb-2 text-lg font-medium text-foreground sm:text-xl">Groq AI is analyzing projects...</h3>
+                <p className="text-sm text-muted-foreground sm:text-base">Evaluating semantic matches based on your skills and achievements.</p>
               </div>
             </div>
           ) : recommendations.length === 0 ? (
@@ -127,7 +127,7 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
                 <Sparkles className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium">No Recommendations</h3>
-              <p className="text-muted-foreground max-w-md mt-2">
+              <p className="text-sm text-muted-foreground max-w-md mt-2 sm:text-base">
                 Click the button above to let AI find the best projects for you based on your profile.
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
               {recommendations.map((rec, index) => (
                 <div 
                   key={rec.id} 
-                  className={`relative bg-card rounded-xl border p-6 transition-all duration-300 hover:shadow-xl ${
+                  className={`relative bg-card rounded-xl border p-4 transition-all duration-300 hover:shadow-xl sm:p-6 ${
                     index === 0 ? 'border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)]' : 'border-border'
                   }`}
                 >
@@ -146,12 +146,12 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
                     </div>
                   )}
                   
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 className="text-2xl font-bold line-clamp-1">{rec.projectTitle}</h4>
-                          <div className="flex items-center gap-3 mt-3">
+                  <div className="flex flex-col gap-6 md:flex-row">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <h4 className="text-lg font-bold break-words sm:text-2xl">{rec.projectTitle}</h4>
+                          <div className="mt-3 flex flex-wrap items-center gap-2 sm:gap-3">
                             <Badge variant={rec.finalScore >= 80 ? "default" : "secondary"} className={rec.finalScore >= 80 ? "bg-green-500/20 text-green-700 hover:bg-green-500/30" : ""}>
                               {rec.finalScore}% Match
                             </Badge>
@@ -163,7 +163,7 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
                         <div className="flex flex-col gap-2 items-end">
                           <Button 
                             variant="outline"
-                            className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                            className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 sm:w-auto"
                             onClick={() => {
                               onClose();
                               navigate(`/projects/${rec.projectId}`);
@@ -177,12 +177,12 @@ export default function ProjectDiscoveryModal({ isOpen, onClose }: ProjectDiscov
                       
                       <p className="text-muted-foreground mt-4 line-clamp-2">{rec.projectDescription}</p>
 
-                      <div className="mt-4 bg-muted/40 rounded-lg p-4 border border-border/50">
+                      <div className="mt-4 bg-muted/40 rounded-lg p-3 border border-border/50 sm:p-4">
                         <div className="flex items-start gap-3">
                           <BrainCircuit className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                          <div>
+                          <div className="min-w-0">
                             <p className="text-sm font-medium text-foreground mb-1">AI Rationale</p>
-                            <p className="text-sm text-muted-foreground italic leading-relaxed">
+                            <p className="text-sm text-muted-foreground italic leading-relaxed break-words">
                               "{rec.rationale}"
                             </p>
                           </div>

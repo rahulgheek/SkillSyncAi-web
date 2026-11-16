@@ -31,10 +31,10 @@ export function AiRoadmap() {
     }
   }, [activeRoadmap]);
 
+  // No polling: mutations and roadmap generation invalidate this query.
   const { data: todos, isLoading: isTodosLoading } = useQuery({
     queryKey: ["todos"],
     queryFn: () => getMyTodos(),
-    refetchInterval: 5000, // Automatically poll for new tasks every 5 seconds
   });
 
   const generateMutation = useMutation({
@@ -43,6 +43,9 @@ export function AiRoadmap() {
       setRoadmap(data);
       toast.success("Your personalized AI Roadmap is ready!");
       queryClient.invalidateQueries({ queryKey: ["todos"] });
+      // Todo generation is event-driven on the backend; refresh once after it
+      // has had time to finish instead of polling every few seconds.
+      window.setTimeout(() => queryClient.invalidateQueries({ queryKey: ["todos"] }), 2500);
     },
     onError: (error) => {
       console.error("Roadmap generation failed:", error);
@@ -101,13 +104,13 @@ export function AiRoadmap() {
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 min-h-screen">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-primary/10 rounded-xl">
-          <Route className="w-8 h-8 text-primary" />
+      <div className="flex items-start sm:items-center gap-3 mb-8">
+        <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl shrink-0">
+          <Route className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
         </div>
-        <div>
-          <h1 className="text-4xl font-extrabold tracking-tight">AI Career <span className="font-handwriting text-primary text-5xl inline-block -rotate-2">Roadmap</span></h1>
-          <p className="text-lg font-medium text-muted-foreground mt-2">Get a personalized learning path and track your progress.</p>
+        <div className="min-w-0">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">AI Career <span className="font-handwriting text-primary text-4xl sm:text-5xl inline-block -rotate-2">Roadmap</span></h1>
+          <p className="text-base sm:text-lg font-medium text-muted-foreground mt-2">Get a personalized learning path and track your progress.</p>
         </div>
       </div>
 
@@ -122,13 +125,13 @@ export function AiRoadmap() {
             <div className="lg:col-span-2 space-y-6">
           {!roadmap && (
             <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden transition-all duration-300">
-              <div className="bg-primary/5 px-8 py-8 border-b border-primary/10">
-                <h2 className="text-2xl font-black text-foreground">Plan Your Next Move</h2>
+              <div className="bg-primary/5 px-5 py-6 sm:px-8 sm:py-8 border-b border-primary/10">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground">Plan Your Next Move</h2>
                 <p className="text-muted-foreground font-medium mt-2">
                   Tell us where you are and where you want to go. Leave the target role blank if you want the AI to recommend a path for you!
                 </p>
               </div>
-              <div className="p-8">
+              <div className="p-5 sm:p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold leading-none">Target Role (What I want to know/do)</label>
@@ -146,7 +149,7 @@ export function AiRoadmap() {
                       placeholder="e.g. I know basic React and Python, but have never built a full app."
                       value={currentKnowledge}
                       onChange={(e) => setCurrentKnowledge(e.target.value)}
-                      className="resize-none text-base p-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
+                      className="resize-none text-base p-4 sm:p-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
                       rows={3}
                     />
                   </div>
@@ -157,7 +160,7 @@ export function AiRoadmap() {
                       placeholder="e.g. I struggle with databases and backend deployment."
                       value={knowledgeGaps}
                       onChange={(e) => setKnowledgeGaps(e.target.value)}
-                      className="resize-none text-base p-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
+                      className="resize-none text-base p-4 sm:p-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
                       rows={3}
                     />
                   </div>
@@ -188,16 +191,16 @@ export function AiRoadmap() {
           )}
 
           {roadmap && (
-            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-700">
-              <div className="bg-primary/5 px-8 py-8 border-b border-primary/10">
-                <h2 className="text-3xl font-black text-foreground">{roadmap.title}</h2>
+            <div className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-700">
+              <div className="bg-primary/5 px-5 py-6 sm:px-8 sm:py-8 border-b border-primary/10">
+                <h2 className="text-2xl sm:text-3xl font-black text-foreground break-words">{roadmap.title}</h2>
                 <p className="text-base font-medium text-muted-foreground mt-3">{roadmap.description}</p>
               </div>
-              <div className="p-8">
-                <div className="relative border-l-4 border-primary/20 pl-8 ml-4 space-y-10">
+              <div className="p-5 sm:p-8">
+                <div className="relative border-l-4 border-primary/20 pl-5 sm:pl-8 ml-2 sm:ml-4 space-y-8 sm:space-y-10">
                   {roadmap.checkpoints?.sort((a, b) => a.orderIndex - b.orderIndex).map((checkpoint, index) => (
                     <div key={checkpoint.id} className="relative">
-                      <div className="absolute -left-[45px] bg-white p-1 rounded-full shadow-sm">
+                      <div className="absolute -left-[29px] sm:-left-[45px] bg-white p-1 rounded-full shadow-sm">
                         {checkpoint.status === "COMPLETED" ? (
                           <CheckCircle2 className="w-8 h-8 text-green-500 bg-white rounded-full" />
                         ) : (
@@ -206,7 +209,7 @@ export function AiRoadmap() {
                       </div>
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all">
                         <div className="flex justify-between items-start mb-3">
-                          <h3 className="font-black text-xl flex items-center gap-3">
+                          <h3 className="font-black text-lg sm:text-xl flex flex-wrap items-center gap-2 sm:gap-3">
                             <span className="text-primary font-bold text-sm bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">Step {index + 1}</span>
                             {checkpoint.title}
                           </h3>
@@ -217,22 +220,22 @@ export function AiRoadmap() {
                   ))}
                 </div>
               </div>
-              <div className="bg-gray-50 px-8 py-6 border-t border-gray-100 flex justify-between items-center">
+              <div className="bg-gray-50 px-5 sm:px-8 py-4 sm:py-6 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <p className="text-sm font-bold text-muted-foreground">Tasks have been automatically added to your To-Do list!</p>
-                  <Button variant="outline" className="rounded-full font-bold bg-white hover:bg-gray-50" onClick={() => setRoadmap(null)}>Generate New Roadmap</Button>
+                  <Button variant="outline" className="w-full sm:w-auto rounded-full font-bold bg-white hover:bg-gray-50" onClick={() => setRoadmap(null)}>Generate New Roadmap</Button>
               </div>
             </div>
           )}
 
           {roadmap && (
-            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 mt-8 overflow-hidden animate-in slide-in-from-bottom-6 duration-700">
-              <div className="bg-primary/5 px-8 py-6 border-b border-primary/10">
+            <div className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 mt-8 overflow-hidden animate-in slide-in-from-bottom-6 duration-700">
+              <div className="bg-primary/5 px-5 sm:px-8 py-5 sm:py-6 border-b border-primary/10">
                 <h2 className="text-2xl font-black flex items-center gap-3">
                   <MessageSquare className="w-6 h-6 text-primary" /> Roadmap Assistant
                 </h2>
                 <p className="text-muted-foreground font-medium mt-1">Stuck on a topic? Ask the AI for help.</p>
               </div>
-              <div className="p-6 h-[400px] overflow-y-auto space-y-4 bg-gray-50/50">
+              <div className="p-4 sm:p-6 h-[400px] overflow-y-auto space-y-4 bg-gray-50/50">
                 {chatMessages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground opacity-50">
                     <MessageSquare className="w-12 h-12 mb-2" />
@@ -257,7 +260,7 @@ export function AiRoadmap() {
                   </div>
                 )}
               </div>
-              <div className="p-6 bg-white border-t border-gray-100">
+              <div className="p-4 sm:p-6 bg-white border-t border-gray-100">
                 <form onSubmit={handleSendMessage} className="flex w-full gap-3">
                   <Input 
                     placeholder="Type your question..." 
@@ -277,7 +280,7 @@ export function AiRoadmap() {
 
         {/* Right Column: To-Do List Widget */}
         <div className="space-y-6">
-          <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 h-[fit-content] sticky top-24 overflow-hidden">
+          <div className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 h-[fit-content] lg:sticky lg:top-24 overflow-hidden">
             <div className="bg-primary/5 px-6 py-6 border-b border-primary/10">
               <h2 className="text-xl font-black flex items-center gap-3">
                 <ListTodo className="w-6 h-6 text-primary" /> {roadmap?.currentTopic ? `Topic: ${roadmap.currentTopic}` : 'My To-Do List'}

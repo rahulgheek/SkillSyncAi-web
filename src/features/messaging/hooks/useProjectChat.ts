@@ -3,6 +3,7 @@ import { Client } from "@stomp/stompjs";
 import { useAuth } from "@/features/auth/context";
 import { getChatHistory, ProjectChatMessage } from "../api";
 import { useQuery } from "@tanstack/react-query";
+import { WS_BASE_URL } from "@/lib/api/axios";
 
 export function useProjectChat(projectId: string) {
   const { token } = useAuth();
@@ -27,7 +28,7 @@ export function useProjectChat(projectId: string) {
     if (!token || !projectId) return;
 
     const client = new Client({
-      brokerURL: "wss://skillsyncai-kkip.onrender.com/ws",
+      brokerURL: WS_BASE_URL,
       connectHeaders: {
         Authorization: `Bearer ${token}`
       },

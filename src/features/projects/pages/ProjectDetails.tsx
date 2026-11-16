@@ -123,7 +123,7 @@ export default function ProjectDetails() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-5xl">
+    <div className="container mx-auto p-4 sm:p-6 max-w-5xl">
       <Button 
         variant="ghost" 
         onClick={() => navigate(-1)} 
@@ -134,7 +134,7 @@ export default function ProjectDetails() {
       </Button>
 
       {/* Header Section */}
-      <div className="bg-card rounded-2xl p-8 border shadow-sm mb-8 relative overflow-hidden">
+      <div className="bg-card rounded-2xl p-5 sm:p-8 border shadow-sm mb-8 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
         
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
@@ -149,7 +149,7 @@ export default function ProjectDetails() {
               </span>
             </div>
             
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-card-foreground">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-card-foreground break-words">
               {project.title}
             </h1>
             

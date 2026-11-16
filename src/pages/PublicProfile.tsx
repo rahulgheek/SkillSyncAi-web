@@ -36,7 +36,7 @@ export function PublicProfile() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 bg-gray-50 min-h-screen">
+    <div className="max-w-6xl mx-auto py-0 md:py-8 px-0 sm:px-6 lg:px-8 animate-in fade-in duration-500 bg-gray-50 min-h-screen">
       <div className="space-y-8">
         <ProfileHero profile={profile} isOwnProfile={false} />
         <QuickStats profile={profile} />

@@ -94,7 +94,7 @@ export function NotesDashboard() {
             {note.pinned && <Pin className="h-4 w-4 text-primary fill-current" />}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -120,7 +120,7 @@ export function NotesDashboard() {
         )}
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
           {note.tags.slice(0, 2).map(tag => (
             <Badge key={tag} variant="secondary" className="text-xs px-2.5 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 border-0 font-bold">
@@ -133,7 +133,7 @@ export function NotesDashboard() {
             </Badge>
           )}
         </div>
-        <div className="flex items-center text-xs text-muted-foreground">
+        <div className="flex shrink-0 items-center text-xs text-muted-foreground">
           <Clock className="mr-1 h-3 w-3" />
           {formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true })}
         </div>
@@ -145,10 +145,10 @@ export function NotesDashboard() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight">My <span className="font-handwriting text-primary text-5xl inline-block -rotate-2">Notes</span></h1>
-          <p className="text-lg font-medium text-muted-foreground mt-2">Capture ideas, summarize with AI, and stay organized.</p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">My <span className="font-handwriting text-primary text-4xl sm:text-5xl inline-block -rotate-2">Notes</span></h1>
+          <p className="text-base sm:text-lg font-medium text-muted-foreground mt-2">Capture ideas, summarize with AI, and stay organized.</p>
         </div>
-        <Button onClick={() => handleOpenEditor()} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 text-base font-bold">
+        <Button onClick={() => handleOpenEditor()} className="w-full sm:w-auto gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 text-base font-bold justify-center">
           <Plus className="h-5 w-5" />
           New Note
         </Button>
@@ -165,12 +165,12 @@ export function NotesDashboard() {
       </div>
 
       {notes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100">
-          <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
-            <FileText className="h-12 w-12 text-primary" />
+        <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100">
+          <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
+            <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
           </div>
-          <h3 className="text-3xl font-black mb-3 text-foreground">No notes yet</h3>
-          <p className="text-lg font-medium text-muted-foreground max-w-md mb-8">
+          <h3 className="text-2xl sm:text-3xl font-black mb-3 text-foreground">No notes yet</h3>
+          <p className="text-base sm:text-lg font-medium text-muted-foreground max-w-md mb-8 px-4">
             Create your first note to start organizing your thoughts. You can even use AI to summarize long notes!
           </p>
           <Button onClick={() => handleOpenEditor()} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 font-bold">

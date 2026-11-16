@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import { useAuth } from "@/features/auth/context";
 import { getChatHistory, getDirectChatHistory, ProjectChatMessage, DirectMessageDto } from "../api";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { WS_BASE_URL } from "@/lib/api/axios";
 
 export type ChatMessage = {
   id: string;
@@ -15,6 +16,7 @@ export type ChatMessage = {
 
 export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null) {
   const { token } = useAuth();
+  const queryClient = useQueryClient();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const clientRef = useRef<Client | null>(null);
@@ -84,7 +86,7 @@ export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null
     if (!token) return;
 
     const client = new Client({
-      brokerURL: "wss://skillsyncai-kkip.onrender.com/ws",
+      brokerURL: WS_BASE_URL,
       connectHeaders: { Authorization: `Bearer ${token}` },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -96,6 +98,8 @@ export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null
         client.subscribe(`/user/queue/messages`, (message) => {
           if (message.body) {
             const newMsg = JSON.parse(message.body) as DirectMessageDto;
+            // Event-driven inbox refresh (replaces the old 5s polling).
+            queryClient.invalidateQueries({ queryKey: ["inbox"] });
             // Only add if it belongs to the currently active direct chat
             if (type === "DIRECT" && (newMsg.senderId === chatId || newMsg.recipientId === chatId)) {
                setMessages(prev => {
@@ -112,6 +116,7 @@ export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null
           client.subscribe(`/topic/projects/${chatId}`, (message) => {
             if (message.body) {
               const newMsg = JSON.parse(message.body) as ProjectChatMessage;
+              queryClient.invalidateQueries({ queryKey: ["inbox"] });
               setMessages(prev => {
                 if (prev.some(m => m.id === newMsg.id)) return prev;
                 return [...prev, { id: newMsg.id, senderId: newMsg.senderId, senderName: (newMsg as any).senderName || "User", senderAvatar: (newMsg as any).senderAvatar || null, content: newMsg.content, createdAt: newMsg.createdAt }];
@@ -130,7 +135,7 @@ export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null
       client.deactivate();
       setIsConnected(false);
     };
-  }, [chatId, type, token]);
+  }, [chatId, type, token, queryClient]);
 
   const sendMessage = useCallback((content: string) => {
     if (clientRef.current && isConnected && chatId && type) {
@@ -142,8 +147,9 @@ export function useChat(chatId: string | null, type: "PROJECT" | "DIRECT" | null
         destination,
         body: JSON.stringify({ content, isRead: false })
       });
+      queryClient.invalidateQueries({ queryKey: ["inbox"] });
     }
-  }, [chatId, type, isConnected]);
+  }, [chatId, type, isConnected, queryClient]);
 
   return { messages, isConnected, isLoadingHistory, hasMore, isLoadingMore, loadMore, sendMessage };
 }

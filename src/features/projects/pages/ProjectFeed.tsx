@@ -39,16 +39,16 @@ export default function ProjectFeed() {
     <div className="container mx-auto py-8 px-4 max-w-7xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">
-            Discover <span className="font-handwriting text-primary text-5xl md:text-6xl inline-block -rotate-2 -translate-y-1">Projects</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-2 leading-tight">
+            Discover <span className="font-handwriting text-primary text-4xl sm:text-5xl md:text-6xl inline-block -rotate-2 -translate-y-1">Projects</span>
           </h1>
-          <p className="text-muted-foreground text-lg font-medium mt-2">
+          <p className="text-muted-foreground text-base sm:text-lg font-medium mt-2">
             Find exciting projects recruiting at your college and join a team.
           </p>
         </div>
         <Button 
           onClick={() => setIsDiscoveryOpen(true)}
-          className="h-12 px-6 rounded-2xl bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20 font-bold text-base"
+          className="h-12 w-full sm:w-auto px-6 rounded-2xl bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20 font-bold text-base justify-center"
         >
           <Sparkles className="w-5 h-5 mr-2" />
           Discover Best Projects with AI
@@ -56,7 +56,7 @@ export default function ProjectFeed() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="text-center p-12 bg-muted/30 rounded-lg border border-dashed">
+        <div className="text-center p-8 sm:p-12 bg-muted/30 rounded-lg border border-dashed">
           <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-xl font-medium">No active projects found</h3>
           <p className="text-muted-foreground">Check back later for new opportunities.</p>

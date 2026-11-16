@@ -185,12 +185,12 @@ const CreateProjectWizard: React.FC = () => {
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Create New Project</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">Create New Project</h1>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-6 sm:p-8">
+      <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-8">
         
         {/* Stepper */}
         <div className="flex items-center justify-between mb-8">
@@ -211,7 +211,7 @@ const CreateProjectWizard: React.FC = () => {
                 >
                   {isCompleted ? <Check className="w-5 h-5" /> : idx + 1}
                 </div>
-                <span className={`text-sm font-medium ${isActive ? "text-indigo-900" : "text-gray-500"}`}>
+                <span className={`text-[11px] sm:text-sm font-medium text-center leading-tight px-1 ${isActive ? "text-indigo-900" : "text-gray-500"}`}>
                   {label}
                 </span>
                 
@@ -283,7 +283,7 @@ const CreateProjectWizard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={createDraftMutation.isPending}
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto justify-center bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {createDraftMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Continue to Roles"}
                   {!createDraftMutation.isPending && <ArrowRight className="w-5 h-5" />}
@@ -308,7 +308,7 @@ const CreateProjectWizard: React.FC = () => {
                     <div key={idx} className="bg-gray-50 rounded-xl p-4 border border-gray-200 relative group">
                       <button 
                         onClick={() => handleRemoveRole(idx)}
-                        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -393,7 +393,7 @@ const CreateProjectWizard: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex items-end gap-3 relative z-20">
+                  <div className="flex flex-col sm:flex-row sm:items-end gap-3 relative z-20">
                     <div className="flex-1 relative">
                       <label className="block text-xs font-medium text-gray-500 mb-1">Search Skill</label>
                       <input
@@ -427,7 +427,7 @@ const CreateProjectWizard: React.FC = () => {
                       )}
                     </div>
                     
-                    <div className="w-40">
+                    <div className="w-full sm:w-40">
                       <label className="block text-xs font-medium text-gray-500 mb-1">Min Level</label>
                       <select
                         value={selectedProficiency}
@@ -448,7 +448,7 @@ const CreateProjectWizard: React.FC = () => {
                     type="button"
                     onClick={handleAddRole}
                     disabled={currentRole.title.trim() === ""}
-                    className="flex items-center gap-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-5 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex w-full sm:w-auto items-center justify-center gap-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-5 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Plus className="w-5 h-5" /> Add Role
                   </button>
@@ -456,18 +456,18 @@ const CreateProjectWizard: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-between pt-4">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between pt-4">
               <button
                 type="button"
                 onClick={() => setStep("BASIC_INFO")}
-                className="px-6 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
+                className="w-full sm:w-auto text-center px-6 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
               >
                 Back
               </button>
               <button
                 type="button"
                 onClick={handleRolesSubmit}
-                className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-2"
+                className="w-full sm:w-auto justify-center bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-2"
               >
                 Review Project <ArrowRight className="w-5 h-5" />
               </button>
@@ -479,10 +479,10 @@ const CreateProjectWizard: React.FC = () => {
         {step === "REVIEW" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-8 text-white">
-                <h2 className="text-3xl font-bold mb-2">{basicInfo.title}</h2>
+              <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-6 sm:p-8 text-white">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-2 break-words">{basicInfo.title}</h2>
                 <p className="text-indigo-100 max-w-2xl">{basicInfo.description}</p>
-                <div className="flex gap-6 mt-6">
+                <div className="flex flex-wrap gap-3 sm:gap-6 mt-6">
                   <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
                     Max Team Size: {basicInfo.maxTeamSize}
                   </div>
@@ -494,7 +494,7 @@ const CreateProjectWizard: React.FC = () => {
                 </div>
               </div>
               
-              <div className="p-8">
+              <div className="p-5 sm:p-8">
                 <h3 className="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Defined Roles ({roles.length})</h3>
                 <div className="space-y-6">
                   {roles.map((role, idx) => (
@@ -510,7 +510,7 @@ const CreateProjectWizard: React.FC = () => {
                           ))}
                         </div>
                       </div>
-                      <div className="bg-white px-4 py-3 rounded-lg border border-gray-200 shadow-sm flex flex-col items-center justify-center min-w-[100px]">
+                      <div className="bg-white px-4 py-3 rounded-lg border border-gray-200 shadow-sm flex flex-col items-center justify-center min-w-[100px] self-start sm:self-auto">
                         <span className="text-3xl font-bold text-indigo-600">{role.headcount}</span>
                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Openings</span>
                       </div>
@@ -520,11 +520,11 @@ const CreateProjectWizard: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-between items-center pt-4">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between sm:items-center pt-4">
               <button
                 type="button"
                 onClick={() => setStep("DEFINE_ROLES")}
-                className="px-6 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
+                className="w-full sm:w-auto text-center px-6 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
                 disabled={addRoleMutation.isPending || publishMutation.isPending}
               >
                 Back to Edit
@@ -533,7 +533,7 @@ const CreateProjectWizard: React.FC = () => {
                 type="button"
                 onClick={handlePublish}
                 disabled={addRoleMutation.isPending || publishMutation.isPending}
-                className="bg-green-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto justify-center bg-green-600 text-white px-6 sm:px-10 py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {(addRoleMutation.isPending || publishMutation.isPending) ? (
                   <>

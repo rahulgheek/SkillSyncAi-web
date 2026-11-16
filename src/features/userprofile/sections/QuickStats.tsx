@@ -25,15 +25,15 @@ export function QuickStats({ profile }: { profile: ProfileResponse }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       {stats.map((stat, i) => (
-        <div key={i} className="bg-white rounded-[2rem] border border-gray-100 p-6 flex items-center gap-5 shadow-lg shadow-gray-200/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group">
-          <div className="p-4 bg-primary/10 rounded-2xl text-primary shadow-inner group-hover:scale-110 transition-transform duration-300">
-            <stat.icon className="h-6 w-6" />
+        <div key={i} className="bg-white rounded-[2rem] border border-gray-100 p-4 sm:p-6 flex items-center gap-3 sm:gap-5 shadow-lg shadow-gray-200/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group min-w-0">
+          <div className="p-3 sm:p-4 shrink-0 bg-primary/10 rounded-2xl text-primary shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <stat.icon className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
-          <div>
-            <p className="text-3xl font-black tracking-tight text-foreground">{stat.value}</p>
-            <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1">{stat.label}</p>
+          <div className="min-w-0">
+            <p className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">{stat.value}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1">{stat.label}</p>
           </div>
         </div>
       ))}
