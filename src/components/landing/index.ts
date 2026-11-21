@@ -11,4 +11,6 @@ export { IconBadge } from "./IconBadge";
 export { SectionGlow } from "./SectionGlow";
 export { InfiniteSlider } from "./InfiniteSlider";
 export { ImpactSection } from "./ImpactSection";
+export * from "./wireframe";
 export * from "./data";
+
