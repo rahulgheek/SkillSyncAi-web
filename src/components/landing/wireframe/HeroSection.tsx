@@ -24,7 +24,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-3.5 md:gap-4 w-full items-stretch ${className}`}
+      className={`grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-3.5 md:gap-4 w-full flex-1 items-stretch ${className}`}
     >
       {/* Left Column: Hero Content Panel with chamfered notch */}
       <div className="lg:col-span-7 flex flex-col">
