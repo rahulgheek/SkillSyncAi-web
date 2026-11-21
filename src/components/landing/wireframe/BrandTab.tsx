@@ -1,16 +1,21 @@
 import React from "react";
-import { PlaceholderPill } from "./PlaceholderPill";
+import { Link } from "react-router-dom";
 
 interface BrandTabProps {
+  brandText?: string;
   className?: string;
   onClick?: () => void;
 }
 
 /**
  * BrandTab represents the top-left tab cut with a diagonal chamfered right edge,
- * housing the dark rounded brand/logo pill.
+ * housing the brand text.
  */
-export const BrandTab: React.FC<BrandTabProps> = ({ className = "", onClick }) => {
+export const BrandTab: React.FC<BrandTabProps> = ({
+  brandText = "SkillSync",
+  className = "",
+  onClick,
+}) => {
   return (
     <div
       onClick={onClick}
@@ -20,13 +25,12 @@ export const BrandTab: React.FC<BrandTabProps> = ({ className = "", onClick }) =
         clipPath: "polygon(0 0, calc(100% - 22px) 0, 100% 100%, 0 100%)",
       }}
     >
-      <PlaceholderPill
-        width={56}
-        height={22}
-        color="dark"
-        ariaLabel="Brand logo"
-        className="shadow-sm"
-      />
+      <Link
+        to="/"
+        className="text-xs sm:text-sm font-bold tracking-tight text-[#242424] hover:opacity-80 transition-opacity"
+      >
+        {brandText}
+      </Link>
     </div>
   );
 };
