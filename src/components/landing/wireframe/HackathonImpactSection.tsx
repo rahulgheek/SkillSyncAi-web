@@ -54,22 +54,22 @@ export const HackathonImpactSection: React.FC<HackathonImpactSectionProps> = ({
       {/* 1. Section Header */}
       <div className="flex flex-col items-center text-center space-y-4 sm:space-y-5 max-w-3xl mx-auto">
         {/* Category Pill Tag */}
-        <div className="inline-flex items-center gap-2 bg-[#242424] text-[#d9d9d9] px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider shadow-sm border border-neutral-800">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        <div className="inline-flex items-center gap-2 bg-[#4A121A] text-[#EFE6D8] px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider shadow-sm border border-[#8A5A62]/40">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#A75D43]" />
           {badge}
         </div>
 
         {/* Main Title with Wireframe Dark Capsule Highlight */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#242424] leading-tight m-0">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#4A121A] leading-tight m-0">
           {titlePrefix}{" "}
-          <span className="inline-block bg-[#242424] text-white px-5 sm:px-7 py-1 sm:py-1.5 rounded-full shadow-md my-1 border border-neutral-800">
+          <span className="inline-block bg-[#4A121A] text-[#EFE6D8] px-5 sm:px-7 py-1 sm:py-1.5 rounded-full shadow-md my-1 border border-[#5E1A23]">
             {highlightText}
           </span>{" "}
           {titleSuffix}
         </h2>
 
         {/* Subtitle Body */}
-        <p className="text-sm sm:text-base md:text-lg text-[#242424]/80 font-medium leading-relaxed max-w-2xl m-0 pt-1">
+        <p className="text-sm sm:text-base md:text-lg text-[#4A121A]/85 font-medium leading-relaxed max-w-2xl m-0 pt-1">
           {subtitle}
         </p>
       </div>

@@ -22,23 +22,23 @@ export const HeroContentCard: React.FC<HeroContentCardProps> = ({
   return (
     <div
       style={style}
-      className={`relative bg-[#d9d9d9] p-5 sm:p-7 md:p-9 flex flex-col justify-between overflow-hidden select-none ${className}`}
+      className={`relative bg-[#EFE6D8] p-5 sm:p-7 md:p-9 flex flex-col justify-between overflow-hidden select-none ${className}`}
     >
       {/* Upper Content: Tagline, Headline & Description */}
       <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-2">
         {/* Category Pill Tag */}
-        <div className="inline-flex items-center gap-2 bg-[#242424] text-[#d9d9d9] px-3 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        <div className="inline-flex items-center gap-2 bg-[#4A121A] text-[#EFE6D8] px-3 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider border border-[#8A5A62]/30 shadow-xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#A75D43]" />
           {tagline}
         </div>
 
         {/* Main Title */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[#242424] leading-[1.1] m-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[#4A121A] leading-[1.1] m-0">
           {title}
         </h1>
 
         {/* Description Body */}
-        <p className="text-xs sm:text-sm md:text-base text-[#242424]/85 font-medium leading-relaxed max-w-xl m-0">
+        <p className="text-xs sm:text-sm md:text-base text-[#4A121A]/85 font-medium leading-relaxed max-w-xl m-0">
           {description}
         </p>
       </div>
@@ -50,7 +50,7 @@ export const HeroContentCard: React.FC<HeroContentCardProps> = ({
           <button
             type="button"
             onClick={onCtaClick}
-            className="inline-flex items-center justify-center bg-[#242424] text-white hover:bg-neutral-800 active:scale-95 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all shadow-md cursor-pointer"
+            className="inline-flex items-center justify-center bg-[#4A121A] text-[#EFE6D8] hover:bg-[#340C12] active:scale-95 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all shadow-md shadow-[#4A121A]/20 cursor-pointer"
           >
             {ctaText}
           </button>
@@ -58,7 +58,7 @@ export const HeroContentCard: React.FC<HeroContentCardProps> = ({
             type="button"
             onClick={onSecondaryClick}
             aria-label="Learn more about team assembly"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#242424] text-white hover:bg-neutral-800 active:scale-95 flex items-center justify-center text-xs font-bold transition-all shadow-md cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#A75D43] text-[#EFE6D8] hover:bg-[#8F4E37] active:scale-95 flex items-center justify-center text-xs font-bold transition-all shadow-md shadow-[#A75D43]/20 cursor-pointer"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -71,15 +71,15 @@ export const HeroContentCard: React.FC<HeroContentCardProps> = ({
           </button>
         </div>
 
-        {/* Right Accent Solid Dark Circle with Team Synergy Glyph */}
+        {/* Right Accent Solid Circle with Team Synergy Glyph */}
         <button
           type="button"
           onClick={onCircleClick}
           aria-label="Team Synergy indicator"
-          className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-[#242424] text-white shadow-lg transition-transform duration-300 hover:scale-105 active:scale-95 flex items-center justify-center flex-shrink-0 cursor-pointer group"
+          className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-[#A75D43] text-[#EFE6D8] shadow-lg shadow-[#A75D43]/25 transition-transform duration-300 hover:scale-105 hover:bg-[#8F4E37] active:scale-95 flex items-center justify-center flex-shrink-0 cursor-pointer group"
         >
           <svg
-            className="w-6 h-6 sm:w-7 sm:h-7 text-[#d9d9d9] group-hover:scale-110 transition-transform"
+            className="w-6 h-6 sm:w-7 sm:h-7 text-[#EFE6D8] group-hover:scale-110 transition-transform"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

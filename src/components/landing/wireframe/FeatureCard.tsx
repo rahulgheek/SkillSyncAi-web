@@ -19,17 +19,17 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       interactive
       onClick={onClick}
       ariaLabel={data?.title || `Feature card ${index}`}
-      className={`relative w-full aspect-[4/4.5] sm:aspect-square md:aspect-[4/4.8] rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between overflow-hidden border border-neutral-800 shadow-md group ${className}`}
+      className={`relative w-full aspect-[4/4.5] sm:aspect-square md:aspect-[4/4.8] rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between overflow-hidden border border-[#4A121A] shadow-md group ${className}`}
     >
       {children || (
-        <div className="w-full h-full rounded-lg sm:rounded-xl bg-[#1e1e21] p-3 sm:p-3.5 flex flex-col justify-between border border-neutral-800/80 transition-all duration-300 group-hover:bg-[#232328] group-hover:border-neutral-700">
+        <div className="w-full h-full rounded-lg sm:rounded-xl bg-[#28090E] p-3 sm:p-3.5 flex flex-col justify-between border border-[#4A121A] transition-all duration-300 group-hover:bg-[#340C12] group-hover:border-[#8A5A62]/60">
           {/* Top Tag & Badge */}
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#D98268]">
               {data?.tag || `0${index} / CORE`}
             </span>
             {data?.badge && (
-              <span className="text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-mono font-semibold text-[#EFE6D8] bg-[#8A5A62]/40 border border-[#8A5A62]/60 px-2 py-0.5 rounded-full">
                 {data.badge}
               </span>
             )}
@@ -37,19 +37,19 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
 
           {/* Middle: Title & Description */}
           <div className="my-auto space-y-1.5 py-1">
-            <h3 className="text-sm sm:text-base font-bold text-[#d9d9d9] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
+            <h3 className="text-sm sm:text-base font-bold text-[#EFE6D8] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
               {data?.title || `Feature ${index}`}
             </h3>
-            <p className="text-[11px] sm:text-xs text-neutral-400 font-medium leading-relaxed m-0 line-clamp-4">
+            <p className="text-[11px] sm:text-xs text-[#EFE6D8]/75 font-medium leading-relaxed m-0 line-clamp-4">
               {data?.description}
             </p>
           </div>
 
           {/* Bottom Accent Indicator */}
-          <div className="flex items-center justify-between pt-1 border-t border-neutral-800/60 text-[10px] font-mono text-neutral-500">
+          <div className="flex items-center justify-between pt-1 border-t border-[#4A121A]/80 text-[10px] font-mono text-[#8A5A62]">
             <span>SkillSync Intelligence</span>
             <svg
-              className="w-3.5 h-3.5 text-neutral-500 group-hover:text-[#d9d9d9] group-hover:translate-x-0.5 transition-all"
+              className="w-3.5 h-3.5 text-[#8A5A62] group-hover:text-[#D98268] group-hover:translate-x-0.5 transition-all"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

@@ -19,7 +19,7 @@ export const BrandTab: React.FC<BrandTabProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative inline-flex items-center h-10 sm:h-12 bg-[#d9d9d9] rounded-tl-2xl pl-4 sm:pl-5 pr-8 sm:pr-10 select-none ${className}`}
+      className={`relative inline-flex items-center h-10 sm:h-12 bg-[#EFE6D8] rounded-tl-2xl pl-4 sm:pl-5 pr-8 sm:pr-10 select-none shadow-sm ${className}`}
       style={{
         // Smooth angled notch matching the wireframe tab slope
         clipPath: "polygon(0 0, calc(100% - 22px) 0, 100% 100%, 0 100%)",
@@ -27,7 +27,7 @@ export const BrandTab: React.FC<BrandTabProps> = ({
     >
       <Link
         to="/"
-        className="text-xs sm:text-sm font-bold tracking-tight text-[#242424] hover:opacity-80 transition-opacity"
+        className="text-xs sm:text-sm font-black tracking-tight text-[#4A121A] hover:opacity-85 transition-opacity"
       >
         {brandText}
       </Link>

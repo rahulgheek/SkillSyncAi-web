@@ -54,7 +54,7 @@ export const ConsoleNavbar: React.FC<ConsoleNavbarProps> = ({
           <Link
             key={item.label}
             to={item.href}
-            className="text-xs sm:text-sm font-medium text-[#d9d9d9] hover:text-white transition-colors"
+            className="text-xs sm:text-sm font-medium text-[#EFE6D8]/80 hover:text-[#EFE6D8] hover:bg-[#8A5A62]/20 px-2.5 py-1 rounded-md transition-colors"
           >
             {item.label}
           </Link>
@@ -66,7 +66,7 @@ export const ConsoleNavbar: React.FC<ConsoleNavbarProps> = ({
         {rightActionText && (
           <Link
             to={rightActionHref}
-            className="text-xs sm:text-sm font-medium text-[#d9d9d9] hover:text-white transition-colors"
+            className="text-xs sm:text-sm font-bold text-[#EFE6D8] bg-[#A75D43] hover:bg-[#8F4E37] px-4 py-1.5 rounded-full shadow-sm transition-all"
           >
             {rightActionText}
           </Link>
@@ -78,10 +78,10 @@ export const ConsoleNavbar: React.FC<ConsoleNavbarProps> = ({
             onClick={handleToggle}
             aria-label="Mode toggle"
             aria-pressed={toggled}
-            className="relative w-11 sm:w-13 h-5 sm:h-6 rounded-full border border-[#d9d9d9] bg-transparent p-0.5 flex items-center cursor-pointer transition-colors duration-200 hover:border-white focus:outline-none focus:ring-1 focus:ring-[#d9d9d9]"
+            className="relative w-11 sm:w-13 h-5 sm:h-6 rounded-full border border-[#8A5A62] bg-[#28090E] p-0.5 flex items-center cursor-pointer transition-colors duration-200 hover:border-[#EFE6D8] focus:outline-none focus:ring-1 focus:ring-[#A75D43]"
           >
             <div
-              className={`w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#d9d9d9] transition-transform duration-200 ease-out shadow-sm ${
+              className={`w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#EFE6D8] transition-transform duration-200 ease-out shadow-sm ${
                 toggled ? "translate-x-5 sm:translate-x-6" : "translate-x-0"
               }`}
             />

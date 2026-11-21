@@ -17,4 +17,5 @@ export { HackathonImpactSection } from "./HackathonImpactSection";
 export { ImpactStatCard } from "./ImpactStatCard";
 export { PlaceholderPill } from "./PlaceholderPill";
 export { PlaceholderBox } from "./PlaceholderBox";
+export { LandingFooter } from "./LandingFooter";
 export * from "./types";

@@ -66,35 +66,35 @@ export const MissionPillarCard: React.FC<MissionPillarCardProps> = ({
       interactive
       onClick={onClick}
       ariaLabel={pillar.title}
-      className={`relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-between overflow-hidden border border-neutral-800 shadow-xl group hover:-translate-y-1.5 transition-all duration-300 ${className}`}
+      className={`relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-between overflow-hidden border border-[#4A121A] shadow-xl group hover:-translate-y-1.5 transition-all duration-300 ${className}`}
     >
       <div className="w-full flex flex-col justify-between gap-5">
         {/* Top: Badge + Icon */}
         <div className="flex items-start justify-between">
-          <div className="w-14 h-14 rounded-2xl bg-[#1a1a1c] border border-neutral-800 flex items-center justify-center text-[#d9d9d9] group-hover:text-white group-hover:scale-105 group-hover:border-neutral-700 transition-all shadow-md">
+          <div className="w-14 h-14 rounded-2xl bg-[#340C12] border border-[#4A121A] flex items-center justify-center text-[#D98268] group-hover:bg-[#A75D43] group-hover:text-[#EFE6D8] group-hover:border-[#A75D43] group-hover:scale-105 transition-all shadow-md">
             {renderPillarIcon(pillar.iconType)}
           </div>
 
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 bg-[#1c1c1f] px-2.5 py-1 rounded-full border border-neutral-800">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8A5A62] bg-[#340C12] px-2.5 py-1 rounded-full border border-[#4A121A]">
             {pillar.badge}
           </span>
         </div>
 
         {/* Content: Title & Description */}
         <div className="space-y-2 pt-1">
-          <h3 className="text-lg sm:text-xl font-bold text-[#d9d9d9] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
+          <h3 className="text-lg sm:text-xl font-bold text-[#EFE6D8] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
             {pillar.title}
           </h3>
-          <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed m-0">
+          <p className="text-xs sm:text-sm text-[#EFE6D8]/75 font-medium leading-relaxed m-0">
             {pillar.description}
           </p>
         </div>
 
         {/* Bottom Indicator */}
-        <div className="flex items-center justify-between pt-3 border-t border-neutral-800/80 text-[10px] font-mono text-neutral-500">
+        <div className="flex items-center justify-between pt-3 border-t border-[#4A121A]/80 text-[10px] font-mono text-[#8A5A62]">
           <span>SkillSync Engine</span>
           <svg
-            className="w-4 h-4 text-neutral-500 group-hover:text-[#d9d9d9] group-hover:translate-x-0.5 transition-all"
+            className="w-4 h-4 text-[#8A5A62] group-hover:text-[#D98268] group-hover:translate-x-0.5 transition-all"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

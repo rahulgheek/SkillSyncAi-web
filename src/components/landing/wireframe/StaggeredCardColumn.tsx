@@ -28,6 +28,7 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
             width={14}
             height={8}
             color="dark"
+            customColor="bg-[#A75D43]"
             ariaLabel={`Card ${index} dot`}
             className="sm:w-4 sm:h-2.5 flex-shrink-0"
           />
@@ -35,6 +36,7 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
             width={72}
             height={8}
             color="dark"
+            customColor="bg-[#4A121A]"
             ariaLabel={`Card ${index} top bar`}
             className="sm:w-24 sm:h-2.5"
           />
@@ -46,6 +48,7 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
             width={58}
             height={8}
             color="dark"
+            customColor="bg-[#8A5A62]"
             ariaLabel={`Card ${index} offset bar`}
             className="sm:w-20 sm:h-2.5 opacity-90"
           />
@@ -58,17 +61,17 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
         interactive
         onClick={onClick}
         ariaLabel={data?.title || `Showcase card ${index}`}
-        className="w-full min-h-[220px] sm:min-h-[260px] md:min-h-[290px] rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col justify-between border border-neutral-800 shadow-xl group"
+        className="w-full min-h-[220px] sm:min-h-[260px] md:min-h-[290px] rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col justify-between border border-[#4A121A] shadow-xl group"
       >
         {children || (
-          <div className="w-full h-full rounded-xl sm:rounded-2xl bg-[#1e1e21] p-4 sm:p-5 flex flex-col justify-between border border-neutral-800/80 transition-all duration-300 group-hover:bg-[#232328] group-hover:border-neutral-700">
+          <div className="w-full h-full rounded-xl sm:rounded-2xl bg-[#28090E] p-4 sm:p-5 flex flex-col justify-between border border-[#4A121A] transition-all duration-300 group-hover:bg-[#340C12] group-hover:border-[#8A5A62]/60">
             {/* Top Tag & Badge */}
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#D98268]">
                 {data?.tag || `0${index} / FEATURE`}
               </span>
               {data?.badge && (
-                <span className="text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-mono font-semibold text-[#EFE6D8] bg-[#8A5A62]/40 border border-[#8A5A62]/60 px-2.5 py-0.5 rounded-full">
                   {data.badge}
                 </span>
               )}
@@ -76,19 +79,19 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
 
             {/* Title & Description */}
             <div className="my-auto space-y-2 py-2">
-              <h3 className="text-base sm:text-lg font-bold text-[#d9d9d9] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
+              <h3 className="text-base sm:text-lg font-bold text-[#EFE6D8] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
                 {data?.title || `Feature ${index}`}
               </h3>
-              <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed m-0">
+              <p className="text-xs sm:text-sm text-[#EFE6D8]/75 font-medium leading-relaxed m-0">
                 {data?.description}
               </p>
             </div>
 
             {/* Bottom status / indicator */}
-            <div className="flex items-center justify-between pt-2 border-t border-neutral-800/60 text-[10px] font-mono text-neutral-500">
+            <div className="flex items-center justify-between pt-2 border-t border-[#4A121A]/80 text-[10px] font-mono text-[#8A5A62]">
               <span>SkillSync AI</span>
               <svg
-                className="w-3.5 h-3.5 text-neutral-500 group-hover:text-[#d9d9d9] group-hover:translate-x-0.5 transition-all"
+                className="w-3.5 h-3.5 text-[#8A5A62] group-hover:text-[#D98268] group-hover:translate-x-0.5 transition-all"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -112,6 +115,7 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
             width="84%"
             height={6}
             color="dark"
+            customColor="bg-[#8A5A62]/50"
             ariaLabel={`Card ${index} bottom line 1`}
             className="sm:h-1.5"
           />
@@ -119,6 +123,7 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
             width="62%"
             height={6}
             color="dark"
+            customColor="bg-[#4A121A]/50"
             ariaLabel={`Card ${index} bottom line 2`}
             className="sm:h-1.5 opacity-90"
           />
@@ -126,6 +131,7 @@ export const StaggeredCardColumn: React.FC<StaggeredCardColumnProps> = ({
             width="42%"
             height={6}
             color="dark"
+            customColor="bg-[#8A5A62]/40"
             ariaLabel={`Card ${index} bottom line 3`}
             className="sm:h-1.5 opacity-80"
           />

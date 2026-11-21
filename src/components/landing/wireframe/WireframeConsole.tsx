@@ -19,7 +19,7 @@ export const WireframeConsole: React.FC<WireframeConsoleProps> = ({
     <main
       role="region"
       aria-label="Wireframe preview console"
-      className={`relative z-10 w-full min-h-[calc(100vh-1rem)] sm:min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-3rem)] bg-[#242424] rounded-2xl sm:rounded-3xl md:rounded-[36px] p-2.5 sm:p-4 md:p-6 border-[4px] sm:border-[6px] md:border-[8px] border-[#242424] shadow-2xl shadow-neutral-950/40 flex flex-col justify-between gap-3 sm:gap-4 md:gap-5 select-none ${className}`}
+      className={`relative z-10 w-full min-h-[calc(100vh-1rem)] sm:min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-3rem)] bg-[#340C12] rounded-2xl sm:rounded-3xl md:rounded-[36px] p-2.5 sm:p-4 md:p-6 border-[4px] sm:border-[6px] md:border-[8px] border-[#4A121A] shadow-2xl shadow-[#28090E]/60 flex flex-col justify-between gap-3 sm:gap-4 md:gap-5 select-none ${className}`}
     >
       {/* 1. Header / Navbar */}
       <ConsoleNavbar isToggled={isToggled} onToggle={interactive ? setIsToggled : undefined} />
@@ -33,7 +33,7 @@ export const WireframeConsole: React.FC<WireframeConsoleProps> = ({
       {/* 4. Bottom Frame Ledge / Footer bar indicator */}
       <footer
         aria-hidden="true"
-        className="w-full h-1 sm:h-1.5 bg-[#242424] rounded-full opacity-60"
+        className="w-full h-1 sm:h-1.5 bg-[#4A121A] rounded-full opacity-60"
       />
     </main>
   );

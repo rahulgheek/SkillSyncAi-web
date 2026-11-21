@@ -13,7 +13,10 @@ export const PlaceholderBox: React.FC<PlaceholderBoxProps> = ({
   onClick,
   ariaLabel = "Placeholder box",
 }) => {
-  const bgClass = color === "light" ? "bg-[#d9d9d9]" : "bg-[#242424]";
+  const bgClass =
+    color === "light"
+      ? "bg-[#EFE6D8] border border-[#D8CABA]"
+      : "bg-[#340C12] border border-[#4A121A]";
 
   return (
     <div

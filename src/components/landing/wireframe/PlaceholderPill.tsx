@@ -16,7 +16,7 @@ export const PlaceholderPill: React.FC<PlaceholderPillProps> = ({
   onClick,
   ariaLabel = "Placeholder item",
 }) => {
-  const bgColor = customColor || (color === "light" ? "bg-[#d9d9d9]" : "bg-[#242424]");
+  const bgColor = customColor || (color === "light" ? "bg-[#EFE6D8]" : "bg-[#4A121A]");
 
   const inlineStyle: React.CSSProperties = {
     ...style,

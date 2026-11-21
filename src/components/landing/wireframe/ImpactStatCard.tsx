@@ -52,37 +52,37 @@ export const ImpactStatCard: React.FC<ImpactStatCardProps> = ({
       interactive
       onClick={onClick}
       ariaLabel={`${stat.value} - ${stat.label}`}
-      className={`relative w-full rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden border border-neutral-800 shadow-xl group hover:-translate-y-2 transition-all duration-300 ${className}`}
+      className={`relative w-full rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden border border-[#4A121A] shadow-xl group hover:-translate-y-2 transition-all duration-300 ${className}`}
     >
       <div className="w-full flex flex-col justify-between gap-6">
         {/* Top: Icon + Badge */}
         <div className="flex items-center justify-between">
-          <div className="w-13 h-13 rounded-2xl bg-[#1a1a1c] border border-neutral-800 flex items-center justify-center text-[#d9d9d9] group-hover:text-white group-hover:scale-105 group-hover:border-neutral-700 transition-all shadow-md">
+          <div className="w-13 h-13 rounded-2xl bg-[#340C12] border border-[#4A121A] flex items-center justify-center text-[#D98268] group-hover:bg-[#A75D43] group-hover:text-[#EFE6D8] group-hover:border-[#A75D43] group-hover:scale-105 transition-all shadow-md">
             {renderStatIcon(stat.iconType)}
           </div>
 
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 bg-[#1c1c1f] px-3 py-1 rounded-full border border-neutral-800">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8A5A62] bg-[#340C12] px-3 py-1 rounded-full border border-[#4A121A]">
             {stat.badge}
           </span>
         </div>
 
         {/* Middle: Big Stat & Title */}
         <div className="space-y-2 pt-2">
-          <div className="text-5xl sm:text-6xl font-black tracking-tight text-white font-mono leading-none">
+          <div className="text-5xl sm:text-6xl font-black tracking-tight text-[#EFE6D8] font-mono leading-none">
             {stat.value}
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-[#d9d9d9] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
+          <h3 className="text-xl sm:text-2xl font-bold text-[#EFE6D8] tracking-tight leading-snug m-0 group-hover:text-white transition-colors">
             {stat.label}
           </h3>
-          <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed m-0 pt-1">
+          <p className="text-xs sm:text-sm text-[#EFE6D8]/75 font-medium leading-relaxed m-0 pt-1">
             {stat.desc}
           </p>
         </div>
 
         {/* Bottom Detail Ledge */}
-        <div className="flex items-center justify-between pt-4 border-t border-neutral-800/80 text-[10px] font-mono text-neutral-500">
+        <div className="flex items-center justify-between pt-4 border-t border-[#4A121A]/80 text-[10px] font-mono text-[#8A5A62]">
           <span>Verified Student Outcome</span>
-          <div className="w-2 h-2 rounded-full bg-emerald-400/80" />
+          <div className="w-2 h-2 rounded-full bg-[#A75D43]" />
         </div>
       </div>
     </PlaceholderBox>
