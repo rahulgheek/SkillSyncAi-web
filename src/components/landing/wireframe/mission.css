@@ -1,0 +1,413 @@
+/* ==========================================================================
+   Mission / impact section
+   The landscape runs in reverse here: the olive field from the showcase
+   continues across the seam, lifts into warm cream, then settles into the
+   cool sky at the bottom. A GhostFibers canvas adds slow, ambient movement
+   behind a standard editorial card grid.
+   ========================================================================== */
+
+.mission-section {
+  --mission-ink: #241d18;
+  --mission-ink-soft: rgba(36, 29, 24, 0.64);
+  --mission-ink-faint: rgba(36, 29, 24, 0.55);
+  --mission-cream: #fbf7f0;
+  --mission-cream-deep: #f3ebdd;
+  --mission-stone: #cbc7c0;
+  --mission-sky: #d6dedd;
+  --mission-field: #8f9474;
+  --mission-terracotta: #8a5a3f;
+  --mission-line: rgba(36, 29, 24, 0.14);
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: clamp(86px, 10vw, 124px) 0 clamp(96px, 11vw, 136px);
+  scroll-margin-top: 78px;
+  background:
+    radial-gradient(
+      72% 40% at 50% 100%,
+      rgba(255, 251, 238, 0.9) 0%,
+      rgba(255, 251, 238, 0) 72%
+    ),
+    linear-gradient(
+      180deg,
+      #b5b39b 0%,
+      #c6c1a7 5%,
+      #ded6c0 11%,
+      #efe7d6 18%,
+      #f7f0e4 32%,
+      #f7f0e4 64%,
+      #e9e8da 82%,
+      #dce1da 92%,
+      #d6dedd 100%
+    );
+  color: var(--mission-ink);
+  font-family: "Manrope", "Segoe UI", system-ui, sans-serif;
+  isolation: isolate;
+}
+
+/* ---------- Landscape backdrop ---------- */
+
+.mission-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mission-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- GhostFibers canvas ---------- */
+
+.mission-fibers {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+}
+
+.mission-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(22px, 3.6vw, 48px);
+}
+
+/* ---------- Header ---------- */
+
+.mission-header {
+  max-width: 920px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.mission-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border: 1px solid rgba(36, 29, 24, 0.16);
+  border-radius: 999px;
+  background: rgba(251, 247, 240, 0.7);
+  color: var(--mission-ink-soft);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px -22px rgba(36, 29, 24, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.mission-eyebrow svg {
+  color: var(--mission-terracotta);
+}
+
+.mission-title {
+  margin: 24px 0 0;
+  font-family: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.5rem, 4.15vw, 3.85rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  color: var(--mission-ink);
+  text-wrap: balance;
+}
+
+.mission-title-accent {
+  font-style: italic;
+  color: var(--mission-terracotta);
+}
+
+.mission-subtitle {
+  max-width: 640px;
+  margin: 18px auto 0;
+  color: var(--mission-ink-soft);
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 500;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+/* ---------- Standard card grid ---------- */
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(14px, 1.5vw, 22px);
+  max-width: 1220px;
+  margin: clamp(42px, 5vw, 62px) auto 0;
+}
+
+.mission-card-wrap {
+  display: flex;
+  min-width: 0;
+}
+
+.mission-card {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 22px 20px 18px;
+  border: 1px solid rgba(36, 29, 24, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 253, 247, 0.94);
+  box-shadow:
+    0 28px 54px -42px rgba(36, 29, 24, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.mission-card:hover {
+  border-color: rgba(36, 29, 24, 0.24);
+  box-shadow:
+    0 34px 64px -42px rgba(36, 29, 24, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.mission-card.is-clickable {
+  cursor: pointer;
+}
+
+.mission-card:focus-visible {
+  outline: 2px solid var(--mission-terracotta);
+  outline-offset: 3px;
+}
+
+.mission-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mission-card-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--mission-cream-deep);
+  color: var(--mission-terracotta);
+  box-shadow: inset 0 0 0 1px rgba(36, 29, 24, 0.06);
+}
+
+.mission-card-badge {
+  color: var(--mission-ink-faint);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.mission-card-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  margin-top: 18px;
+}
+
+.mission-card-title {
+  margin: 0;
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-size: clamp(19px, 1.55vw, 22px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--mission-ink);
+}
+
+.mission-card-copy {
+  margin: 9px 0 0;
+  color: var(--mission-ink-soft);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.mission-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 13px;
+  border-top: 1px solid var(--mission-line);
+}
+
+.mission-card-engine {
+  color: var(--mission-ink-faint);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.mission-card-arrow {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--mission-cream-deep);
+  color: var(--mission-terracotta);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.mission-card:hover .mission-card-arrow {
+  transform: translate(2px, -2px);
+  background: #eadfcd;
+}
+
+/* ---------- Values strip ---------- */
+
+.mission-values {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 22px;
+  max-width: 1000px;
+  margin: clamp(26px, 3vw, 36px) auto 0;
+  padding: 14px 24px;
+  border: 1px solid rgba(36, 29, 24, 0.12);
+  border-radius: 999px;
+  background: rgba(251, 247, 240, 0.7);
+  box-shadow: 0 18px 36px -34px rgba(36, 29, 24, 0.5);
+  color: var(--mission-ink-soft);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.mission-values span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.mission-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 999px;
+}
+
+.mission-dot-a {
+  background: var(--mission-terracotta);
+}
+
+.mission-dot-b {
+  background: var(--mission-field);
+}
+
+.mission-dot-c {
+  background: #8fa3a1;
+}
+
+.mission-dot-d {
+  background: #b6a98c;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+  .mission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 880px;
+  }
+
+  .mission-card-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mission-section {
+    padding-top: 72px;
+    padding-bottom: 88px;
+  }
+
+  .mission-inner {
+    padding-inline: 18px;
+  }
+
+  .mission-title {
+    margin-top: 20px;
+    font-size: clamp(2.2rem, 10vw, 3rem);
+  }
+
+  .mission-subtitle {
+    margin-top: 16px;
+    font-size: 12.5px;
+  }
+
+  .mission-grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 520px;
+    margin-top: 34px;
+    gap: 14px;
+  }
+
+  .mission-card {
+    padding: 20px 18px 16px;
+  }
+
+  .mission-values {
+    margin-top: 24px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    gap: 8px 16px;
+    font-size: 8.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-card,
+  .mission-card-arrow {
+    transition: none;
+  }
+}

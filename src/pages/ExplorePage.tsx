@@ -1,29 +1,87 @@
-import { Navbar, Footer } from "@/components/landing";
+import { Link } from "react-router-dom";
+import { ArrowRight, ArrowUpRight } from "react-bootstrap-icons";
+import { PublicPageLayout } from "@/components/layout/PublicPageLayout";
+
+const PROJECTS = [
+  {
+    title: "AI Health Assistant",
+    role: "Looking for 2 Frontend Developers & 1 UI/UX Designer",
+    tag: "AI / ML",
+  },
+  {
+    title: "HackConnect Platform",
+    role: "Looking for 1 Backend Engineer (Spring/Postgres)",
+    tag: "Full-stack",
+  },
+  {
+    title: "EcoTrack Mobile App",
+    role: "Looking for React Native Dev & Mobile Lead",
+    tag: "Mobile",
+  },
+  {
+    title: "DevFlow Collaborative IDE",
+    role: "Looking for Systems Dev & TypeScript Specialist",
+    tag: "Tools",
+  },
+  {
+    title: "Campus Hub Portal",
+    role: "Looking for Product Designer & React Dev",
+    tag: "Web",
+  },
+  {
+    title: "Smart Study AI",
+    role: "Looking for Data Engineer & Python Specialist",
+    tag: "NLP",
+  },
+];
 
 export function ExplorePage() {
   return (
-    <div className="min-h-screen bg-white text-foreground font-sans overflow-x-hidden flex flex-col">
-      <Navbar />
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-24 w-full">
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-6">
-          Explore <span className="font-handwriting text-accent text-6xl md:text-8xl inline-block -rotate-2 -translate-y-2">Projects</span>
+    <PublicPageLayout>
+      <header className="public-hero">
+        <p className="dash-eyebrow">Explore</p>
+        <h1 className="public-title">
+          Projects looking for <em>their people.</em>
         </h1>
-        <p className="text-xl text-muted-foreground mb-12 max-w-2xl leading-relaxed">
-          Discover interactive projects and brilliant minds. Join a team or start your own hackathon project today!
+        <p className="public-copy">
+          Discover student-led projects and complementary skill matches. Join a team
+          or recruit collaborators for your next hackathon project.
         </p>
-
-        {/* Placeholder grid for explore content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-3xl p-8 border border-border shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover-anti-gravity h-64 flex flex-col justify-end relative overflow-hidden group">
-              <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-20 ${i % 2 === 0 ? 'bg-primary' : 'bg-accent'}`} />
-              <h3 className="text-2xl font-bold mb-2">Project Idea {i + 1}</h3>
-              <p className="text-muted-foreground font-medium">Looking for 2 frontend devs and 1 designer.</p>
-            </div>
-          ))}
+        <div className="public-actions">
+          <Link to="/register" className="dash-btn dash-btn-solid">
+            Join SkillSync
+            <ArrowUpRight size={12} aria-hidden="true" />
+          </Link>
+          <Link to="/about" className="dash-btn dash-btn-ghost">
+            How it works
+          </Link>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </header>
+
+      <div className="public-grid">
+        {PROJECTS.map((item) => (
+          <article className="dash-project-card" key={item.title}>
+            <div className="dash-project-top">
+              <span className="dash-chip dash-chip-neutral">{item.tag}</span>
+              <ArrowUpRight
+                className="dash-project-arrow"
+                size={14}
+                aria-hidden="true"
+              />
+            </div>
+
+            <h2 className="dash-project-title">{item.title}</h2>
+            <p className="dash-project-desc">{item.role}</p>
+
+            <div className="dash-project-foot" style={{ marginTop: "auto" }}>
+              <span className="dash-section-link" style={{ padding: 0 }}>
+                View project details
+                <ArrowRight size={11} aria-hidden="true" />
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </PublicPageLayout>
   );
 }

@@ -1,13 +1,12 @@
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ProfileResponse } from "../schemas";
-import { Image as ImageIcon, UploadCloud, Loader2 } from "lucide-react";
+import { ArrowRepeat, CloudUpload, Image as ImageIcon } from "react-bootstrap-icons";
 import { toast } from "sonner";
-import { getUploadSignature, updateAvatar } from "../api";
 import axios from "axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/features/dashboard/utils";
+import { ProfileResponse } from "../schemas";
+import { getUploadSignature, updateAvatar } from "../api";
 
 export function AvatarUploader({ profile }: { profile: ProfileResponse }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -22,7 +21,7 @@ export function AvatarUploader({ profile }: { profile: ProfileResponse }) {
     },
     onError: () => {
       toast.error("Failed to save profile picture.");
-    }
+    },
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +41,7 @@ export function AvatarUploader({ profile }: { profile: ProfileResponse }) {
     setIsUploading(true);
     try {
       const sigData = await getUploadSignature("avatar");
-      
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("api_key", sigData.apiKey);
@@ -55,11 +54,10 @@ export function AvatarUploader({ profile }: { profile: ProfileResponse }) {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      
+
       const secureUrl = uploadRes.data.secure_url;
-      
+
       updateAvatarMutation.mutate(secureUrl);
-      
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("An error occurred during upload. Please try again.");
@@ -76,57 +74,59 @@ export function AvatarUploader({ profile }: { profile: ProfileResponse }) {
   };
 
   return (
-    <Card className="shadow-sm border-muted">
-      <CardHeader>
-        <CardTitle className="text-lg">Profile Picture</CardTitle>
-        <CardDescription>Upload a professional photo to stand out.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col md:flex-row items-center gap-6">
-        <Avatar className="w-24 h-24 border-4 border-background shadow-sm ring-2 ring-primary/20">
+    <div className="dash-stack">
+      <div>
+        <h2 className="dash-mini-title">Profile picture</h2>
+        <p className="dash-mini-sub">
+          A clear, friendly photo helps teammates put a face to the work.
+        </p>
+      </div>
+
+      <div className="dash-avatar-upload">
+        <Avatar className="dash-avatar-xl">
           <AvatarImage src={profile.profilePictureUrl || undefined} alt={profile.fullName} />
-          <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
-            {profile.fullName.charAt(0).toUpperCase()}
+          <AvatarFallback className="dash-avatar-fallback">
+            {getInitials(profile.fullName)}
           </AvatarFallback>
         </Avatar>
 
-        <div className="flex-1 space-y-4 w-full">
-          <div className="border-2 border-dashed border-muted rounded-lg p-6 flex flex-col items-center justify-center text-center space-y-3 bg-muted/20 transition-colors hover:bg-muted/30">
-            <div className="p-3 bg-background rounded-full shadow-sm">
-              <ImageIcon className="w-6 h-6 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="text-sm font-medium">Drag and drop or click to browse</p>
-              <p className="text-xs text-muted-foreground mt-1">JPEG, PNG or GIF (max 5MB)</p>
-            </div>
-            
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              className="hidden" 
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-            
-            <Button 
-              variant="outline" 
-              onClick={handleUploadClick}
-              disabled={isUploading || updateAvatarMutation.isPending}
-            >
-              {isUploading || updateAvatarMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <UploadCloud className="w-4 h-4 mr-2" />
-                  Select Image
-                </>
-              )}
-            </Button>
+        <div className="dash-dropzone">
+          <span className="dash-dropzone-icon">
+            <ImageIcon size={16} aria-hidden="true" />
+          </span>
+          <div>
+            <strong>Drop a photo or browse</strong>
+            <p>JPEG, PNG or GIF · max 5MB</p>
           </div>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+
+          <button
+            type="button"
+            className="dash-btn dash-btn-ghost dash-btn-sm"
+            onClick={handleUploadClick}
+            disabled={isUploading || updateAvatarMutation.isPending}
+          >
+            {isUploading || updateAvatarMutation.isPending ? (
+              <>
+                <ArrowRepeat size={11} className="dash-icon-spin" aria-hidden="true" />
+                Uploading
+              </>
+            ) : (
+              <>
+                <CloudUpload size={11} aria-hidden="true" />
+                Select image
+              </>
+            )}
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

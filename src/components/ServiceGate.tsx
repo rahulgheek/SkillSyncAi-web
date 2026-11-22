@@ -21,12 +21,13 @@ export function ServiceGate({ children }: ServiceGateProps) {
   }, []);
 
   useEffect(() => {
-    if (!suspended || !serviceResumeAt) return;
+    const resumeAt = serviceResumeAt;
+    if (!suspended || !resumeAt) return;
 
     let timeoutId: number | undefined;
 
     const scheduleResumeCheck = () => {
-      const remaining = serviceResumeAt.getTime() - Date.now();
+      const remaining = resumeAt.getTime() - Date.now();
 
       if (remaining <= 0) {
         setSuspended(false);

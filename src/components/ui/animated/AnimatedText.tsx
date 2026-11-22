@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 interface AnimatedTextProps {
   text: string;
@@ -17,7 +17,7 @@ export function AnimatedText({ text, className = "", delay = 0 }: AnimatedTextPr
     }),
   };
 
-  const child = {
+  const child: Variants = {
     visible: {
       opacity: 1,
       y: 0,

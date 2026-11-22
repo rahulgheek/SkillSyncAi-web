@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Manrope:wght@300..800&family=Nunito:wght@400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @source "../src";
@@ -9,16 +10,23 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -28,64 +36,199 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Semantic Brand Color Palette Tokens - M3 Extended Tonal System */
+  --color-primary-10: #3B070F;
+  --color-primary-20: #571C22;
+  --color-primary-30: #733237;
+  --color-primary-40: #90494E;
+  --color-primary-50: #AE6165;
+  --color-primary-60: #CC797E;
+  --color-primary-70: #EB9398;
+  --color-primary-80: #FFB3B6;
+  --color-primary-90: #FFDADA;
+  --color-primary-95: #FFEDEC;
+
+  --color-secondary-10: #370E00;
+  --color-secondary-20: #571E05;
+  --color-secondary-30: #743419;
+  --color-secondary-40: #924B2E;
+  --color-secondary-50: #B06244;
+  --color-secondary-60: #CE7B5A;
+  --color-secondary-70: #EE9572;
+  --color-secondary-80: #FFB599;
+  --color-secondary-90: #FFDBCE;
+
+  --color-neutral-10: #281719;
+  --color-neutral-20: #3F2B2D;
+  --color-neutral-30: #574143;
+  --color-neutral-80: #DDBFC1;
+  --color-neutral-90: #FBDBDD;
+  --color-neutral-95: #FFECED;
+
+  --color-success: #6EE7B7;
+  --color-on-success: #064E3B;
+
+  --color-light-primary: #2D0006;
+  --color-light-on-primary: #FFFFFF;
+  --color-light-primary-container: #4A1219;
+  --color-light-on-primary-container: #C8767B;
+  --color-light-secondary: #924B2E;
+  --color-light-on-secondary: #FFFFFF;
+  --color-light-secondary-container: #FDA27F;
+  --color-light-on-secondary-container: #77361B;
+  --color-light-tertiary: #001516;
+  --color-light-on-tertiary: #FFFFFF;
+  --color-light-tertiary-container: #002C2D;
+  --color-light-on-tertiary-container: #6E9595;
+  --color-light-error: #BA1A1A;
+  --color-light-on-error: #FFFFFF;
+  --color-light-error-container: #FFDAD6;
+  --color-light-on-error-container: #93000A;
+  --color-light-surface: #FFF8F7;
+  --color-light-surface-dim: #F2D3D5;
+  --color-light-surface-bright: #FFF8F7;
+  --color-light-surface-container-lowest: #FFFFFF;
+  --color-light-surface-container-low: #FFF0F0;
+  --color-light-surface-container: #FFE9EA;
+  --color-light-surface-container-high: #FFE1E3;
+  --color-light-surface-container-highest: #FBDBDD;
+  --color-light-on-surface: #281719;
+  --color-light-surface-variant: #F5DDDD;
+  --color-light-on-surface-variant: #534343;
+  --color-light-outline: #867273;
+  --color-light-outline-variant: #D8C1C1;
+
+  --color-dark-primary: #FFB3B6;
+  --color-dark-on-primary: #571C22;
+  --color-dark-primary-container: #4A1219;
+  --color-dark-on-primary-container: #C8767B;
+  --color-dark-secondary: #FFB599;
+  --color-dark-on-secondary: #571E05;
+  --color-dark-secondary-container: #77361B;
+  --color-dark-on-secondary-container: #FDA27E;
+  --color-dark-tertiary: #A6CECE;
+  --color-dark-on-tertiary: #0D3637;
+  --color-dark-tertiary-container: #002C2D;
+  --color-dark-on-tertiary-container: #6E9595;
+  --color-dark-error: #FFB4AB;
+  --color-dark-on-error: #690005;
+  --color-dark-error-container: #93000A;
+  --color-dark-on-error-container: #FFDAD6;
+  --color-dark-surface: #1F0F11;
+  --color-dark-surface-dim: #1F0F11;
+  --color-dark-surface-bright: #483436;
+  --color-dark-surface-container-lowest: #190A0C;
+  --color-dark-surface-container-low: #281719;
+  --color-dark-surface-container: #2C1B1D;
+  --color-dark-surface-container-high: #382527;
+  --color-dark-surface-container-highest: #433032;
+  --color-dark-on-surface: #FBDBDD;
+  --color-dark-surface-variant: #534343;
+  --color-dark-on-surface-variant: #D8C1C1;
+  --color-dark-outline: #A08C8C;
+  --color-dark-outline-variant: #534343;
+
+  /* Aliases for Brand Consistency */
+  --color-burgundy: #4A1219;
+  --color-burgundy-dark: #281719;
+  --color-burgundy-darker: #190A0C;
+  --color-burgundy-light: #733237;
+
+  --color-terracotta: #924B2E;
+  --color-terracotta-light: #CE7B5A;
+  --color-terracotta-dark: #571E05;
+
+  --color-rose: #AE6165;
+  --color-rose-light: #CC797E;
+  --color-rose-subtle: #FFEDEC;
+
+  --color-cream: #FFF8F7;
+  --color-cream-light: #FFFFFF;
+  --color-cream-warm: #FFF0F0;
+  --color-cream-dark: #FFE9EA;
+  --color-cream-border: #D8C1C1;
 }
 
 :root {
-  --radius: 24px;
-  /* Light theme: Playful, Bright */
-  --background: #FFFFFF;
-  --foreground: #1F2937;
+  --radius: 20px;
+
+  /* SkillSync Brand System Tokens (Mapped to refined palette) */
+  --background: #FFF8F7;                   /* light-surface */
+  --foreground: #281719;                   /* light-on-surface */
+
+  /* Surfaces & Cards */
+  --surface: #FFFFFF;                      /* light-surface-container-lowest */
+  --surface-hover: #FFF0F0;                /* light-surface-container-low */
   --card: #FFFFFF;
-  --card-foreground: #1F2937;
+  --card-foreground: #281719;
   --popover: #FFFFFF;
-  --popover-foreground: #1F2937;
+  --popover-foreground: #281719;
   
-  /* Primary: Vibrant Purple */
-  --primary: #8B5CF6;
-  --primary-foreground: #FFFFFF;
+  /* Primary: Deep Oxblood Burgundy (#4A1219) */
+  --primary: #4A1219;                      /* light-primary-container */
+  --primary-foreground: #FFFFFF;           /* light-on-primary */
   
-  /* Secondary: Soft Purple/Lilac */
-  --secondary: #DDD6FE;
-  --secondary-foreground: #1F2937;
+  /* Secondary: Warm Terracotta (#924B2E / #CE7B5A) */
+  --secondary: #924B2E;                    /* light-secondary */
+  --secondary-foreground: #FFFFFF;
+
+  /* Tertiary / Accent: Muted Rose & Warm Rust */
+  --tertiary: #AE6165;                     /* primary-50 */
+  --tertiary-foreground: #FFFFFF;
+  --accent: #B06244;                       /* secondary-50 */
+  --accent-foreground: #FFFFFF;
   
-  /* Muted */
-  --muted: #F3F4F6;
-  --muted-foreground: #6B7280;
+  /* Muted Surfaces & Text */
+  --muted: #FFF0F0;                        /* light-surface-container-low */
+  --muted-foreground: #534343;             /* light-on-surface-variant */
   
-  /* Accent: Bright Yellow */
-  --accent: #FCD34D;
-  --accent-foreground: #1F2937;
-  
-  --destructive: #EF4444;
+  /* Destructive */
+  --destructive: #BA1A1A;                  /* light-error */
   --destructive-foreground: #FFFFFF;
   
-  --border: #E5E7EB;
-  --input: #E5E7EB;
-  --ring: #8B5CF6;
+  /* Borders, Inputs & Focus Rings */
+  --border: #D8C1C1;                       /* light-outline-variant */
+  --input: #D8C1C1;
+  --ring: #4A1219;
+
+  /* Direct CSS variables for explicit reference */
+  --color-primary-token: #4A1219;
+  --color-secondary-token: #924B2E;
+  --color-tertiary-token: #AE6165;
+  --color-neutral-token: #FFF8F7;
 }
 
-/* We will not support dark mode for this specific playful design unless explicitly needed, 
-   but we leave variables here just in case */
 .dark {
-  --background: #111827;
-  --foreground: #F9FAFB;
-  --card: #1F2937;
-  --card-foreground: #F9FAFB;
-  --popover: #1F2937;
-  --popover-foreground: #F9FAFB;
-  --primary: #8B5CF6;
-  --primary-foreground: #FFFFFF;
-  --secondary: #4C1D95;
-  --secondary-foreground: #F9FAFB;
-  --muted: #374151;
-  --muted-foreground: #9CA3AF;
-  --accent: #FBBF24;
-  --accent-foreground: #111827;
-  --destructive: #7F1D1D;
-  --destructive-foreground: #F9FAFB;
-  --border: #374151;
-  --input: #374151;
-  --ring: #8B5CF6;
+  --background: #190A0C;                   /* dark-surface-container-lowest */
+  --foreground: #FBDBDD;                   /* dark-on-surface */
+  --surface: #2C1B1D;                      /* dark-surface-container */
+  --surface-hover: #382527;                /* dark-surface-container-high */
+  --card: #2C1B1D;                         /* dark-surface-container */
+  --card-foreground: #FBDBDD;
+  --popover: #2C1B1D;
+  --popover-foreground: #FBDBDD;
+
+  --primary: #FFB3B6;                      /* dark-primary */
+  --primary-foreground: #571C22;           /* dark-on-primary */
+
+  --secondary: #FFB599;                    /* dark-secondary */
+  --secondary-foreground: #571E05;         /* dark-on-secondary */
+
+  --tertiary: #C8767B;                     /* dark-on-primary-container */
+  --tertiary-foreground: #190A0C;
+  --accent: #FDA27E;                       /* dark-on-secondary-container */
+  --accent-foreground: #370E00;
+
+  --muted: #281719;                        /* dark-surface-container-low */
+  --muted-foreground: #D8C1C1;             /* dark-on-surface-variant */
+
+  --destructive: #FFB4AB;                  /* dark-error */
+  --destructive-foreground: #690005;
+
+  --border: #534343;                       /* dark-outline-variant */
+  --input: #534343;
+  --ring: #FFB3B6;
 }
 
 @layer base {

@@ -1,6 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import {
+  ArrowLeft,
+  ArrowRepeat,
+  ArrowRight,
+  Calendar3,
+  CheckLg,
+  People,
+  PlusLg,
+  Search,
+  Stars,
+  Trash3,
+} from "react-bootstrap-icons";
+import { toast } from "sonner";
 import { useAuth } from "../../auth/context";
 import {
   createProjectDraft,
@@ -10,14 +23,19 @@ import {
   CreateProjectRoleRequest,
 } from "../api";
 import { searchSkills } from "../../userprofile/api";
-import { ArrowLeft, ArrowRight, Check, Plus, Trash2, Loader2 } from "lucide-react";
 
 type WizardStep = "BASIC_INFO" | "DEFINE_ROLES" | "REVIEW";
+
+const STEPS: { id: WizardStep; label: string; hint: string }[] = [
+  { id: "BASIC_INFO", label: "The brief", hint: "Name, scope, deadline" },
+  { id: "DEFINE_ROLES", label: "The roles", hint: "Who you need" },
+  { id: "REVIEW", label: "Review", hint: "Publish when ready" },
+];
 
 const CreateProjectWizard: React.FC = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
-  
+
   const [step, setStep] = useState<WizardStep>("BASIC_INFO");
   const [projectId, setProjectId] = useState<string | null>(null);
 
@@ -52,8 +70,8 @@ const CreateProjectWizard: React.FC = () => {
     },
     onError: (err) => {
       console.error("Failed to create draft", err);
-      alert("Failed to create draft project. Please try again.");
-    }
+      toast.error("Failed to create the draft project. Please try again.");
+    },
   });
 
   const addRoleMutation = useMutation({
@@ -67,55 +85,48 @@ const CreateProjectWizard: React.FC = () => {
     },
     onError: (err: any) => {
       console.error("Failed to publish", err);
-      alert(err.response?.data?.message || "Failed to publish project.");
-    }
+      toast.error(err.response?.data?.message || "Failed to publish project.");
+    },
   });
 
   const handleBasicInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (basicInfo.title.trim() === "" || basicInfo.maxTeamSize < 2) return;
-    
-    // Format deadline to ISO if provided
-    let data = { ...basicInfo };
-    if (data.applicationDeadline) {
-      data.applicationDeadline = new Date(data.applicationDeadline).toISOString();
-    } else {
-      delete data.applicationDeadline;
-    }
-    
-    createDraftMutation.mutate(data);
+    if (!basicInfo.title.trim()) return;
+    createDraftMutation.mutate(basicInfo);
   };
 
   const handleSkillSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value;
     setSkillQuery(q);
-    if (q.length < 2) {
+    if (q.trim().length >= 2) {
+      setIsSearchingSkills(true);
+      try {
+        const results = await searchSkills(q);
+        setSkillResults(results);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearchingSkills(false);
+      }
+    } else {
       setSkillResults([]);
-      return;
-    }
-    setIsSearchingSkills(true);
-    try {
-      const res = await searchSkills(q);
-      setSkillResults(res);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSearchingSkills(false);
     }
   };
 
   const handleAddSkill = (skill: any) => {
-    setCurrentRole({
-      ...currentRole,
-      requiredSkills: [
-        ...currentRole.requiredSkills,
-        {
-          skillId: skill.id,
-          skillName: skill.name,
-          minimumLevel: selectedProficiency,
-        },
-      ],
-    });
+    if (!currentRole.requiredSkills.some((s) => s.skillId === skill.id)) {
+      setCurrentRole({
+        ...currentRole,
+        requiredSkills: [
+          ...currentRole.requiredSkills,
+          {
+            skillId: skill.id,
+            skillName: skill.name,
+            minimumLevel: selectedProficiency,
+          },
+        ],
+      });
+    }
     setSkillQuery("");
     setSkillResults([]);
   };
@@ -127,16 +138,22 @@ const CreateProjectWizard: React.FC = () => {
     });
   };
 
-  const handleAddRole = () => {
-    if (currentRole.title.trim() === "" || currentRole.headcount < 1) return;
-    
-    const currentTotalHeadcount = roles.reduce((sum, r) => sum + r.headcount, 0);
-    if (currentTotalHeadcount + currentRole.headcount + 1 > basicInfo.maxTeamSize) {
-      alert(`Cannot add role. Total roles headcount + 1 (Owner) must not exceed Max Team Size (${basicInfo.maxTeamSize}).`);
-      return;
+  const handleAddRole = async () => {
+    if (!currentRole.title.trim()) return;
+
+    // Add locally to preview
+    setRoles([...roles, currentRole]);
+
+    // Add to backend if we have a project ID
+    if (projectId) {
+      try {
+        await addRoleMutation.mutateAsync(currentRole);
+      } catch (err) {
+        console.error("Failed to save role", err);
+      }
     }
 
-    setRoles([...roles, currentRole]);
+    // Reset current role form
     setCurrentRole({
       title: "",
       description: "",
@@ -146,26 +163,22 @@ const CreateProjectWizard: React.FC = () => {
   };
 
   const handleRemoveRole = (index: number) => {
-    setRoles(roles.filter((_, i) => i !== index));
+    setRoles(roles.filter((_, idx) => idx !== index));
   };
 
-  const handleRolesSubmit = async () => {
+  const handleRolesSubmit = () => {
     if (roles.length === 0) {
-      alert("Please add at least one role to the project.");
-      return;
+      if (!confirm("You haven't added any roles. Continue anyway?")) return;
     }
     setStep("REVIEW");
   };
 
   const handlePublish = async () => {
-    if (!projectId) {
-      alert("Project ID is missing. Please go back and recreate the draft project.");
-      return;
-    }
+    if (!projectId) return;
     try {
-      // First, add all roles sequentially
-      for (const role of roles) {
-        await addRoleMutation.mutateAsync(role);
+      // First save any remaining role that wasn't explicitly added via button
+      if (currentRole.title.trim()) {
+        await addRoleMutation.mutateAsync(currentRole);
       }
       // Then publish
       publishMutation.mutate();
@@ -174,382 +187,518 @@ const CreateProjectWizard: React.FC = () => {
     }
   };
 
+  const stepIndex = STEPS.findIndex((item) => item.id === step);
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-sm py-4 px-6 sm:px-8 lg:px-12 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="dash-page">
+      <header className="dash-page-head">
+        <div className="dash-page-heading">
+          <p className="dash-eyebrow">New project</p>
+          <h1 className="dash-title">
+            Build something <em>worth joining.</em>
+          </h1>
+          <p className="dash-sub">
+            Three steps: shape the brief, define the roles, then publish it to the
+            community.
+          </p>
+        </div>
+        <div className="dash-head-actions">
           <button
+            type="button"
+            className="dash-btn dash-btn-ghost dash-btn-sm"
             onClick={() => navigate("/dashboard")}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft size={11} aria-hidden="true" />
+            Back to dashboard
           </button>
-          <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">Create New Project</h1>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-8">
-        
-        {/* Stepper */}
-        <div className="flex items-center justify-between mb-8">
-          {["Basic Info", "Define Roles", "Review & Publish"].map((label, idx) => {
-            const stepName = idx === 0 ? "BASIC_INFO" : idx === 1 ? "DEFINE_ROLES" : "REVIEW";
-            const isActive = step === stepName;
-            const isCompleted = 
-              (idx === 0 && (step === "DEFINE_ROLES" || step === "REVIEW")) ||
-              (idx === 1 && step === "REVIEW");
-            
-            return (
-              <div key={label} className="flex flex-col items-center relative z-10 flex-1">
-                <div 
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-colors ${
-                    isActive ? "bg-indigo-600 text-white shadow-md ring-4 ring-indigo-100" :
-                    isCompleted ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
-                  }`}
-                >
-                  {isCompleted ? <Check className="w-5 h-5" /> : idx + 1}
-                </div>
-                <span className={`text-[11px] sm:text-sm font-medium text-center leading-tight px-1 ${isActive ? "text-indigo-900" : "text-gray-500"}`}>
-                  {label}
-                </span>
-                
-                {/* Connector Line */}
-                {idx < 2 && (
-                  <div className={`absolute top-5 left-1/2 w-full h-[2px] -z-10 ${
-                    isCompleted ? "bg-green-500" : "bg-gray-200"
-                  }`} />
-                )}
-              </div>
-            );
-          })}
-        </div>
+      <ol className="dash-stepper" aria-label="Project creation progress">
+        {STEPS.map((item, index) => {
+          const isActive = step === item.id;
+          const isCompleted = index < stepIndex;
 
-        {/* Step 1: Basic Info */}
-        {step === "BASIC_INFO" && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 animate-in fade-in slide-in-from-bottom-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Project Details</h2>
-            <form onSubmit={handleBasicInfoSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Project Title *</label>
+          return (
+            <li
+              key={item.id}
+              className={`dash-step${isActive ? " is-active" : ""}${
+                isCompleted ? " is-complete" : ""
+              }`}
+              aria-current={isActive ? "step" : undefined}
+            >
+              <span className="dash-step-dot">
+                {isCompleted ? (
+                  <CheckLg size={10} aria-hidden="true" />
+                ) : (
+                  index + 1
+                )}
+              </span>
+              <span className="dash-step-copy">
+                <span className="dash-step-label">{item.label}</span>
+                <span className="dash-step-hint">{item.hint}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+
+      {step === "BASIC_INFO" && (
+        <section className="dash-panel">
+          <div className="dash-panel-head">
+            <div className="dash-panel-heading">
+              <p className="dash-panel-kicker">Step one</p>
+              <h2 className="dash-panel-title">Project details</h2>
+              <p className="dash-panel-sub">
+                Give the work a name, a shape, and a finish line.
+              </p>
+            </div>
+          </div>
+
+          <div className="dash-panel-body">
+            <form className="dash-form" onSubmit={handleBasicInfoSubmit}>
+              <div className="dash-field">
+                <label className="dash-label" htmlFor="project-title">
+                  Project title *
+                </label>
                 <input
+                  id="project-title"
+                  className="dash-input"
                   type="text"
                   required
                   value={basicInfo.title}
-                  onChange={(e) => setBasicInfo({ ...basicInfo, title: e.target.value })}
+                  onChange={(e) =>
+                    setBasicInfo({ ...basicInfo, title: e.target.value })
+                  }
                   placeholder="e.g. NextGen E-Commerce Platform"
-                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <div className="dash-field">
+                <label className="dash-label" htmlFor="project-description">
+                  Description
+                </label>
                 <textarea
+                  id="project-description"
+                  className="dash-textarea"
                   value={basicInfo.description}
-                  onChange={(e) => setBasicInfo({ ...basicInfo, description: e.target.value })}
+                  onChange={(e) =>
+                    setBasicInfo({ ...basicInfo, description: e.target.value })
+                  }
                   placeholder="What is this project about? What are the goals?"
                   rows={4}
-                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none resize-none"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Max Team Size *</label>
+              <div className="dash-form-grid">
+                <div className="dash-field">
+                  <label className="dash-label" htmlFor="project-team-size">
+                    Max team size *
+                  </label>
                   <input
+                    id="project-team-size"
+                    className="dash-input"
                     type="number"
                     required
                     min={2}
                     value={basicInfo.maxTeamSize}
-                    onChange={(e) => setBasicInfo({ ...basicInfo, maxTeamSize: parseInt(e.target.value) || 2 })}
-                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                    onChange={(e) =>
+                      setBasicInfo({
+                        ...basicInfo,
+                        maxTeamSize: parseInt(e.target.value) || 2,
+                      })
+                    }
                   />
-                  <p className="text-xs text-gray-500 mt-2">Includes you (the owner).</p>
+                  <p className="dash-help">Includes you, the project owner.</p>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Application Deadline</label>
+
+                <div className="dash-field">
+                  <label className="dash-label" htmlFor="project-deadline">
+                    Application deadline
+                  </label>
                   <input
+                    id="project-deadline"
+                    className="dash-input"
                     type="date"
                     value={basicInfo.applicationDeadline}
-                    onChange={(e) => setBasicInfo({ ...basicInfo, applicationDeadline: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                    onChange={(e) =>
+                      setBasicInfo({
+                        ...basicInfo,
+                        applicationDeadline: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-gray-100 flex justify-end">
+              <div className="dash-form-actions">
                 <button
                   type="submit"
+                  className="dash-btn dash-btn-solid dash-btn-lg"
                   disabled={createDraftMutation.isPending}
-                  className="w-full sm:w-auto justify-center bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {createDraftMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Continue to Roles"}
-                  {!createDraftMutation.isPending && <ArrowRight className="w-5 h-5" />}
+                  {createDraftMutation.isPending ? (
+                    <ArrowRepeat
+                      size={13}
+                      className="dash-icon-spin"
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                  Continue to roles
+                  {!createDraftMutation.isPending && (
+                    <ArrowRight size={13} aria-hidden="true" />
+                  )}
                 </button>
               </div>
             </form>
           </div>
-        )}
+        </section>
+      )}
 
-        {/* Step 2: Define Roles */}
-        {step === "DEFINE_ROLES" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-            
-            {/* Added Roles List */}
-            {roles.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" /> Roles Added ({roles.length})
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
+      {step === "DEFINE_ROLES" && (
+        <div className="dash-stack">
+          {roles.length > 0 && (
+            <section className="dash-panel">
+              <div className="dash-panel-head">
+                <div className="dash-panel-heading">
+                  <p className="dash-panel-kicker">The team</p>
+                  <h2 className="dash-panel-title">Roles added</h2>
+                  <p className="dash-panel-sub">
+                    {roles.length} {roles.length === 1 ? "role" : "roles"} defined so
+                    far.
+                  </p>
+                </div>
+                <span className="dash-badge dash-badge-soft">
+                  <People size={9} aria-hidden="true" />
+                  Max {basicInfo.maxTeamSize}
+                </span>
+              </div>
+
+              <div className="dash-panel-body">
+                <div className="dash-role-grid">
                   {roles.map((role, idx) => (
-                    <div key={idx} className="bg-gray-50 rounded-xl p-4 border border-gray-200 relative group">
-                      <button 
+                    <article key={idx} className="dash-role-card">
+                      <button
+                        type="button"
+                        className="dash-icon-btn-sm is-danger dash-role-remove"
+                        aria-label={`Remove ${role.title}`}
                         onClick={() => handleRemoveRole(idx)}
-                        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash3 size={10} aria-hidden="true" />
                       </button>
-                      <h4 className="font-semibold text-gray-900">{role.title}</h4>
-                      <p className="text-sm text-gray-600 mb-2 mt-1 line-clamp-2">{role.description || "No description"}</p>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {role.requiredSkills.map(s => (
-                          <span key={s.skillId} className="inline-flex items-center px-2 py-1 rounded-md bg-indigo-50 text-indigo-700 text-xs font-medium">
-                            {s.skillName} • {s.minimumLevel}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="text-xs font-medium text-gray-500 bg-white px-2 py-1 rounded border inline-block">
-                        Headcount: {role.headcount}
-                      </div>
-                    </div>
+                      <h4>{role.title}</h4>
+                      <p>{role.description || "No description"}</p>
+                      {role.requiredSkills.length > 0 && (
+                        <div className="dash-tag-row" style={{ marginTop: 7 }}>
+                          {role.requiredSkills.map((skill) => (
+                            <span key={skill.skillId} className="dash-tag">
+                              {skill.skillName} · {skill.minimumLevel}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <span className="dash-role-count">
+                        Headcount {role.headcount}
+                      </span>
+                    </article>
                   ))}
                 </div>
               </div>
-            )}
+            </section>
+          )}
 
-            {/* Add New Role Form */}
-            <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 sm:p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Define a Role</h2>
-              <p className="text-gray-500 mb-6 text-sm">Add roles to your team. Total headcount must fit within your max team size of {basicInfo.maxTeamSize}.</p>
-              
-              <div className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Role Title *</label>
+          <section className="dash-panel">
+            <div className="dash-panel-head">
+              <div className="dash-panel-heading">
+                <p className="dash-panel-kicker">Step two</p>
+                <h2 className="dash-panel-title">Define a role</h2>
+                <p className="dash-panel-sub">
+                  Add roles to your team. Total headcount should fit within your max
+                  team size of {basicInfo.maxTeamSize}.
+                </p>
+              </div>
+            </div>
+
+            <div className="dash-panel-body">
+              <div className="dash-form">
+                <div className="dash-form-grid">
+                  <div className="dash-field">
+                    <label className="dash-label" htmlFor="role-title">
+                      Role title *
+                    </label>
                     <input
+                      id="role-title"
+                      className="dash-input"
                       type="text"
                       value={currentRole.title}
-                      onChange={(e) => setCurrentRole({ ...currentRole, title: e.target.value })}
+                      onChange={(e) =>
+                        setCurrentRole({ ...currentRole, title: e.target.value })
+                      }
                       placeholder="e.g. Frontend Developer"
-                      className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Headcount *</label>
+
+                  <div className="dash-field">
+                    <label className="dash-label" htmlFor="role-headcount">
+                      Headcount *
+                    </label>
                     <input
+                      id="role-headcount"
+                      className="dash-input"
                       type="number"
                       min={1}
                       value={currentRole.headcount}
-                      onChange={(e) => setCurrentRole({ ...currentRole, headcount: parseInt(e.target.value) || 1 })}
-                      className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                      onChange={(e) =>
+                        setCurrentRole({
+                          ...currentRole,
+                          headcount: parseInt(e.target.value) || 1,
+                        })
+                      }
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Role Responsibilities</label>
+                <div className="dash-field">
+                  <label className="dash-label" htmlFor="role-description">
+                    Role responsibilities
+                  </label>
                   <textarea
+                    id="role-description"
+                    className="dash-textarea"
                     value={currentRole.description}
-                    onChange={(e) => setCurrentRole({ ...currentRole, description: e.target.value })}
+                    onChange={(e) =>
+                      setCurrentRole({
+                        ...currentRole,
+                        description: e.target.value,
+                      })
+                    }
                     placeholder="What will this person be doing?"
                     rows={2}
-                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none resize-none"
                   />
                 </div>
 
-                {/* Skills Search */}
-                <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Required Skills</label>
-                  
+                <div className="dash-field">
+                  <span className="dash-label">Required skills</span>
+
                   {currentRole.requiredSkills.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {currentRole.requiredSkills.map(skill => (
-                        <div key={skill.skillId} className="flex items-center bg-white border border-indigo-200 rounded-lg px-3 py-1.5 shadow-sm">
-                          <div className="flex flex-col mr-3">
-                            <span className="text-sm font-bold text-gray-900">{skill.skillName}</span>
-                            <span className="text-xs text-indigo-600 font-medium">{skill.minimumLevel}</span>
-                          </div>
-                          <button 
+                    <div className="dash-tag-row" style={{ marginBottom: 7 }}>
+                      {currentRole.requiredSkills.map((skill) => (
+                        <span key={skill.skillId} className="dash-tag">
+                          {skill.skillName}
+                          <span style={{ opacity: 0.62 }}>{skill.minimumLevel}</span>
+                          <button
+                            type="button"
+                            className="dash-tag-remove"
+                            aria-label={`Remove ${skill.skillName}`}
                             onClick={() => handleRemoveSkill(skill.skillId)}
-                            className="text-gray-400 hover:text-red-500 transition-colors p-1"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash3 size={9} aria-hidden="true" />
                           </button>
-                        </div>
+                        </span>
                       ))}
                     </div>
                   )}
 
-                  <div className="flex flex-col sm:flex-row sm:items-end gap-3 relative z-20">
-                    <div className="flex-1 relative">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Search Skill</label>
+                  <div className="dash-searchbar" style={{ alignItems: "stretch" }}>
+                    <div className="dash-input-wrap">
+                      <Search size={12} aria-hidden="true" />
                       <input
+                        className="dash-input"
                         type="text"
                         value={skillQuery}
                         onChange={handleSkillSearch}
                         placeholder="Type to search skills..."
-                        className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                        aria-label="Search skills"
+                        autoComplete="off"
                       />
-                      
-                      {/* Search Results Dropdown */}
+                      {isSearchingSkills && (
+                        <span className="dash-input-action">
+                          <ArrowRepeat
+                            size={12}
+                            className="dash-icon-spin"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )}
+
                       {skillResults.length > 0 && skillQuery.length >= 2 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto z-50">
-                          {skillResults.map(skill => (
+                        <div className="dash-suggest">
+                          {skillResults.map((skill) => (
                             <button
                               key={skill.id}
                               type="button"
                               onClick={() => handleAddSkill(skill)}
-                              className="w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 focus:bg-indigo-50 outline-none transition-colors border-b border-gray-100 last:border-0"
                             >
-                              <span className="font-medium text-gray-900">{skill.name}</span>
-                              <span className="text-xs text-gray-500 ml-2 block">{skill.category}</span>
+                              {skill.name}
+                              <small>{skill.category}</small>
                             </button>
                           ))}
                         </div>
                       )}
-                      {isSearchingSkills && (
-                        <div className="absolute right-3 top-8">
-                          <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
-                        </div>
-                      )}
                     </div>
-                    
-                    <div className="w-full sm:w-40">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Min Level</label>
-                      <select
-                        value={selectedProficiency}
-                        onChange={(e) => setSelectedProficiency(e.target.value)}
-                        className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
-                      >
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                        <option value="Expert">Expert</option>
-                      </select>
-                    </div>
+
+                    <select
+                      className="dash-select"
+                      style={{ maxWidth: 170 }}
+                      value={selectedProficiency}
+                      onChange={(e) => setSelectedProficiency(e.target.value)}
+                      aria-label="Minimum skill level"
+                    >
+                      <option value="Beginner">Beginner</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Advanced">Advanced</option>
+                      <option value="Expert">Expert</option>
+                    </select>
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
+                <div className="dash-form-actions">
                   <button
                     type="button"
+                    className="dash-btn dash-btn-ghost"
                     onClick={handleAddRole}
                     disabled={currentRole.title.trim() === ""}
-                    className="flex w-full sm:w-auto items-center justify-center gap-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-5 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Plus className="w-5 h-5" /> Add Role
+                    <PlusLg size={11} aria-hidden="true" />
+                    Add role
                   </button>
                 </div>
               </div>
             </div>
+          </section>
 
-            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between pt-4">
-              <button
-                type="button"
-                onClick={() => setStep("BASIC_INFO")}
-                className="w-full sm:w-auto text-center px-6 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={handleRolesSubmit}
-                className="w-full sm:w-auto justify-center bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-2"
-              >
-                Review Project <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
+          <div className="dash-form-actions">
+            <button
+              type="button"
+              className="dash-btn dash-btn-ghost"
+              onClick={() => setStep("BASIC_INFO")}
+            >
+              <ArrowLeft size={11} aria-hidden="true" />
+              Back
+            </button>
+            <button
+              type="button"
+              className="dash-btn dash-btn-solid dash-btn-lg"
+              onClick={handleRolesSubmit}
+            >
+              Review project
+              <ArrowRight size={13} aria-hidden="true" />
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Step 3: Review */}
-        {step === "REVIEW" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-6 sm:p-8 text-white">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-2 break-words">{basicInfo.title}</h2>
-                <p className="text-indigo-100 max-w-2xl">{basicInfo.description}</p>
-                <div className="flex flex-wrap gap-3 sm:gap-6 mt-6">
-                  <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
-                    Max Team Size: {basicInfo.maxTeamSize}
-                  </div>
-                  {basicInfo.applicationDeadline && (
-                    <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
-                      Deadline: {new Date(basicInfo.applicationDeadline).toLocaleDateString()}
-                    </div>
-                  )}
-                </div>
+      {step === "REVIEW" && (
+        <div className="dash-stack">
+          <section className="dash-panel" style={{ overflow: "hidden" }}>
+            <div className="dash-review-hero">
+              <span className="dash-badge dash-badge-ai" style={{ marginBottom: 8 }}>
+                <Stars size={9} aria-hidden="true" />
+                Final review
+              </span>
+              <h2 className="dash-review-title">{basicInfo.title}</h2>
+              <p className="dash-review-desc">{basicInfo.description}</p>
+              <div className="dash-review-chips">
+                <span className="dash-review-chip">
+                  <People size={9} aria-hidden="true" /> Max team size{" "}
+                  {basicInfo.maxTeamSize}
+                </span>
+                {basicInfo.applicationDeadline && (
+                  <span className="dash-review-chip">
+                    <Calendar3 size={9} aria-hidden="true" />
+                    Deadline{" "}
+                    {new Date(basicInfo.applicationDeadline).toLocaleDateString()}
+                  </span>
+                )}
+                <span className="dash-review-chip">
+                  {roles.length} {roles.length === 1 ? "role" : "roles"} defined
+                </span>
               </div>
-              
-              <div className="p-5 sm:p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Defined Roles ({roles.length})</h3>
-                <div className="space-y-6">
+            </div>
+
+            <div className="dash-panel-body">
+              <div className="dash-spread" style={{ marginBottom: 10 }}>
+                <h3 className="dash-mini-title" style={{ margin: 0 }}>
+                  Defined roles
+                </h3>
+                <span className="dash-badge dash-badge-soft">
+                  {roles.reduce((total, role) => total + role.headcount, 0)} openings
+                </span>
+              </div>
+
+              {roles.length === 0 ? (
+                <div className="dash-empty-inline dash-panel-soft">
+                  <p>
+                    No roles defined. You can still publish, but adding roles helps
+                    the right people find you.
+                  </p>
+                </div>
+              ) : (
+                <div className="dash-stack-sm">
                   {roles.map((role, idx) => (
-                    <div key={idx} className="flex flex-col sm:flex-row gap-4 justify-between bg-gray-50 rounded-xl p-5 border border-gray-100">
-                      <div className="flex-1">
-                        <h4 className="text-lg font-bold text-gray-900 mb-1">{role.title}</h4>
-                        <p className="text-sm text-gray-600 mb-3">{role.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {role.requiredSkills.map(s => (
-                            <span key={s.skillId} className="inline-flex items-center px-2 py-1 rounded bg-white border border-gray-200 text-gray-700 text-xs font-medium shadow-sm">
-                              {s.skillName} <span className="text-indigo-500 ml-1">({s.minimumLevel})</span>
-                            </span>
-                          ))}
+                    <article key={idx} className="dash-entry">
+                      <div className="dash-spread" style={{ alignItems: "flex-start" }}>
+                        <div style={{ minWidth: 0 }}>
+                          <h4 className="dash-entry-title">{role.title}</h4>
+                          {role.description && (
+                            <p className="dash-entry-text">{role.description}</p>
+                          )}
+                          {role.requiredSkills.length > 0 && (
+                            <div className="dash-tag-row" style={{ marginTop: 8 }}>
+                              {role.requiredSkills.map((skill) => (
+                                <span key={skill.skillId} className="dash-tag">
+                                  {skill.skillName} ({skill.minimumLevel})
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
+                        <span className="dash-role-count" style={{ marginTop: 0 }}>
+                          {role.headcount} opening{role.headcount === 1 ? "" : "s"}
+                        </span>
                       </div>
-                      <div className="bg-white px-4 py-3 rounded-lg border border-gray-200 shadow-sm flex flex-col items-center justify-center min-w-[100px] self-start sm:self-auto">
-                        <span className="text-3xl font-bold text-indigo-600">{role.headcount}</span>
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Openings</span>
-                      </div>
-                    </div>
+                    </article>
                   ))}
                 </div>
-              </div>
+              )}
             </div>
+          </section>
 
-            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between sm:items-center pt-4">
-              <button
-                type="button"
-                onClick={() => setStep("DEFINE_ROLES")}
-                className="w-full sm:w-auto text-center px-6 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
-                disabled={addRoleMutation.isPending || publishMutation.isPending}
-              >
-                Back to Edit
-              </button>
-              <button
-                type="button"
-                onClick={handlePublish}
-                disabled={addRoleMutation.isPending || publishMutation.isPending}
-                className="w-full sm:w-auto justify-center bg-green-600 text-white px-6 sm:px-10 py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {(addRoleMutation.isPending || publishMutation.isPending) ? (
-                  <>
-                    <Loader2 className="w-6 h-6 animate-spin" /> Publishing...
-                  </>
-                ) : (
-                  <>
-                    <Check className="w-6 h-6" /> Publish Project
-                  </>
-                )}
-              </button>
-            </div>
+          <div className="dash-form-actions">
+            <button
+              type="button"
+              className="dash-btn dash-btn-ghost"
+              onClick={() => setStep("DEFINE_ROLES")}
+              disabled={addRoleMutation.isPending || publishMutation.isPending}
+            >
+              <ArrowLeft size={11} aria-hidden="true" />
+              Back to edit
+            </button>
+            <button
+              type="button"
+              className="dash-btn dash-btn-solid dash-btn-lg"
+              onClick={handlePublish}
+              disabled={addRoleMutation.isPending || publishMutation.isPending}
+            >
+              {addRoleMutation.isPending || publishMutation.isPending ? (
+                <>
+                  <ArrowRepeat
+                    size={13}
+                    className="dash-icon-spin"
+                    aria-hidden="true"
+                  />
+                  Publishing
+                </>
+              ) : (
+                <>
+                  <CheckLg size={13} aria-hidden="true" />
+                  Publish project
+                </>
+              )}
+            </button>
           </div>
-        )}
-
-      </main>
+        </div>
+      )}
     </div>
   );
 };

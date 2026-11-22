@@ -1,11 +1,18 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { applyToProject, ProjectResponse, ProjectRoleResponse } from "../api";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/text-area";
 import { useState } from "react";
-import { Send, CheckCircle } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  ArrowRepeat,
+  CheckCircleFill,
+  SendFill,
+} from "react-bootstrap-icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { applyToProject, ProjectResponse, ProjectRoleResponse } from "../api";
 
 interface ApplicationFormModalProps {
   project: ProjectResponse | any;
@@ -14,21 +21,27 @@ interface ApplicationFormModalProps {
   onClose: () => void;
 }
 
-export default function ApplicationFormModal({ project, role, isOpen, onClose }: ApplicationFormModalProps) {
+export default function ApplicationFormModal({
+  project,
+  role,
+  isOpen,
+  onClose,
+}: ApplicationFormModalProps) {
   const [coverMessage, setCoverMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
   const queryClient = useQueryClient();
 
   const applyMutation = useMutation({
-    mutationFn: () => applyToProject({
-      projectId: project.id,
-      projectRoleId: role?.id,
-      coverMessage: coverMessage
-    }),
+    mutationFn: () =>
+      applyToProject({
+        projectId: project.id,
+        projectRoleId: role?.id,
+        coverMessage: coverMessage,
+      }),
     onSuccess: () => {
       setIsSuccess(true);
-      toast.success("Application Submitted successfully!");
+      toast.success("Application submitted successfully!");
       queryClient.invalidateQueries({ queryKey: ["myApplications"] });
       // Automatically close after a short delay so the user sees the success state
       setTimeout(() => {
@@ -39,7 +52,7 @@ export default function ApplicationFormModal({ project, role, isOpen, onClose }:
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to submit application");
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -52,59 +65,93 @@ export default function ApplicationFormModal({ project, role, isOpen, onClose }:
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] border-border/50 bg-background/95 backdrop-blur-md">
+      <DialogContent className="dash-modal">
         {!isSuccess ? (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold">Apply to Join</DialogTitle>
-              <DialogDescription>
-                You are applying {role ? <>for <strong className="text-foreground">{role.title}</strong> in</> : "to"} <strong className="text-foreground">{project.title}</strong>.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <label htmlFor="coverMessage" className="block text-sm font-medium text-foreground mb-2">
-                Pitch Yourself (Cover Message)
-              </label>
-              <Textarea
-                id="coverMessage"
-                value={coverMessage}
-                onChange={(e) => setCoverMessage(e.target.value)}
-                placeholder="Hi! I have 3 years of experience in React and I'd love to help build this..."
-                className="min-h-[150px] resize-none focus-visible:ring-primary/50"
-              />
-              <p className="text-xs text-muted-foreground mt-2">
-                Briefly explain why you're a good fit for this role and mention any relevant skills.
-              </p>
+            <div className="dash-modal-head">
+              <div>
+                <DialogTitle className="dash-modal-title">Apply to join</DialogTitle>
+                <DialogDescription className="dash-modal-desc">
+                  You are applying{" "}
+                  {role ? (
+                    <>
+                      for <strong>{role.title}</strong> in{" "}
+                    </>
+                  ) : (
+                    "to "
+                  )}
+                  <strong>{project.title}</strong>.
+                </DialogDescription>
+              </div>
             </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={onClose} disabled={applyMutation.isPending}>
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSubmit} 
-                disabled={applyMutation.isPending}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[120px] shadow-md transition-all"
-              >
-                {applyMutation.isPending ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary-foreground mr-2"></div>
-                ) : (
-                  <Send className="w-4 h-4 mr-2" />
-                )}
-                {applyMutation.isPending ? "Sending..." : "Submit Application"}
-              </Button>
-            </DialogFooter>
+
+            <div className="dash-modal-body dash-form">
+              <div className="dash-field">
+                <label className="dash-label" htmlFor="coverMessage">
+                  Your pitch <small>Cover message</small>
+                </label>
+                <textarea
+                  id="coverMessage"
+                  className="dash-textarea"
+                  value={coverMessage}
+                  onChange={(e) => setCoverMessage(e.target.value)}
+                  placeholder="Hi! I have 3 years of experience in React and I'd love to help build this..."
+                  style={{ minHeight: 150 }}
+                />
+                <p className="dash-help">
+                  Briefly explain why you are a good fit for this role and mention
+                  any relevant skills.
+                </p>
+              </div>
+            </div>
+
+            <div className="dash-modal-foot">
+              <span className="dash-help">A thoughtful note goes a long way</span>
+              <div className="dash-modal-actions">
+                <button
+                  type="button"
+                  className="dash-btn dash-btn-ghost"
+                  onClick={onClose}
+                  disabled={applyMutation.isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="dash-btn dash-btn-solid"
+                  onClick={handleSubmit}
+                  disabled={applyMutation.isPending}
+                >
+                  {applyMutation.isPending ? (
+                    <ArrowRepeat
+                      size={12}
+                      className="dash-icon-spin"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <SendFill size={11} aria-hidden="true" />
+                  )}
+                  {applyMutation.isPending ? "Sending" : "Submit application"}
+                </button>
+              </div>
+            </div>
           </>
         ) : (
-          <div className="py-12 flex flex-col items-center justify-center text-center animate-in zoom-in duration-300">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600">
-              <CheckCircle className="w-8 h-8" />
+          <div className="dash-modal-body" style={{ padding: "38px 24px" }}>
+            <DialogTitle className="sr-only">Application sent</DialogTitle>
+            <div className="dash-empty-inline" style={{ minHeight: 200 }}>
+              <span
+                className="dash-dropzone-icon"
+                style={{ color: "#6f7a56" }}
+                aria-hidden="true"
+              >
+                <CheckCircleFill size={17} />
+              </span>
+              <h4>Application sent</h4>
+              <p>
+                The project owner will review your profile and get back to you soon.
+              </p>
             </div>
-            <h3 className="text-2xl font-bold mb-2">Application Sent!</h3>
-            <p className="text-muted-foreground">
-              The project owner will review your profile and get back to you soon.
-            </p>
           </div>
         )}
       </DialogContent>

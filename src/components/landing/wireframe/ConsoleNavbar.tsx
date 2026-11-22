@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { BrandTab } from "./BrandTab";
-import { ConsoleNavbarProps, NavItem } from "./types";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRightIcon, CloseIcon, MenuIcon, PeopleIcon } from "./icons";
+import type { ConsoleNavbarProps, NavItem } from "./types";
 
 const DEFAULT_NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
@@ -11,83 +12,157 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 ];
 
 /**
- * ConsoleNavbar represents the top header bar of the wireframe HUD window.
- * Configured with text-only navigation while maintaining the console aesthetic:
- * - BrandTab on the left with clean text logo
- * - Center text navigation links (Home, Explore, About, Contact)
- * - Right text actions (Sign In)
+ * Fixed editorial navigation. It stays available while scrolling and fades in
+ * a cream glass surface once the page moves, so the links remain readable over
+ * the dark sections below the hero.
  */
 export const ConsoleNavbar: React.FC<ConsoleNavbarProps> = ({
   brandText = "SkillSync",
   navItems = DEFAULT_NAV_ITEMS,
-  rightActionText = "Sign In",
+  rightActionText = "Sign in",
   rightActionHref = "/login",
-  showToggle = false,
-  isToggled: controlledToggled,
-  onToggle,
   className = "",
 }) => {
-  const [internalToggled, setInternalToggled] = useState(true);
-  const toggled = controlledToggled !== undefined ? controlledToggled : internalToggled;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
-  const handleToggle = () => {
-    const nextState = !toggled;
-    if (controlledToggled === undefined) {
-      setInternalToggled(nextState);
-    }
-    onToggle?.(nextState);
-  };
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
+
+  const isActive = (href: string) =>
+    href === "/" ? location.pathname === "/" : location.pathname.startsWith(href);
 
   return (
-    <header
-      className={`relative w-full h-10 sm:h-12 flex items-center justify-between rounded-t-2xl sm:rounded-t-3xl overflow-hidden select-none ${className}`}
+    <motion.header
+      initial={{ opacity: 0, y: -14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`hero-nav ${scrolled || mobileOpen ? "is-scrolled" : ""} ${className}`}
     >
-      {/* Left: Brand Tab with chamfered cut and text */}
-      <BrandTab brandText={brandText} />
+      <motion.div
+        aria-hidden="true"
+        initial={false}
+        animate={{ opacity: scrolled || mobileOpen ? 1 : 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="hero-nav-surface"
+      />
 
-      {/* Center: Text-only navigation links */}
-      <nav
-        aria-label="Main navigation links"
-        className="flex items-center gap-4 sm:gap-7 md:gap-9 mx-auto px-2"
-      >
-        {navItems.map((item) => (
-          <Link
-            key={item.label}
-            to={item.href}
-            className="text-xs sm:text-sm font-medium text-[#EFE6D8]/80 hover:text-[#EFE6D8] hover:bg-[#8A5A62]/20 px-2.5 py-1 rounded-md transition-colors"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      <div className="hero-nav-inner">
+        <Link to="/" aria-label="SkillSync home" className="hero-brand">
+          <span className="hero-brand-mark">
+            <PeopleIcon className="h-4 w-4" />
+          </span>
+          <span className="hero-brand-word">
+            {brandText}
+            <span className="hero-brand-ai">AI</span>
+          </span>
+        </Link>
 
-      {/* Right: Text-only action link (with optional toggle support) */}
-      <div className="flex items-center gap-3 sm:gap-4 pr-4 sm:pr-5">
-        {rightActionText && (
-          <Link
-            to={rightActionHref}
-            className="text-xs sm:text-sm font-bold text-[#EFE6D8] bg-[#A75D43] hover:bg-[#8F4E37] px-4 py-1.5 rounded-full shadow-sm transition-all"
-          >
+        <nav aria-label="Main navigation" className="hero-nav-links">
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                aria-current={active ? "page" : undefined}
+                className="hero-nav-link"
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="hero-nav-actions">
+          <Link to={rightActionHref} className="hero-nav-signin">
             {rightActionText}
           </Link>
-        )}
+          <Link to="/register" className="hero-nav-cta">
+            Get started
+            <ArrowUpRightIcon className="h-3 w-3" />
+          </Link>
+        </div>
 
-        {showToggle && (
-          <button
-            type="button"
-            onClick={handleToggle}
-            aria-label="Mode toggle"
-            aria-pressed={toggled}
-            className="relative w-11 sm:w-13 h-5 sm:h-6 rounded-full border border-[#8A5A62] bg-[#28090E] p-0.5 flex items-center cursor-pointer transition-colors duration-200 hover:border-[#EFE6D8] focus:outline-none focus:ring-1 focus:ring-[#A75D43]"
-          >
-            <div
-              className={`w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#EFE6D8] transition-transform duration-200 ease-out shadow-sm ${
-                toggled ? "translate-x-5 sm:translate-x-6" : "translate-x-0"
-              }`}
-            />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
+          aria-controls="hero-mobile-nav"
+          className="hero-menu-button"
+        >
+          {mobileOpen ? <CloseIcon className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
+        </button>
       </div>
-    </header>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            id="hero-mobile-nav"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="hero-mobile-menu"
+          >
+            <nav aria-label="Mobile navigation">
+              {navItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className="hero-mobile-link"
+                  >
+                    {item.label}
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 opacity-45" />
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="hero-mobile-actions">
+              <Link
+                to={rightActionHref}
+                onClick={() => setMobileOpen(false)}
+                className="hero-mobile-signin"
+              >
+                {rightActionText}
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setMobileOpen(false)}
+                className="hero-mobile-cta"
+              >
+                Get started
+                <ArrowUpRightIcon className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 };

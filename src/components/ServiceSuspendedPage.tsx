@@ -37,12 +37,12 @@ export function ServiceSuspendedPage({ resumeAt }: ServiceSuspendedPageProps) {
   const hasResumeDate = Boolean(resumeAt && resumeAt.getTime() > now.getTime());
 
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden bg-white text-foreground">
+    <div className="relative flex min-h-svh flex-col overflow-hidden bg-background text-foreground">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-secondary/60 blur-3xl" />
+        <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-secondary/30 blur-3xl" />
         <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-accent/25 blur-3xl" />
         <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f3f4f6_1px,transparent_1px),linear-gradient(to_bottom,#f3f4f6_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#E2D5C3_1px,transparent_1px),linear-gradient(to_bottom,#E2D5C3_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)] opacity-30" />
       </div>
 
       <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 md:px-12">
@@ -51,7 +51,7 @@ export function ServiceSuspendedPage({ resumeAt }: ServiceSuspendedPageProps) {
           <span className="text-xl font-extrabold tracking-tight sm:text-2xl">SkillSync</span>
         </div>
 
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-white/80 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground shadow-sm backdrop-blur sm:text-xs">
+        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground shadow-sm backdrop-blur sm:text-xs">
           <span className="h-2 w-2 rounded-full bg-accent" />
           Paused
         </span>
@@ -112,7 +112,7 @@ export function ServiceSuspendedPage({ resumeAt }: ServiceSuspendedPageProps) {
               {COUNTDOWN_UNITS.map((unit) => (
                 <div
                   key={unit.key}
-                  className="rounded-2xl border border-border bg-white/85 px-1 py-4 shadow-sm backdrop-blur sm:rounded-3xl sm:py-5"
+                  className="rounded-2xl border border-border bg-card/85 px-1 py-4 shadow-sm backdrop-blur sm:rounded-3xl sm:py-5"
                 >
                   <span className="block text-3xl font-extrabold tabular-nums tracking-tight text-foreground sm:text-4xl">
                     {String(countdown[unit.key]).padStart(2, "0")}
@@ -156,7 +156,7 @@ export function ServiceSuspendedPage({ resumeAt }: ServiceSuspendedPageProps) {
         </p>
       </main>
 
-      <footer className="relative z-10 border-t border-border/70 bg-white/60 px-5 py-5 text-center text-xs font-semibold text-muted-foreground backdrop-blur sm:text-sm">
+      <footer className="relative z-10 border-t border-border/70 bg-card/60 px-5 py-5 text-center text-xs font-semibold text-muted-foreground backdrop-blur sm:text-sm">
         {new Date().getFullYear()} SkillSync AI. All rights reserved.
       </footer>
     </div>
@@ -171,7 +171,7 @@ interface InfoCardProps {
 
 function InfoCard({ icon: Icon, title, description }: InfoCardProps) {
   return (
-    <div className="rounded-2xl border border-border bg-white/80 p-4 shadow-sm backdrop-blur sm:rounded-3xl sm:p-5">
+    <div className="rounded-2xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur sm:rounded-3xl sm:p-5">
       <Icon className="h-5 w-5 text-primary" />
       <h2 className="mt-3 text-base font-extrabold leading-tight">{title}</h2>
       <p className="mt-1.5 text-sm font-medium leading-relaxed text-muted-foreground">

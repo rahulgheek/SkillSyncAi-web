@@ -2,18 +2,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { updateSocialLinksSchema, UpdateSocialLinksInput, ProfileResponse } from "../schemas";
+import { ArrowRepeat, Github, Globe2, Linkedin } from "react-bootstrap-icons";
+import {
+  updateSocialLinksSchema,
+  UpdateSocialLinksInput,
+  ProfileResponse,
+} from "../schemas";
 import { updateSocialLinks } from "../api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Github, Linkedin, Globe } from "lucide-react";
 
 export function SocialLinksForm({ profile }: { profile: ProfileResponse }) {
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<UpdateSocialLinksInput>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UpdateSocialLinksInput>({
     resolver: zodResolver(updateSocialLinksSchema),
     defaultValues: {
       linkedinUrl: profile.linkedinUrl || "",
@@ -38,42 +42,61 @@ export function SocialLinksForm({ profile }: { profile: ProfileResponse }) {
   };
 
   return (
-    <Card className="shadow-lg border-secondary/20">
-      <CardHeader className="bg-secondary/5 rounded-t-xl">
-        <CardTitle className="text-xl text-secondary-foreground">Social Links</CardTitle>
-        <CardDescription>Connect your professional profiles.</CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="linkedinUrl" className="flex items-center gap-2">
-              <Linkedin className="w-4 h-4 text-[#0A66C2]" /> LinkedIn
-            </Label>
-            <Input id="linkedinUrl" type="url" {...register("linkedinUrl")} placeholder="https://linkedin.com/in/..." />
-            {errors.linkedinUrl && <p className="text-sm text-destructive">{errors.linkedinUrl.message}</p>}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="dash-form">
+      <div className="dash-field">
+        <label className="dash-label" htmlFor="social-linkedin">
+          <Linkedin size={11} aria-hidden="true" /> LinkedIn
+        </label>
+        <input
+          id="social-linkedin"
+          className="dash-input"
+          type="url"
+          placeholder="https://linkedin.com/in/..."
+          {...register("linkedinUrl")}
+        />
+        {errors.linkedinUrl && (
+          <p className="dash-error">{errors.linkedinUrl.message}</p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="githubUrl" className="flex items-center gap-2">
-              <Github className="w-4 h-4" /> GitHub
-            </Label>
-            <Input id="githubUrl" type="url" {...register("githubUrl")} placeholder="https://github.com/..." />
-            {errors.githubUrl && <p className="text-sm text-destructive">{errors.githubUrl.message}</p>}
-          </div>
+      <div className="dash-field">
+        <label className="dash-label" htmlFor="social-github">
+          <Github size={11} aria-hidden="true" /> GitHub
+        </label>
+        <input
+          id="social-github"
+          className="dash-input"
+          type="url"
+          placeholder="https://github.com/..."
+          {...register("githubUrl")}
+        />
+        {errors.githubUrl && <p className="dash-error">{errors.githubUrl.message}</p>}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="portfolioUrl" className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-primary" /> Portfolio Website
-            </Label>
-            <Input id="portfolioUrl" type="url" {...register("portfolioUrl")} placeholder="https://yourwebsite.com" />
-            {errors.portfolioUrl && <p className="text-sm text-destructive">{errors.portfolioUrl.message}</p>}
-          </div>
+      <div className="dash-field">
+        <label className="dash-label" htmlFor="social-portfolio">
+          <Globe2 size={11} aria-hidden="true" /> Portfolio website
+        </label>
+        <input
+          id="social-portfolio"
+          className="dash-input"
+          type="url"
+          placeholder="https://yourwebsite.com"
+          {...register("portfolioUrl")}
+        />
+        {errors.portfolioUrl && (
+          <p className="dash-error">{errors.portfolioUrl.message}</p>
+        )}
+      </div>
 
-          <Button type="submit" disabled={mutation.isPending} className="w-full sm:w-auto bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-            {mutation.isPending ? "Saving..." : "Save Links"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <div className="dash-form-actions">
+        <button type="submit" className="dash-btn dash-btn-solid" disabled={mutation.isPending}>
+          {mutation.isPending && (
+            <ArrowRepeat size={12} className="dash-icon-spin" aria-hidden="true" />
+          )}
+          Save links
+        </button>
+      </div>
+    </form>
   );
 }

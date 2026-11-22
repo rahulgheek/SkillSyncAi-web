@@ -3,14 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/text-area";
-import { updateBasicInfoSchema, type UpdateBasicInfoInput } from "@/features/userprofile/schemas";
+import { ArrowRepeat, Stars } from "react-bootstrap-icons";
+import {
+  updateBasicInfoSchema,
+  type UpdateBasicInfoInput,
+} from "@/features/userprofile/schemas";
 import { createProfile } from "@/features/userprofile/api";
-import { Sparkles } from "lucide-react";
 import { normalizeError } from "@/lib/api/errors";
 
 export function Onboarding() {
@@ -40,62 +38,93 @@ export function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg border-border shadow-xl">
-        <CardHeader className="text-center space-y-4 pb-6">
-          <div className="mx-auto bg-black h-12 w-12 rounded-2xl flex items-center justify-center shadow-md">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <CardTitle className="text-2xl font-bold tracking-tight">Welcome to SkillSync AI</CardTitle>
-            <CardDescription className="text-base mt-2">
-              Let's set up your professional profile to get started.
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" placeholder="John Doe" {...register("fullName")} className="bg-gray-50" />
-              {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+    <div className="dash-page" style={{ maxWidth: 620, marginInline: "auto" }}>
+      <div className="dash-onboarding-card">
+        <div className="dash-onboarding-head">
+          <span className="dash-onboarding-mark">
+            <Stars size={16} aria-hidden="true" />
+          </span>
+          <h1>Welcome to SkillSync</h1>
+          <p>
+            Set up your student profile so the right teams can find you. You can
+            refine everything later.
+          </p>
+        </div>
+
+        <div className="dash-onboarding-body">
+          <form onSubmit={handleSubmit(onSubmit)} className="dash-form">
+            <div className="dash-field">
+              <label className="dash-label" htmlFor="onboarding-name">
+                Full name
+              </label>
+              <input
+                id="onboarding-name"
+                className="dash-input"
+                placeholder="John Doe"
+                {...register("fullName")}
+              />
+              {errors.fullName && (
+                <p className="dash-error">{errors.fullName.message}</p>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="major">University / Major</Label>
-              <Input id="major" placeholder="B.S. Computer Science" {...register("major")} className="bg-gray-50" />
-              {errors.major && <p className="text-sm text-destructive">{errors.major.message}</p>}
+            <div className="dash-field">
+              <label className="dash-label" htmlFor="onboarding-major">
+                University / major
+              </label>
+              <input
+                id="onboarding-major"
+                className="dash-input"
+                placeholder="B.S. Computer Science"
+                {...register("major")}
+              />
+              {errors.major && <p className="dash-error">{errors.major.message}</p>}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="graduationYear">Graduation Year</Label>
-              <Input
-                id="graduationYear"
+            <div className="dash-field">
+              <label className="dash-label" htmlFor="onboarding-year">
+                Graduation year
+              </label>
+              <input
+                id="onboarding-year"
+                className="dash-input"
                 type="number"
                 placeholder="2026"
                 {...register("graduationYear", { valueAsNumber: true })}
-                className="bg-gray-50"
               />
-              {errors.graduationYear && <p className="text-sm text-destructive">{errors.graduationYear.message}</p>}
+              {errors.graduationYear && (
+                <p className="dash-error">{errors.graduationYear.message}</p>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="bio">Professional Bio</Label>
-              <Textarea 
-                id="bio" 
-                placeholder="Passionate about building scalable web applications..."
-                className="resize-none bg-gray-50 h-24"
+            <div className="dash-field">
+              <label className="dash-label" htmlFor="onboarding-bio">
+                Bio / about you
+              </label>
+              <textarea
+                id="onboarding-bio"
+                className="dash-textarea"
+                placeholder="Tell us about your interests, hackathons, and what you love building..."
                 {...register("bio")}
               />
-              {errors.bio && <p className="text-sm text-destructive">{errors.bio.message}</p>}
+              {errors.bio && <p className="dash-error">{errors.bio.message}</p>}
             </div>
 
-            <Button type="submit" className="w-full h-11 text-base rounded-lg mt-4" disabled={submitting}>
-              {submitting ? "Creating Profile..." : "Complete Setup"}
-            </Button>
+            <div className="dash-form-actions">
+              <button
+                type="submit"
+                className="dash-btn dash-btn-solid dash-btn-lg dash-btn-full"
+                disabled={submitting}
+              >
+                {submitting && (
+                  <ArrowRepeat size={13} className="dash-icon-spin" aria-hidden="true" />
+                )}
+                {submitting ? "Saving profile" : "Complete setup"}
+              </button>
+            </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

@@ -69,6 +69,7 @@ export interface ProjectRoleResponse {
   description: string;
   requiredSkills: RequiredSkill[];
   headcount: number;
+  filledCount: number;
 }
 
 export interface TeamMemberResponse {
@@ -225,6 +226,8 @@ export interface RecommendationResponse {
   id: string;
   projectId: string;
   userId: string;
+  candidateName: string;
+  candidateProfilePictureUrl?: string;
   status: string;
   semanticScore: number;
   finalScore: number;

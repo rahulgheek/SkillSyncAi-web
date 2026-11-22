@@ -1,23 +1,29 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  ArrowRepeat,
+  PlusLg,
+  Search,
+  XLg,
+} from "react-bootstrap-icons";
 import { ProfileResponse } from "../schemas";
 import { searchSkills, addSkill, removeSkill, Skill } from "../api";
-import { Loader2, Search, X } from "lucide-react";
 
-export function SkillsManager({ profile, isOwnProfile = true }: { profile: ProfileResponse, isOwnProfile?: boolean }) {
+export function SkillsManager({
+  profile,
+  isOwnProfile = true,
+}: {
+  profile: ProfileResponse;
+  isOwnProfile?: boolean;
+}) {
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Skill[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [level, setLevel] = useState<string>("BEGINNER");
-  
+
   // Debounced search
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -72,100 +78,138 @@ export function SkillsManager({ profile, isOwnProfile = true }: { profile: Profi
   };
 
   return (
-    <Card className="shadow-lg border-primary/20">
-      <CardHeader className="bg-primary/5 rounded-t-xl">
-        <CardTitle className="text-xl text-primary">{isOwnProfile ? "Your Skills" : "Skills"}</CardTitle>
-        <CardDescription>
-          {isOwnProfile ? "Add the skills you're proficient in and let AI match you to projects." : `Skills that ${profile.fullName} is proficient in.`}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6 space-y-6">
-        
-        {isOwnProfile && (
-          <div className="flex flex-col md:flex-row gap-3 relative">
-            <div className="flex-1 relative">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search for a skill (e.g., React, Java)..." 
-                value={selectedSkill ? selectedSkill.name : query} 
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  if (selectedSkill) setSelectedSkill(null);
-                }} 
-                className="pl-9"
-              />
-              {isSearching && <Loader2 className="absolute right-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />}
-              {selectedSkill && (
-                <button onClick={() => { setSelectedSkill(null); setQuery(""); }} className="absolute right-3 top-2.5">
-                  <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                </button>
-              )}
-            </div>
+    <div className="dash-stack">
+      <div className="dash-spread">
+        <div>
+          <h2 className="dash-mini-title">
+            {isOwnProfile ? "Your skills" : "Skills"}
+          </h2>
+          <p className="dash-mini-sub">
+            {isOwnProfile
+              ? "Add the skills you are proficient in and let AI match you to projects."
+              : `Skills that ${profile.fullName} is proficient in.`}
+          </p>
+        </div>
+        <span className="dash-badge dash-badge-soft">
+          {profile.skills?.length || 0} listed
+        </span>
+      </div>
 
-            {/* Dropdown Results */}
+      {isOwnProfile && (
+        <div className="dash-searchbar" style={{ alignItems: "flex-start" }}>
+          <div className="dash-input-wrap">
+            <Search size={12} aria-hidden="true" />
+            <input
+              className="dash-input"
+              placeholder="Search for a skill (e.g. React, Java)..."
+              value={selectedSkill ? selectedSkill.name : query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                if (selectedSkill) setSelectedSkill(null);
+              }}
+              aria-label="Search skills"
+            />
+            {isSearching && (
+              <span className="dash-input-action">
+                <ArrowRepeat size={12} className="dash-icon-spin" aria-hidden="true" />
+              </span>
+            )}
+            {selectedSkill && (
+              <button
+                type="button"
+                className="dash-input-action"
+                aria-label="Clear selected skill"
+                onClick={() => {
+                  setSelectedSkill(null);
+                  setQuery("");
+                }}
+              >
+                <XLg size={10} aria-hidden="true" />
+              </button>
+            )}
+
             {results.length > 0 && !selectedSkill && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
-                {results.map(skill => (
-                  <div 
-                    key={skill.id} 
-                    className="px-4 py-2 hover:bg-muted cursor-pointer flex flex-col"
+              <div className="dash-suggest">
+                {results.map((skill) => (
+                  <button
+                    type="button"
+                    key={skill.id}
                     onClick={() => {
                       setSelectedSkill(skill);
                       setResults([]);
                     }}
                   >
-                    <span className="font-medium">{skill.name}</span>
-                    <span className="text-xs text-muted-foreground">{skill.category}</span>
-                  </div>
+                    {skill.name}
+                    <small>{skill.category}</small>
+                  </button>
                 ))}
               </div>
             )}
           </div>
-          
-          <div className="w-full md:w-48">
-            <Select value={level} onValueChange={setLevel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Proficiency" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="BEGINNER">Beginner</SelectItem>
-                <SelectItem value="INTERMEDIATE">Intermediate</SelectItem>
-                <SelectItem value="ADVANCED">Advanced</SelectItem>
-                <SelectItem value="EXPERT">Expert</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <Button onClick={handleAddSkill} disabled={!selectedSkill || addMutation.isPending} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            {addMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Skill"}
-          </Button>
+
+          <select
+            className="dash-select"
+            style={{ maxWidth: 168 }}
+            value={level}
+            onChange={(event) => setLevel(event.target.value)}
+            aria-label="Skill proficiency"
+          >
+            <option value="BEGINNER">Beginner</option>
+            <option value="INTERMEDIATE">Intermediate</option>
+            <option value="ADVANCED">Advanced</option>
+            <option value="EXPERT">Expert</option>
+          </select>
+
+          <button
+            type="button"
+            className="dash-btn dash-btn-solid"
+            onClick={handleAddSkill}
+            disabled={!selectedSkill || addMutation.isPending}
+          >
+            {addMutation.isPending ? (
+              <ArrowRepeat size={12} className="dash-icon-spin" aria-hidden="true" />
+            ) : (
+              <PlusLg size={12} aria-hidden="true" />
+            )}
+            Add skill
+          </button>
         </div>
-        )}
-        
-        <div className="flex flex-wrap gap-2 pt-2">
-          {(!profile.skills || profile.skills.length === 0) && (
-            <p className="text-sm text-muted-foreground italic p-4 border border-dashed rounded-lg w-full text-center">
-              No skills added yet. Add some skills to boost your profile!
-            </p>
-          )}
-          {profile.skills?.map((skill) => (
-            <Badge key={skill.studentSkillId} variant="secondary" className="px-3 py-1.5 bg-primary/10 text-primary border border-primary/20 flex items-center gap-2 group transition-all hover:bg-primary/20">
-              <span className="font-medium">{skill.name}</span>
-              <span className="text-[10px] text-muted-foreground ml-1 bg-background px-1.5 py-0.5 rounded-full uppercase tracking-wider font-semibold shadow-sm">{skill.level}</span>
-              {isOwnProfile && (
-                <button 
-                  onClick={() => removeMutation.mutate(skill.studentSkillId)}
-                  disabled={removeMutation.isPending}
-                  className="ml-1 text-primary/50 hover:text-destructive transition-colors rounded-full hover:bg-destructive/10 p-0.5"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </Badge>
-          ))}
+      )}
+
+      {(!profile.skills || profile.skills.length === 0) && (
+        <div className="dash-empty-inline dash-panel-soft">
+          <p>
+            No skills added yet. Add a few to boost your profile and sharpen your
+            project matches.
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      )}
+
+      <div className="dash-tag-row">
+        {profile.skills?.map((skill) => (
+          <span key={skill.studentSkillId} className="dash-tag">
+            {skill.name}
+            <span style={{ opacity: 0.62, letterSpacing: "0.02em" }}>
+              {skill.level}
+            </span>
+            {isOwnProfile && (
+              <button
+                type="button"
+                className="dash-tag-remove"
+                aria-label={`Remove ${skill.name}`}
+                onClick={() => {
+                  if (skill.studentSkillId) {
+                    removeMutation.mutate(skill.studentSkillId);
+                  }
+                }}
+                disabled={removeMutation.isPending || !skill.studentSkillId}
+              >
+                <XLg size={9} aria-hidden="true" />
+              </button>
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }

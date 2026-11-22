@@ -1,19 +1,26 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMyNotes, deleteNote, createNote, updateNote, NoteResponse, NoteRequest } from "../api";
-import { NoteEditorModal } from "../components/NoteEditorModal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, Search, FileText, Pin, Clock, MoreVertical, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Clock,
+  FileEarmarkText,
+  JournalText,
+  PinAngleFill,
+  PinFill,
+  PlusLg,
+  Search,
+  Trash3,
+} from "react-bootstrap-icons";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
+import {
+  getMyNotes,
+  deleteNote,
+  createNote,
+  updateNote,
+  NoteResponse,
+  NoteRequest,
+} from "../api";
+import { NoteEditorModal } from "../components/NoteEditorModal";
 
 export function NotesDashboard() {
   const queryClient = useQueryClient();
@@ -43,15 +50,16 @@ export function NotesDashboard() {
   });
 
   const notes = data?.content || [];
-  
-  const filteredNotes = notes.filter((note) => 
-    note.title.toLowerCase().includes(search.toLowerCase()) || 
-    note.content.toLowerCase().includes(search.toLowerCase()) ||
-    note.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))
+
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(search.toLowerCase()) ||
+      note.content.toLowerCase().includes(search.toLowerCase()) ||
+      note.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const pinnedNotes = filteredNotes.filter(n => n.pinned);
-  const otherNotes = filteredNotes.filter(n => !n.pinned);
+  const pinnedNotes = filteredNotes.filter((note) => note.pinned);
+  const otherNotes = filteredNotes.filter((note) => !note.pinned);
 
   const handleOpenEditor = (note?: NoteResponse) => {
     setEditingNote(note || null);
@@ -69,139 +77,159 @@ export function NotesDashboard() {
     await saveMutation.mutateAsync({ request, id });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
-      </div>
-    );
-  }
-
   const renderNoteCard = (note: NoteResponse) => (
-    <div
+    <article
       key={note.id}
+      role="button"
+      tabIndex={0}
       onClick={() => handleOpenEditor(note)}
-      className="group relative flex flex-col justify-between p-6 rounded-[2rem] border border-gray-100 bg-white shadow-lg shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleOpenEditor(note);
+        }
+      }}
+      className="dash-note-card"
     >
-      <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
-      <div>
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-black text-xl line-clamp-1 group-hover:text-primary transition-colors">
-            {note.title}
-          </h3>
-          <div className="flex items-center gap-1">
-            {note.pinned && <Pin className="h-4 w-4 text-primary fill-current" />}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={(e) => handleDelete(e, note.id)}>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+      <div className="dash-note-top">
+        <h3 className="dash-note-title">{note.title}</h3>
+        <div className="dash-note-actions">
+          {note.pinned && (
+            <span className="dash-note-pin" aria-label="Pinned note">
+              <PinAngleFill size={12} aria-hidden="true" />
+            </span>
+          )}
+          <button
+            type="button"
+            className="dash-icon-btn-sm is-danger"
+            aria-label={`Delete ${note.title}`}
+            onClick={(event) => handleDelete(event, note.id)}
+          >
+            <Trash3 size={10} aria-hidden="true" />
+          </button>
         </div>
-        
-        <p className="text-base font-medium text-muted-foreground line-clamp-3 mb-5">
-          {note.content}
-        </p>
-
-        {note.aiSummary && (
-          <div className="mb-5 p-3 rounded-2xl bg-primary/5 border border-primary/10 text-sm font-medium text-foreground line-clamp-2">
-            <span className="font-black text-primary mr-1">AI:</span> 
-            {note.aiSummary}
-          </div>
-        )}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-2">
-          {note.tags.slice(0, 2).map(tag => (
-            <Badge key={tag} variant="secondary" className="text-xs px-2.5 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 border-0 font-bold">
+      <p className="dash-note-body">{note.content}</p>
+
+      {note.aiSummary && (
+        <div className="dash-note-ai">
+          <strong>AI summary</strong>
+          <br />
+          {note.aiSummary}
+        </div>
+      )}
+
+      <div className="dash-note-foot">
+        <div className="dash-tag-row">
+          {note.tags.slice(0, 2).map((tag) => (
+            <span key={tag} className="dash-tag">
               {tag}
-            </Badge>
+            </span>
           ))}
           {note.tags.length > 2 && (
-            <Badge variant="secondary" className="text-xs px-2.5 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 border-0 font-bold">
-              +{note.tags.length - 2}
-            </Badge>
+            <span className="dash-tag">+{note.tags.length - 2}</span>
           )}
         </div>
-        <div className="flex shrink-0 items-center text-xs text-muted-foreground">
-          <Clock className="mr-1 h-3 w-3" />
+        <span className="dash-note-time">
+          <Clock size={9} aria-hidden="true" />
           {formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true })}
-        </div>
+        </span>
       </div>
-    </div>
+    </article>
   );
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">My <span className="font-handwriting text-primary text-4xl sm:text-5xl inline-block -rotate-2">Notes</span></h1>
-          <p className="text-base sm:text-lg font-medium text-muted-foreground mt-2">Capture ideas, summarize with AI, and stay organized.</p>
-        </div>
-        <Button onClick={() => handleOpenEditor()} className="w-full sm:w-auto gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 text-base font-bold justify-center">
-          <Plus className="h-5 w-5" />
-          New Note
-        </Button>
-      </div>
-
-      <div className="relative max-w-xl">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search your notes..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-12 h-14 rounded-full bg-white border-gray-200 shadow-sm focus-visible:ring-primary/20 text-base font-medium"
-        />
-      </div>
-
-      {notes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center rounded-[2rem] bg-white shadow-xl shadow-gray-200/50 border border-gray-100">
-          <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
-            <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-          </div>
-          <h3 className="text-2xl sm:text-3xl font-black mb-3 text-foreground">No notes yet</h3>
-          <p className="text-base sm:text-lg font-medium text-muted-foreground max-w-md mb-8 px-4">
-            Create your first note to start organizing your thoughts. You can even use AI to summarize long notes!
+    <div className="dash-page">
+      <header className="dash-page-head">
+        <div className="dash-page-heading">
+          <p className="dash-eyebrow">Notes</p>
+          <h1 className="dash-title">
+            A desk for <em>loose thoughts.</em>
+          </h1>
+          <p className="dash-sub">
+            Capture ideas, summarize the long ones with AI, and keep them close.
           </p>
-          <Button onClick={() => handleOpenEditor()} className="gap-2 rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 font-bold">
-            <Plus className="h-5 w-5" />
-            Create Note
-          </Button>
+        </div>
+        <div className="dash-head-actions">
+          <button
+            type="button"
+            className="dash-btn dash-btn-solid"
+            onClick={() => handleOpenEditor()}
+          >
+            <PlusLg size={12} aria-hidden="true" />
+            New note
+          </button>
+        </div>
+      </header>
+
+      <div className="dash-searchbar" role="search">
+        <div className="dash-input-wrap">
+          <Search size={13} aria-hidden="true" />
+          <input
+            className="dash-input"
+            placeholder="Search titles, content, or tags..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search notes"
+          />
+        </div>
+        <span className="dash-badge dash-badge-soft">
+          {filteredNotes.length} {filteredNotes.length === 1 ? "note" : "notes"}
+        </span>
+      </div>
+
+      {isLoading ? (
+        <div className="dash-page-loader" role="status" aria-label="Loading notes">
+          <span className="dash-spinner" aria-hidden="true" />
+          <span>Opening your notes</span>
+        </div>
+      ) : notes.length === 0 ? (
+        <div className="dash-empty dash-panel">
+          <span className="dash-empty-icon">
+            <FileEarmarkText size={19} aria-hidden="true" />
+          </span>
+          <h3>No notes yet</h3>
+          <p>
+            Create your first note to start organizing your thoughts. You can
+            even ask AI to summarize the long ones.
+          </p>
+          <button
+            type="button"
+            className="dash-btn dash-btn-solid"
+            onClick={() => handleOpenEditor()}
+          >
+            <PlusLg size={12} aria-hidden="true" />
+            Create note
+          </button>
+        </div>
+      ) : filteredNotes.length === 0 ? (
+        <div className="dash-empty dash-panel">
+          <span className="dash-empty-icon">
+            <JournalText size={19} aria-hidden="true" />
+          </span>
+          <h3>Nothing matches that search</h3>
+          <p>Try a different title, phrase, or tag.</p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="dash-stack">
           {pinnedNotes.length > 0 && (
-            <div>
-              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                <Pin className="h-4 w-4" /> Pinned
+            <section>
+              <h2 className="dash-note-section-head">
+                <PinFill size={10} aria-hidden="true" />
+                Pinned
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {pinnedNotes.map(renderNoteCard)}
-              </div>
-            </div>
+              <div className="dash-notes-grid">{pinnedNotes.map(renderNoteCard)}</div>
+            </section>
           )}
 
           {otherNotes.length > 0 && (
-            <div>
+            <section>
               {pinnedNotes.length > 0 && (
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-                  Others
-                </h2>
+                <h2 className="dash-note-section-head">Others</h2>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {otherNotes.map(renderNoteCard)}
-              </div>
-            </div>
+              <div className="dash-notes-grid">{otherNotes.map(renderNoteCard)}</div>
+            </section>
           )}
         </div>
       )}

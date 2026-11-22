@@ -1,20 +1,41 @@
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/text-area";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  ArrowRepeat,
+  BoxArrowUpRight,
+  Building,
+  Calendar3,
+  PencilSquare,
+  PlusLg,
+  Trash3,
+  Trophy,
+  Upload,
+} from "react-bootstrap-icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ProfileResponse, Achievement } from "../schemas";
-import { addAchievement, updateAchievement, deleteAchievement, AchievementInput, getUploadSignature } from "../api";
-import { Plus, ExternalLink, Calendar, Building2, Loader2, Pencil, Trash2, Trophy, Upload } from "lucide-react";
+import {
+  addAchievement,
+  updateAchievement,
+  deleteAchievement,
+  AchievementInput,
+  getUploadSignature,
+} from "../api";
 import axios from "axios";
-import { Badge } from "@/components/ui/badge";
 
-export function AchievementsManager({ profile, isOwnProfile = true }: { profile: ProfileResponse, isOwnProfile?: boolean }) {
+export function AchievementsManager({
+  profile,
+  isOwnProfile = true,
+}: {
+  profile: ProfileResponse;
+  isOwnProfile?: boolean;
+}) {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] = useState<Achievement | null>(null);
@@ -101,7 +122,8 @@ export function AchievementsManager({ profile, isOwnProfile = true }: { profile:
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: { id: string; input: AchievementInput }) => updateAchievement(data.id, data.input),
+    mutationFn: (data: { id: string; input: AchievementInput }) =>
+      updateAchievement(data.id, data.input),
     onSuccess: () => {
       toast.success("Achievement updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -138,181 +160,280 @@ export function AchievementsManager({ profile, isOwnProfile = true }: { profile:
   };
 
   return (
-    <Card className="shadow-lg border-primary/20">
-      <CardHeader className="flex flex-row items-center justify-between bg-primary/5 rounded-t-xl">
+    <div className="dash-stack">
+      <div className="dash-spread">
         <div>
-          <CardTitle className="text-xl text-primary">Honors & Awards</CardTitle>
-          <CardDescription>Showcase your certificates, hackathons, and special achievements.</CardDescription>
+          <h2 className="dash-mini-title">Honors & awards</h2>
+          <p className="dash-mini-sub">
+            Certificates, hackathons, and the moments worth keeping.
+          </p>
         </div>
         {isOwnProfile && (
-          <Dialog open={isOpen} onOpenChange={(open) => {
-            setIsOpen(open);
-            if (!open) resetForm();
-          }}>
+          <Dialog
+            open={isOpen}
+            onOpenChange={(open) => {
+              setIsOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-                <Plus className="w-4 h-4" /> Add Achievement
-              </Button>
+              <button type="button" className="dash-btn dash-btn-ghost dash-btn-sm">
+                <PlusLg size={11} aria-hidden="true" />
+                Add achievement
+              </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{editingAchievement ? "Edit Achievement" : "Add New Achievement"}</DialogTitle>
-                <DialogDescription>
-                  Record your success and upload certificates for proof.
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
-                  <Input id="title" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. AWS Solutions Architect" />
+            <DialogContent className="dash-modal">
+              <div className="dash-modal-head">
+                <div>
+                  <DialogTitle className="dash-modal-title">
+                    {editingAchievement ? "Edit achievement" : "Add an achievement"}
+                  </DialogTitle>
+                  <DialogDescription className="dash-modal-desc">
+                    Record the win and attach a certificate or proof.
+                  </DialogDescription>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="organization">Organization *</Label>
-                    <Input id="organization" required value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="e.g. Amazon Web Services" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Date Achieved *</Label>
-                    <Input id="date" type="month" required value={date} onChange={(e) => setDate(e.target.value)} />
-                  </div>
-                </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Type *</Label>
-                    <Select value={type} onValueChange={setType}>
-                      <SelectTrigger id="type">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Certificate">Certificate</SelectItem>
-                        <SelectItem value="Hackathon">Hackathon</SelectItem>
-                        <SelectItem value="Competition">Competition</SelectItem>
-                        <SelectItem value="Award">Award</SelectItem>
-                        <SelectItem value="Badge">Badge</SelectItem>
-                      </SelectContent>
-                    </Select>
+              <form onSubmit={handleSubmit}>
+                <div className="dash-modal-body dash-form">
+                  <div className="dash-field">
+                    <label className="dash-label" htmlFor="achievement-title">
+                      Title *
+                    </label>
+                    <input
+                      id="achievement-title"
+                      className="dash-input"
+                      required
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="e.g. AWS Solutions Architect"
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Certificate / Proof</Label>
-                    <div className="flex gap-2">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        className="w-full relative" 
-                        disabled={isUploading}
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
-                        {certificateUrl ? "Replace File" : "Upload File"}
-                      </Button>
-                      <input 
-                        type="file" 
-                        ref={fileInputRef}
-                        className="hidden" 
-                        accept=".pdf,image/*" 
-                        onChange={handleFileUpload} 
+
+                  <div className="dash-form-grid">
+                    <div className="dash-field">
+                      <label className="dash-label" htmlFor="achievement-org">
+                        Organization *
+                      </label>
+                      <input
+                        id="achievement-org"
+                        className="dash-input"
+                        required
+                        value={organization}
+                        onChange={(e) => setOrganization(e.target.value)}
+                        placeholder="e.g. Amazon Web Services"
+                      />
+                    </div>
+                    <div className="dash-field">
+                      <label className="dash-label" htmlFor="achievement-date">
+                        Date achieved *
+                      </label>
+                      <input
+                        id="achievement-date"
+                        className="dash-input"
+                        type="month"
+                        required
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                       />
                     </div>
                   </div>
-                </div>
 
-                {certificateUrl && (
-                  <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    File uploaded successfully: 
-                    <a href={certificateUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center">
-                      View <ExternalLink className="w-3 h-3 ml-1" />
-                    </a>
-                    <Button type="button" variant="ghost" size="sm" className="h-6 px-2 text-destructive ml-auto" onClick={() => setCertificateUrl("")}>
-                      Remove
-                    </Button>
+                  <div className="dash-form-grid">
+                    <div className="dash-field">
+                      <label className="dash-label" htmlFor="achievement-type">
+                        Type *
+                      </label>
+                      <select
+                        id="achievement-type"
+                        className="dash-select"
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                      >
+                        <option value="Certificate">Certificate</option>
+                        <option value="Hackathon">Hackathon</option>
+                        <option value="Competition">Competition</option>
+                        <option value="Award">Award</option>
+                        <option value="Badge">Badge</option>
+                      </select>
+                    </div>
+                    <div className="dash-field">
+                      <span className="dash-label">Certificate / proof</span>
+                      <button
+                        type="button"
+                        className="dash-btn dash-btn-ghost"
+                        disabled={isUploading}
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        {isUploading ? (
+                          <ArrowRepeat
+                            size={12}
+                            className="dash-icon-spin"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <Upload size={12} aria-hidden="true" />
+                        )}
+                        {certificateUrl ? "Replace file" : "Upload file"}
+                      </button>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept=".pdf,image/*"
+                        onChange={handleFileUpload}
+                      />
+                    </div>
                   </div>
-                )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe what this achievement is about." className="h-24" />
+                  {certificateUrl && (
+                    <div className="dash-alert">
+                      <Trophy size={12} aria-hidden="true" />
+                      <span style={{ flex: 1 }}>Certificate uploaded successfully.</span>
+                      <a
+                        href={certificateUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="dash-btn dash-btn-ghost dash-btn-sm"
+                      >
+                        View
+                        <BoxArrowUpRight size={10} aria-hidden="true" />
+                      </a>
+                      <button
+                        type="button"
+                        className="dash-icon-btn-sm is-danger"
+                        aria-label="Remove certificate"
+                        onClick={() => setCertificateUrl("")}
+                      >
+                        <Trash3 size={10} aria-hidden="true" />
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="dash-field">
+                    <label className="dash-label" htmlFor="achievement-description">
+                      Description
+                    </label>
+                    <textarea
+                      id="achievement-description"
+                      className="dash-textarea"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Describe what this achievement is about."
+                    />
+                  </div>
                 </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                  <Button type="submit" disabled={addMutation.isPending || updateMutation.isPending || isUploading}>
-                    {(addMutation.isPending || updateMutation.isPending) ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Achievement"}
-                  </Button>
-                </DialogFooter>
+
+                <div className="dash-modal-foot">
+                  <span className="dash-help">Proof builds trust with teammates</span>
+                  <div className="dash-modal-actions">
+                    <button
+                      type="button"
+                      className="dash-btn dash-btn-ghost"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="dash-btn dash-btn-solid"
+                      disabled={
+                        addMutation.isPending ||
+                        updateMutation.isPending ||
+                        isUploading
+                      }
+                    >
+                      {(addMutation.isPending || updateMutation.isPending) && (
+                        <ArrowRepeat
+                          size={12}
+                          className="dash-icon-spin"
+                          aria-hidden="true"
+                        />
+                      )}
+                      Save achievement
+                    </button>
+                  </div>
+                </div>
               </form>
             </DialogContent>
           </Dialog>
         )}
-      </CardHeader>
-      <CardContent className="space-y-4 pt-6">
-        {(!profile.achievements || profile.achievements.length === 0) && (
-          <div className="text-center py-6 text-muted-foreground border border-dashed rounded-lg">
-            No achievements added yet.
-          </div>
-        )}
-        
-        <div className="grid gap-4">
-          {profile.achievements?.map((achievement) => (
-            <div key={achievement.id} className="group border border-border bg-card hover:bg-muted/30 rounded-lg p-5 transition-all relative">
+      </div>
+
+      {(!profile.achievements || profile.achievements.length === 0) && (
+        <div className="dash-empty-inline dash-panel-soft">
+          <Trophy size={18} color="#8f8d6e" aria-hidden="true" />
+          <p>No achievements added yet.</p>
+        </div>
+      )}
+
+      <div className="dash-stack-sm">
+        {profile.achievements?.map((achievement) => (
+          <article key={achievement.id} className="dash-entry">
+            <div className="dash-spread">
+              <div style={{ minWidth: 0 }}>
+                <h3 className="dash-entry-title">
+                  {achievement.title}
+                  <span className="dash-badge dash-badge-soft">{achievement.type}</span>
+                </h3>
+                <div className="dash-entry-meta">
+                  <span>
+                    <Building size={10} aria-hidden="true" />
+                    {achievement.organization}
+                  </span>
+                  <span>
+                    <Calendar3 size={10} aria-hidden="true" />
+                    {achievement.date}
+                  </span>
+                </div>
+              </div>
+
               {isOwnProfile && (
-                <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-opacity gap-2">
-                  <Button size="icon" variant="secondary" className="w-8 h-8" onClick={() => handleEdit(achievement)}>
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                  <Button size="icon" variant="destructive" className="w-8 h-8" onClick={() => {
-                    if (confirm("Are you sure you want to delete this achievement?")) {
-                      deleteMutation.mutate(achievement.id!);
-                    }
-                  }}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                <div className="dash-entry-actions">
+                  <button
+                    type="button"
+                    className="dash-icon-btn-sm"
+                    aria-label={`Edit ${achievement.title}`}
+                    onClick={() => handleEdit(achievement)}
+                  >
+                    <PencilSquare size={11} aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="dash-icon-btn-sm is-danger"
+                    aria-label={`Delete ${achievement.title}`}
+                    onClick={() => {
+                      if (confirm("Are you sure you want to delete this achievement?")) {
+                        deleteMutation.mutate(achievement.id!);
+                      }
+                    }}
+                  >
+                    <Trash3 size={11} aria-hidden="true" />
+                  </button>
                 </div>
               )}
-              
-              <div className="pr-16">
-                <h4 className="text-lg font-semibold text-foreground flex items-center gap-3">
-                  {achievement.title}
-                  <Badge variant="outline" className="bg-primary/5 text-primary">
-                    {achievement.type}
-                  </Badge>
-                </h4>
-                
-                <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mt-2">
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <Building2 className="w-3.5 h-3.5" />
-                    {achievement.organization}
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {achievement.date}
-                  </div>
-                </div>
-                
-                {achievement.description && (
-                  <p className="text-sm text-foreground/80 mt-4 leading-relaxed whitespace-pre-wrap">
-                    {achievement.description}
-                  </p>
-                )}
-
-                {achievement.certificateUrl && (
-                  <div className="mt-4 pt-3 border-t border-border">
-                    <a 
-                      href={achievement.certificateUrl} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-1.5" />
-                      View Certificate
-                    </a>
-                  </div>
-                )}
-              </div>
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+
+            {achievement.description && (
+              <p className="dash-entry-text">{achievement.description}</p>
+            )}
+
+            {achievement.certificateUrl && (
+              <div style={{ marginTop: 10 }}>
+                <a
+                  href={achievement.certificateUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="dash-btn dash-btn-ghost dash-btn-sm"
+                >
+                  <BoxArrowUpRight size={11} aria-hidden="true" />
+                  View certificate
+                </a>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
   );
 }

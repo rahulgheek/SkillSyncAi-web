@@ -1,42 +1,64 @@
+import type { Icon } from "react-bootstrap-icons";
+import { Eye, People, Tools, Trophy } from "react-bootstrap-icons";
 import { ProfileResponse } from "../schemas";
-import { Code2, Trophy, Users, Eye } from "lucide-react";
+
+type StatTone = "olive" | "terracotta" | "sky" | "ink";
+
 export function QuickStats({ profile }: { profile: ProfileResponse }) {
-  const stats = [
+  const stats: {
+    label: string;
+    value: number;
+    hint: string;
+    icon: Icon;
+    tone: StatTone;
+  }[] = [
     {
-      label: "Skills Verified",
+      label: "Skills verified",
       value: profile.skills?.length || 0,
-      icon: Code2,
+      hint: "Craft you can prove",
+      icon: Tools,
+      tone: "olive",
     },
     {
-      label: "Projects Completed",
+      label: "Projects completed",
       value: profile.projects?.length || 0,
+      hint: "Work in the world",
       icon: Trophy,
+      tone: "terracotta",
     },
     {
       label: "Connections",
-      value: profile.stats?.connections || 42,
-      icon: Users,
+      value: profile.stats?.connections || 0,
+      hint: "Builders you know",
+      icon: People,
+      tone: "sky",
     },
     {
-      label: "Profile Views",
-      value: profile.stats?.profileViews || 128,
+      label: "Profile views",
+      value: profile.stats?.profileViews || 0,
+      hint: "People stopping by",
       icon: Eye,
-    }
+      tone: "ink",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-      {stats.map((stat, i) => (
-        <div key={i} className="bg-white rounded-[2rem] border border-gray-100 p-4 sm:p-6 flex items-center gap-3 sm:gap-5 shadow-lg shadow-gray-200/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group min-w-0">
-          <div className="p-3 sm:p-4 shrink-0 bg-primary/10 rounded-2xl text-primary shadow-inner group-hover:scale-110 transition-transform duration-300">
-            <stat.icon className="h-5 w-5 sm:h-6 sm:w-6" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">{stat.value}</p>
-            <p className="text-[10px] sm:text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1">{stat.label}</p>
-          </div>
-        </div>
-      ))}
+    <div className="dash-stats">
+      {stats.map((stat) => {
+        const IconGlyph = stat.icon;
+        return (
+          <article className="dash-stat" key={stat.label}>
+            <div className="dash-stat-top">
+              <span className={`dash-stat-icon dash-tone-${stat.tone}`}>
+                <IconGlyph size={14} aria-hidden="true" />
+              </span>
+              <span className="dash-stat-label">{stat.label}</span>
+            </div>
+            <strong className="dash-stat-value">{stat.value}</strong>
+            <span className="dash-stat-hint">{stat.hint}</span>
+          </article>
+        );
+      })}
     </div>
   );
 }

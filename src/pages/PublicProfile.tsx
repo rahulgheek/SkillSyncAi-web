@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { PersonX } from "react-bootstrap-icons";
 import { getPublicProfile } from "@/features/userprofile/api";
-import { Loader2 } from "lucide-react";
 import { ProfileHero } from "@/features/userprofile/sections/ProfileHero";
 import { QuickStats } from "@/features/userprofile/sections/QuickStats";
 import { OverviewTab } from "@/features/userprofile/sections/tabs/OverviewTab";
@@ -12,7 +12,7 @@ import { AchievementsTab } from "@/features/userprofile/sections/tabs/Achievemen
 export function PublicProfile() {
   const { userId } = useParams<{ userId: string }>();
 
-  const { data: profile, isLoading, isError, error } = useQuery({
+  const { data: profile, isLoading, isError } = useQuery({
     queryKey: ["publicProfile", userId],
     queryFn: () => getPublicProfile(userId!),
     enabled: !!userId,
@@ -20,49 +20,81 @@ export function PublicProfile() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="dash-page">
+        <div className="dash-page-loader" role="status" aria-label="Loading profile">
+          <span className="dash-spinner" aria-hidden="true" />
+          <span>Loading profile</span>
+        </div>
       </div>
     );
   }
 
   if (isError || !profile) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
-        <h2 className="text-2xl font-bold text-destructive mb-2">Profile Not Found</h2>
-        <p className="text-muted-foreground">This profile may be private, deleted, or does not exist.</p>
+      <div className="dash-page">
+        <div className="dash-empty-inline dash-panel" style={{ minHeight: 320 }}>
+          <PersonX size={26} color="#8f8d6e" aria-hidden="true" />
+          <h4>Profile not found</h4>
+          <p>This profile may be private, deleted, or does not exist.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-0 md:py-8 px-0 sm:px-6 lg:px-8 animate-in fade-in duration-500 bg-gray-50 min-h-screen">
-      <div className="space-y-8">
-        <ProfileHero profile={profile} isOwnProfile={false} />
-        <QuickStats profile={profile} />
-
-        <div className="space-y-8 pt-6">
-          <section>
-            <h3 className="text-2xl font-bold mb-4 px-1">Overview</h3>
-            <OverviewTab profile={profile} />
-          </section>
-          
-          <section>
-            <h3 className="text-2xl font-bold mb-4 px-1">Skills</h3>
-            <SkillsTab profile={profile} isOwnProfile={false} />
-          </section>
-          
-          <section>
-            <h3 className="text-2xl font-bold mb-4 px-1">Projects</h3>
-            <ProjectsTab profile={profile} isOwnProfile={false} />
-          </section>
-          
-          <section>
-            <h3 className="text-2xl font-bold mb-4 px-1">Achievements</h3>
-            <AchievementsTab profile={profile} isOwnProfile={false} />
-          </section>
+    <div className="dash-page">
+      <header className="dash-page-head">
+        <div className="dash-page-heading">
+          <p className="dash-eyebrow">Public profile</p>
+          <h1 className="dash-title">
+            A builder&rsquo;s <em>record.</em>
+          </h1>
+          <p className="dash-sub">
+            Skills, shipped work, and the moments that shaped them.
+          </p>
         </div>
-      </div>
+      </header>
+
+      <ProfileHero profile={profile} isOwnProfile={false} />
+      <QuickStats profile={profile} />
+
+      <OverviewTab profile={profile} />
+
+      <section className="dash-panel">
+        <div className="dash-panel-head">
+          <div className="dash-panel-heading">
+            <p className="dash-panel-kicker">What they work with</p>
+            <h2 className="dash-panel-title">Skills</h2>
+          </div>
+        </div>
+        <div className="dash-panel-body">
+          <SkillsTab profile={profile} isOwnProfile={false} />
+        </div>
+      </section>
+
+      <section className="dash-panel">
+        <div className="dash-panel-head">
+          <div className="dash-panel-heading">
+            <p className="dash-panel-kicker">Built before</p>
+            <h2 className="dash-panel-title">Projects</h2>
+          </div>
+        </div>
+        <div className="dash-panel-body">
+          <ProjectsTab profile={profile} isOwnProfile={false} />
+        </div>
+      </section>
+
+      <section className="dash-panel">
+        <div className="dash-panel-head">
+          <div className="dash-panel-heading">
+            <p className="dash-panel-kicker">Recognized for</p>
+            <h2 className="dash-panel-title">Achievements</h2>
+          </div>
+        </div>
+        <div className="dash-panel-body">
+          <AchievementsTab profile={profile} isOwnProfile={false} />
+        </div>
+      </section>
     </div>
   );
 }

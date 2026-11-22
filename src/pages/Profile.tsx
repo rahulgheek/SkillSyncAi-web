@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
+import {
+  Folder2Open,
+  PersonLinesFill,
+  Stars,
+  Tools,
+  Trophy,
+} from "react-bootstrap-icons";
 import { getMyProfile } from "@/features/userprofile/api";
-import { Loader2 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileHero } from "@/features/userprofile/sections/ProfileHero";
 import { QuickStats } from "@/features/userprofile/sections/QuickStats";
 import { OverviewTab } from "@/features/userprofile/sections/tabs/OverviewTab";
@@ -11,9 +17,11 @@ import { ProjectsTab } from "@/features/userprofile/sections/tabs/ProjectsTab";
 import { AchievementsTab } from "@/features/userprofile/sections/tabs/AchievementsTab";
 import { AiInsightsTab } from "@/features/userprofile/sections/tabs/AiInsightsTab";
 import { ProfileCompletionTracker } from "@/features/userprofile/components/ProfileCompletionTracker";
-import { FadeIn } from "@/components/ui/animated/FadeIn";
+
+type ProfileTab = "overview" | "skills" | "projects" | "achievements" | "insights";
 
 export function Profile() {
+  const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
   const { data: profile, isLoading, isError } = useQuery({
     queryKey: ["profile"],
     queryFn: getMyProfile,
@@ -21,8 +29,11 @@ export function Profile() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      <div className="dash-page">
+        <div className="dash-page-loader" role="status" aria-label="Loading profile">
+          <span className="dash-spinner" aria-hidden="true" />
+          <span>Opening your profile</span>
+        </div>
       </div>
     );
   }
@@ -31,54 +42,63 @@ export function Profile() {
     return <Navigate to="/onboarding" />;
   }
 
-  return (
-    <div className="max-w-6xl mx-auto py-0 md:py-8 px-0 sm:px-6 lg:px-8 bg-gray-50 min-h-screen overflow-hidden">
-      <div className="space-y-8">
-        <FadeIn delay={0.1}>
-          <ProfileHero profile={profile} />
-        </FadeIn>
-        <FadeIn delay={0.2}>
-          <QuickStats profile={profile} />
-        </FadeIn>
+  const tabs: { id: ProfileTab; label: string; icon: typeof Stars; count?: number }[] = [
+    { id: "overview", label: "Overview", icon: PersonLinesFill },
+    { id: "skills", label: "Skills", icon: Tools, count: profile.skills?.length ?? 0 },
+    { id: "projects", label: "Projects", icon: Folder2Open, count: profile.projects?.length ?? 0 },
+    { id: "achievements", label: "Achievements", icon: Trophy, count: profile.achievements?.length ?? 0 },
+    { id: "insights", label: "AI insights", icon: Stars },
+  ];
 
-        <div className="pt-8">
-          <Tabs defaultValue="overview" className="w-full">
-            <FadeIn delay={0.3} className="sticky top-16 z-40 bg-gray-50 pt-2 pb-3">
-              <TabsList className="w-full justify-start overflow-x-auto bg-transparent border-b border-gray-200 rounded-none h-auto p-0 space-x-4 sm:space-x-8">
-                {["overview", "skills", "projects", "achievements", "insights"].map(tab => (
-                  <TabsTrigger 
-                    key={tab}
-                    value={tab} 
-                    className="capitalize shrink-0 bg-transparent border-b-[3px] border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-2 py-4 text-sm sm:text-base font-bold text-muted-foreground hover:text-foreground data-[state=active]:text-primary transition-all"
-                  >
-                    {tab === "insights" ? "AI Insights" : tab}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </FadeIn>
-            
-            <div className="mt-8">
-              <TabsContent value="overview" className="m-0 mt-2 focus-visible:outline-none animate-in slide-in-from-bottom-2 fade-in-50">
-                <OverviewTab profile={profile} />
-              </TabsContent>
-              <TabsContent value="skills" className="m-0 mt-2 focus-visible:outline-none animate-in slide-in-from-bottom-2 fade-in-50">
-                <SkillsTab profile={profile} />
-              </TabsContent>
-              <TabsContent value="projects" className="m-0 mt-2 focus-visible:outline-none animate-in slide-in-from-bottom-2 fade-in-50">
-                <ProjectsTab profile={profile} />
-              </TabsContent>
-              <TabsContent value="achievements" className="m-0 mt-2 focus-visible:outline-none animate-in slide-in-from-bottom-2 fade-in-50">
-                <AchievementsTab profile={profile} />
-              </TabsContent>
-              <TabsContent value="insights" className="m-0 mt-2 focus-visible:outline-none animate-in slide-in-from-bottom-2 fade-in-50">
-                <AiInsightsTab profile={profile} />
-              </TabsContent>
-            </div>
-          </Tabs>
+  return (
+    <div className="dash-page">
+      <header className="dash-page-head">
+        <div className="dash-page-heading">
+          <p className="dash-eyebrow">Your profile</p>
+          <h1 className="dash-title">
+            The person <em>behind the work.</em>
+          </h1>
+          <p className="dash-sub">
+            Keep your story current so the right teams can find you.
+          </p>
         </div>
-      </div>
-      
+      </header>
+
+      <ProfileHero profile={profile} />
+      <QuickStats profile={profile} />
       <ProfileCompletionTracker profile={profile} />
+
+      <section className="dash-panel" aria-label="Profile details">
+        <div className="dash-tabs" role="tablist">
+          {tabs.map((tab) => {
+            const IconGlyph = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                className={`dash-tab${activeTab === tab.id ? " is-active" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <IconGlyph size={11} aria-hidden="true" />
+                {tab.label}
+                {typeof tab.count === "number" && tab.count > 0 && (
+                  <span className="dash-tab-count">{tab.count}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="dash-panel-body" role="tabpanel">
+          {activeTab === "overview" && <OverviewTab profile={profile} />}
+          {activeTab === "skills" && <SkillsTab profile={profile} />}
+          {activeTab === "projects" && <ProjectsTab profile={profile} />}
+          {activeTab === "achievements" && <AchievementsTab profile={profile} />}
+          {activeTab === "insights" && <AiInsightsTab profile={profile} />}
+        </div>
+      </section>
     </div>
   );
 }

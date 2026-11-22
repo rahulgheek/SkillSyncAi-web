@@ -2,17 +2,22 @@ import { cn } from "@/lib/utils";
 
 interface SectionGlowProps {
   position: "top-right" | "top-left" | "center";
-  color?: "indigo" | "purple";
+  color?: "indigo" | "purple" | "burgundy" | "terracotta" | "rose";
   className?: string;
 }
 
 /**
- * The soft ambient blur orb reused behind several sections. Each section
- * previously defined its own absolutely-positioned blurred div inline —
- * centralizing it keeps the "glow language" of the page consistent.
+ * Ambient glow orbs using the SkillSync brand palette:
+ * Deep Burgundy (#4A121A) & Warm Terracotta (#A75D43)
  */
-export function SectionGlow({ position, color = "indigo", className }: SectionGlowProps) {
-  const colorClass = color === "indigo" ? "bg-indigo-900/10" : "bg-purple-900/10";
+export function SectionGlow({ position, color = "burgundy", className }: SectionGlowProps) {
+  const colorClass = {
+    burgundy: "bg-[#4A121A]/10",
+    terracotta: "bg-[#A75D43]/12",
+    rose: "bg-[#8A5A62]/10",
+    indigo: "bg-[#4A121A]/10",
+    purple: "bg-[#8A5A62]/10",
+  }[color] || "bg-[#4A121A]/10";
 
   const positionClass = {
     "top-right": "top-1/2 right-0 translate-x-1/3 -translate-y-1/2",

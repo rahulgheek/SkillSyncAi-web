@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/api/axios";
 
 /**
@@ -12,11 +11,12 @@ export function GoogleButton({ disabled }: { disabled?: boolean }) {
   return (
     <button
       type="button"
-      className="w-full bg-white hover:bg-gray-100 text-black border border-transparent h-12 rounded-xl flex items-center justify-center font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="auth-google"
       onClick={handleClick}
       disabled={disabled}
+      aria-label="Continue with Google"
     >
-      <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path
           fill="#4285F4"
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -34,7 +34,7 @@ export function GoogleButton({ disabled }: { disabled?: boolean }) {
           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"
         />
       </svg>
-      <span className="text-black font-semibold tracking-wide">Continue with Google</span>
+      <span>Continue with Google</span>
     </button>
   );
 }

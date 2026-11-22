@@ -1,28 +1,52 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProjectDetails, getProjectMembers, getMyApplications, removeMember, leaveProject, transferOwnership } from "../api";
-import { getMyProfile } from "@/features/userprofile/api";
-import { 
-  Users, Calendar, ChevronLeft, Building, 
-  GraduationCap, Mail, UserPlus, Info,
-  MoreVertical, LogOut, Crown, UserMinus, MessageSquare
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { format } from "date-fns";
-import ApplicationFormModal from "../components/ApplicationFormModal";
 import { useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
+import {
+  BoxArrowUpRight,
+  Calendar3,
+  ChatDots,
+  ChevronLeft,
+  AwardFill,
+  GeoAlt,
+  InfoCircle,
+  Mortarboard,
+  People,
+  PersonDash,
+  PersonPlus,
+  Send,
+  BoxArrowRight,
+  Building,
+} from "react-bootstrap-icons";
 import { toast } from "sonner";
+import {
+  getProjectDetails,
+  getProjectMembers,
+  getMyApplications,
+  removeMember,
+  leaveProject,
+  transferOwnership,
+} from "../api";
+import { getMyProfile } from "@/features/userprofile/api";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ApplicationFormModal from "../components/ApplicationFormModal";
+import {
+  formatDeadline,
+  formatProjectStatus,
+  getInitials,
+  getStatusTone,
+} from "@/features/dashboard/utils";
 
 export default function ProjectDetails() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
-  const { data: project, isLoading, error } = useQuery({
+  const {
+    data: project,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => getProjectDetails(projectId!),
     enabled: !!projectId,
@@ -45,8 +69,10 @@ export default function ProjectDetails() {
   });
 
   const isOwner = project?.ownerId === profile?.userId;
-  const isMember = members?.some(m => m.userId === profile?.userId);
-  const pendingApp = myApps?.find(a => a.projectId === projectId && a.status === "PENDING");
+  const isMember = members?.some((member) => member.userId === profile?.userId);
+  const pendingApp = myApps?.find(
+    (application) => application.projectId === projectId && application.status === "PENDING"
+  );
 
   const queryClient = useQueryClient();
 
@@ -59,7 +85,7 @@ export default function ProjectDetails() {
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Failed to remove member");
-    }
+    },
   });
 
   const leaveProjectMutation = useMutation({
@@ -73,7 +99,7 @@ export default function ProjectDetails() {
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Failed to leave project");
-    }
+    },
   });
 
   const transferOwnershipMutation = useMutation({
@@ -85,20 +111,15 @@ export default function ProjectDetails() {
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Failed to transfer leadership");
-    }
+    },
   });
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 space-y-6 max-w-4xl">
-        <Skeleton className="h-10 w-32" />
-        <Skeleton className="h-48 w-full rounded-xl" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 space-y-6">
-            <Skeleton className="h-32 w-full rounded-xl" />
-            <Skeleton className="h-32 w-full rounded-xl" />
-          </div>
-          <Skeleton className="h-64 w-full rounded-xl" />
+      <div className="dash-page">
+        <div className="dash-page-loader" role="status" aria-label="Loading project">
+          <span className="dash-spinner" aria-hidden="true" />
+          <span>Opening the project</span>
         </div>
       </div>
     );
@@ -106,336 +127,378 @@ export default function ProjectDetails() {
 
   if (error || !project) {
     return (
-      <div className="container mx-auto p-6 text-center max-w-4xl pt-24">
-        <div className="bg-destructive/10 text-destructive p-6 rounded-xl inline-block mb-6">
-          <Info className="h-12 w-12 mx-auto mb-2" />
-          <h2 className="text-xl font-semibold">Project Not Found</h2>
-          <p className="text-sm mt-2">The project you're looking for doesn't exist or has been deleted.</p>
-        </div>
-        <div>
-          <Button variant="outline" onClick={() => navigate("/discover")}>
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back to Discover
-          </Button>
+      <div className="dash-page">
+        <div className="dash-empty dash-panel" style={{ minHeight: 320 }}>
+          <span className="dash-empty-icon">
+            <InfoCircle size={19} aria-hidden="true" />
+          </span>
+          <h3>Project not found</h3>
+          <p>The project you are looking for does not exist or has been deleted.</p>
+          <button
+            type="button"
+            className="dash-btn dash-btn-solid"
+            onClick={() => navigate("/discover")}
+          >
+            <ChevronLeft size={12} aria-hidden="true" />
+            Back to discover
+          </button>
         </div>
       </div>
     );
   }
 
+  const teamCapacity =
+    project.maxTeamSize > 0
+      ? Math.min(100, Math.round((project.currentMemberCount / project.maxTeamSize) * 100))
+      : 0;
+  const deadline = formatDeadline(project.applicationDeadline);
+  const isFull = (project.currentMemberCount || 0) >= (project.maxTeamSize || 0);
+
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-5xl">
-      <Button 
-        variant="ghost" 
-        onClick={() => navigate(-1)} 
-        className="mb-6 -ml-4 text-muted-foreground hover:text-foreground"
+    <div className="dash-page">
+      <button
+        type="button"
+        className="dash-btn dash-btn-ghost dash-btn-sm"
+        onClick={() => navigate(-1)}
+        style={{ alignSelf: "flex-start" }}
       >
-        <ChevronLeft className="h-4 w-4 mr-1" />
+        <ChevronLeft size={11} aria-hidden="true" />
         Back
-      </Button>
+      </button>
 
-      {/* Header Section */}
-      <div className="bg-card rounded-2xl p-5 sm:p-8 border shadow-sm mb-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
-        
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2 items-center">
-              <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary border-0 font-medium">
-                {project.status.replace("_", " ")}
-              </Badge>
-              <span className="text-sm text-muted-foreground flex items-center">
-                <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                Posted {format(new Date(project.createdAt), "MMM d, yyyy")}
-              </span>
-            </div>
-            
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-card-foreground break-words">
-              {project.title}
-            </h1>
-            
-            <div className="flex flex-wrap gap-2 mt-4">
-              {project.requiredSkills?.map((skill) => (
-                <Badge key={skill.skillId || skill.skillName} variant="outline" className="px-3 py-1 bg-background text-sm">
-                  {skill.skillName}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 min-w-40 md:text-right shrink-0">
-            {!isOwner && !isMember && (
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto font-medium shadow-sm group"
-                disabled={!!pendingApp || project?.status !== "RECRUITING" || (project?.currentMemberCount || 0) >= (project?.maxTeamSize || 0)}
-                onClick={() => setIsApplyModalOpen(true)}
-              >
-                <UserPlus className="h-4 w-4 mr-2 transition-transform group-hover:scale-110" />
-                {pendingApp ? "Application Pending" : "Apply to Join"}
-              </Button>
-            )}
-            {!isOwner && isMember && (
-              <Button 
-                variant="destructive" 
-                size="lg" 
-                className="w-full sm:w-auto font-medium shadow-sm"
-                onClick={() => {
-                  if (confirm("Are you sure you want to leave this project?")) {
-                    leaveProjectMutation.mutate();
-                  }
-                }}
-                disabled={leaveProjectMutation.isPending}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Leave Project
-              </Button>
-            )}
-            
-            {!isOwner && !isMember && (
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="w-full sm:w-auto font-medium shadow-sm group"
-                onClick={() => navigate(`/messages?userId=${project?.ownerId}&name=${encodeURIComponent(project?.owner?.name || 'Project Leader')}`)}
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Message Leader
-              </Button>
-            )}
-            
-            {(isOwner || isMember) && (
-              <Button 
-                className="w-full sm:w-auto font-medium shadow-sm bg-primary/90 hover:bg-primary"
-                onClick={() => navigate(`/messages?projectId=${projectId}`)}
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Team Chat
-              </Button>
-            )}
-
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              <Users className="h-4 w-4 mr-2" />
-              View Team
-            </Button>
-          </div>
+      <section className="dash-detail-hero">
+        <div className="dash-detail-hero-top">
+          <span className={`dash-chip dash-chip-${getStatusTone(project.status)}`}>
+            {formatProjectStatus(project.status)}
+          </span>
+          <span className="dash-detail-meta">
+            <Calendar3 size={10} aria-hidden="true" />
+            Posted {format(new Date(project.createdAt), "MMM d, yyyy")}
+          </span>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Column: Description & Details */}
-        <div className="lg:col-span-2 space-y-8">
-          <section className="space-y-4">
-            <h2 className="text-xl font-semibold flex items-center">
-              <Info className="w-5 h-5 mr-2 text-primary" />
-              About the Project
-            </h2>
-            <div className="bg-card rounded-xl p-6 border shadow-sm prose prose-sm sm:prose-base max-w-none text-muted-foreground">
-              {project.description.split('\n').map((paragraph, index) => (
-                <p key={index} className="mb-4 last:mb-0 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </section>
+        <h1 className="dash-detail-title">{project.title}</h1>
+        <p className="dash-detail-desc">{project.description}</p>
 
-          {/* Team Roster Section */}
-          <section className="space-y-4 pt-4">
-            <h2 className="text-xl font-semibold flex items-center">
-              <Users className="w-5 h-5 mr-2 text-primary" />
-              Team Members
-            </h2>
-            
-            {isLoadingMembers ? (
-              <div className="space-y-4">
-                <Skeleton className="h-24 w-full rounded-xl" />
-                <Skeleton className="h-24 w-full rounded-xl" />
+        {project.requiredSkills?.length > 0 && (
+          <div className="dash-review-chips">
+            {project.requiredSkills.map((skill) => (
+              <span key={skill.skillId || skill.skillName} className="dash-review-chip">
+                {skill.skillName}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="dash-detail-hero-actions">
+          {!isOwner && !isMember && (
+            <button
+              type="button"
+              className="dash-btn dash-btn-cream"
+              disabled={!!pendingApp || project?.status !== "RECRUITING" || isFull}
+              onClick={() => setIsApplyModalOpen(true)}
+            >
+              <PersonPlus size={12} aria-hidden="true" />
+              {pendingApp ? "Application pending" : isFull ? "Team full" : "Apply to join"}
+            </button>
+          )}
+
+          {!isOwner && isMember && (
+            <button
+              type="button"
+              className="dash-btn dash-btn-ghost-light"
+              onClick={() => {
+                if (confirm("Are you sure you want to leave this project?")) {
+                  leaveProjectMutation.mutate();
+                }
+              }}
+              disabled={leaveProjectMutation.isPending}
+            >
+              <BoxArrowRight size={12} aria-hidden="true" />
+              Leave project
+            </button>
+          )}
+
+          {!isOwner && !isMember && (
+            <button
+              type="button"
+              className="dash-btn dash-btn-ghost-light"
+              onClick={() =>
+                navigate(
+                  `/messages?userId=${project?.ownerId}&name=${encodeURIComponent(
+                    project?.owner?.name || "Project Leader"
+                  )}`
+                )
+              }
+            >
+              <ChatDots size={12} aria-hidden="true" />
+              Message leader
+            </button>
+          )}
+
+          {(isOwner || isMember) && (
+            <button
+              type="button"
+              className="dash-btn dash-btn-cream"
+              onClick={() => navigate(`/messages?projectId=${projectId}`)}
+            >
+              <ChatDots size={12} aria-hidden="true" />
+              Team chat
+            </button>
+          )}
+
+          <a href="#team" className="dash-btn dash-btn-ghost-light">
+            <People size={12} aria-hidden="true" />
+            View team
+          </a>
+        </div>
+      </section>
+
+      <div className="dash-detail-layout">
+        <div className="dash-detail-main">
+          <section className="dash-panel">
+            <div className="dash-panel-head">
+              <div className="dash-panel-heading">
+                <p className="dash-panel-kicker">The brief</p>
+                <h2 className="dash-panel-title">About the project</h2>
               </div>
-            ) : members && members.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {members.map(member => (
-                  <div 
-                    key={member.id} 
-                    className="bg-card rounded-xl p-5 border shadow-sm flex items-start space-x-4 transition-colors relative hover:border-primary/50"
-                  >
-                    <Avatar 
-                      className="h-12 w-12 border-2 border-background shadow-sm shrink-0 cursor-pointer"
-                      onClick={() => navigate(`/users/${member.userId}`)}
-                    >
-                      <AvatarImage src={member.profilePictureUrl || ""} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        {member.name?.charAt(0) || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div 
-                      className="flex-1 min-w-0 cursor-pointer"
-                      onClick={() => navigate(`/users/${member.userId}`)}
-                    >
-                      <h4 className="font-semibold text-sm truncate">{member.name}</h4>
-                      <p className="text-xs text-primary font-medium truncate mb-1">
-                        {member.roleTitle || "Project Owner"}
-                      </p>
-                      
-                      {(member.department || member.graduationYear) && (
-                        <div className="text-[10px] text-muted-foreground mb-2 flex items-center gap-2 truncate">
-                          {member.department && <span className="truncate">{member.department}</span>}
-                          {member.department && member.graduationYear && <span>•</span>}
-                          {member.graduationYear && <span>{member.graduationYear}</span>}
-                        </div>
-                      )}
-                      
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {member.topSkills?.map(skill => (
-                          <Badge key={skill} variant="secondary" className="px-1.5 py-0 text-[10px] bg-secondary/50">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    {member.userId !== profile?.userId && (
-                      <div className="absolute top-2 right-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {member.userId !== profile?.userId && (
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/messages?userId=${member.userId}&name=${encodeURIComponent(member.name || 'User')}`);
-                                }}
-                              >
-                                <MessageSquare className="w-4 h-4 mr-2" /> Message
-                              </DropdownMenuItem>
-                            )}
-                            {isOwner && member.userId !== profile?.userId && (
-                              <>
-                                <DropdownMenuItem 
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (confirm("Are you sure you want to transfer leadership to this member? You will lose owner privileges.")) {
-                                      transferOwnershipMutation.mutate(member.userId);
-                                    }
-                                  }}
-                                >
-                                  <Crown className="w-4 h-4 mr-2" /> Make Leader
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (confirm("Are you sure you want to remove this member from the team?")) {
-                                      removeMemberMutation.mutate(member.userId);
-                                    }
-                                  }}
-                                >
-                                  <UserMinus className="w-4 h-4 mr-2" /> Remove Member
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    )}
-                  </div>
+            </div>
+            <div className="dash-panel-body">
+              <div className="dash-prose">
+                {project.description.split("\n").map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
                 ))}
               </div>
-            ) : (
-              <div className="bg-muted/30 border border-dashed rounded-xl p-8 text-center text-muted-foreground">
-                <Users className="w-8 h-8 mx-auto mb-3 opacity-20" />
-                <p>No team members yet.</p>
-                <p className="text-sm mt-1">Be the first to apply and join!</p>
-              </div>
-            )}
-          </section>
-        </div>
-
-        {/* Right Column: Owner & Team Stats */}
-        <div className="space-y-8">
-          
-          {/* Owner Card */}
-          <section className="bg-card rounded-xl p-6 border shadow-sm">
-            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Project Leader</h3>
-            
-            {project.owner ? (
-              <div className="flex flex-col items-center text-center">
-                <Avatar className="h-24 w-24 border-4 border-background shadow-sm mb-4">
-                  <AvatarImage src={project.owner.profilePictureUrl || ""} />
-                  <AvatarFallback className="text-2xl bg-primary/5 text-primary">
-                    {project.owner.name?.charAt(0) || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <h4 className="font-semibold text-lg">{project.owner.name}</h4>
-                
-                <div className="w-full space-y-3 mt-6 text-sm text-muted-foreground text-left">
-                  <div className="flex items-center">
-                    <Building className="w-4 h-4 mr-3 text-primary/70 shrink-0" />
-                    <span className="truncate">{project.owner.department || "Department not listed"}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <GraduationCap className="w-4 h-4 mr-3 text-primary/70 shrink-0" />
-                    <span>Class of {project.owner.graduationYear || "Unknown"}</span>
-                  </div>
-                </div>
-
-                <Button variant="secondary" className="w-full mt-6 bg-secondary hover:bg-secondary/80">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Message
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center text-muted-foreground py-8">
-                Owner information unavailable
-              </div>
-            )}
-          </section>
-
-          {/* Team Stats */}
-          <section className="bg-card rounded-xl p-6 border shadow-sm">
-            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Team Status</h3>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm font-medium">
-                <span>Current Size</span>
-                <span>{project.currentMemberCount} / {project.maxTeamSize}</span>
-              </div>
-              <div className="w-full bg-secondary h-2.5 rounded-full overflow-hidden">
-                <div 
-                  className="bg-primary h-full rounded-full transition-all duration-500 ease-out" 
-                  style={{ width: `${Math.min(100, (project.currentMemberCount / project.maxTeamSize) * 100)}%` }} 
-                />
-              </div>
-              <p className="text-xs text-muted-foreground text-right mt-1">
-                {project.maxTeamSize - project.currentMemberCount} spots remaining
-              </p>
             </div>
-            
-            {project.applicationDeadline && (
-              <div className="mt-6 pt-6 border-t flex items-center justify-between">
-                <span className="text-sm text-muted-foreground flex items-center">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Deadline
-                </span>
-                <span className="text-sm font-medium">
-                  {format(new Date(project.applicationDeadline), "MMM d, yyyy")}
-                </span>
-              </div>
-            )}
           </section>
 
+          <section className="dash-panel" id="team">
+            <div className="dash-panel-head">
+              <div className="dash-panel-heading">
+                <p className="dash-panel-kicker">The people</p>
+                <h2 className="dash-panel-title">Team members</h2>
+              </div>
+              <span className="dash-badge dash-badge-soft">
+                <People size={9} aria-hidden="true" />
+                {project.currentMemberCount}/{project.maxTeamSize}
+              </span>
+            </div>
+            <div className="dash-panel-body">
+              {isLoadingMembers ? (
+                <div className="dash-loader-row" role="status">
+                  <span className="dash-spinner" aria-hidden="true" />
+                </div>
+              ) : members && members.length > 0 ? (
+                <div className="dash-member-grid">
+                  {members.map((member) => (
+                    <article className="dash-member-card" key={member.id}>
+                      <Link
+                        to={`/profiles/${member.userId}`}
+                        className="dash-member-main"
+                      >
+                        <Avatar className="dash-avatar-sm">
+                          <AvatarImage src={member.profilePictureUrl || ""} />
+                          <AvatarFallback className="dash-avatar-fallback">
+                            {getInitials(member.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="dash-member-copy">
+                          <span className="dash-member-name">{member.name}</span>
+                          <span className="dash-member-role">
+                            {member.roleTitle || "Project Owner"}
+                          </span>
+                          {(member.department || member.graduationYear) && (
+                            <span className="dash-member-meta">
+                              {[member.department, member.graduationYear]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </span>
+                          )}
+                          {member.topSkills && member.topSkills.length > 0 && (
+                            <div className="dash-tag-row" style={{ marginTop: 5 }}>
+                              {member.topSkills.slice(0, 3).map((skill) => (
+                                <span key={skill} className="dash-tag">
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+
+                      {member.userId !== profile?.userId && (
+                        <div className="dash-member-menu dash-inline">
+                          <button
+                            type="button"
+                            className="dash-icon-btn-sm"
+                            aria-label={`Message ${member.name}`}
+                            onClick={() =>
+                              navigate(
+                                `/messages?userId=${member.userId}&name=${encodeURIComponent(
+                                  member.name || "User"
+                                )}`
+                              )
+                            }
+                          >
+                            <ChatDots size={10} aria-hidden="true" />
+                          </button>
+                          {isOwner && (
+                            <>
+                              <button
+                                type="button"
+                                className="dash-icon-btn-sm"
+                                aria-label={`Make ${member.name} leader`}
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      "Are you sure you want to transfer leadership to this member? You will lose owner privileges."
+                                    )
+                                  ) {
+                                    transferOwnershipMutation.mutate(member.userId);
+                                  }
+                                }}
+                              >
+                                <AwardFill size={10} aria-hidden="true" />
+                              </button>
+                              <button
+                                type="button"
+                                className="dash-icon-btn-sm is-danger"
+                                aria-label={`Remove ${member.name}`}
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      "Are you sure you want to remove this member from the team?"
+                                    )
+                                  ) {
+                                    removeMemberMutation.mutate(member.userId);
+                                  }
+                                }}
+                              >
+                                <PersonDash size={10} aria-hidden="true" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="dash-empty-inline dash-panel-soft">
+                  <People size={18} color="#8f8d6e" aria-hidden="true" />
+                  <p>No team members yet. Be the first to apply and join.</p>
+                </div>
+              )}
+            </div>
+          </section>
         </div>
+
+        <aside className="dash-detail-side">
+          <section className="dash-panel">
+            <div className="dash-panel-head">
+              <div className="dash-panel-heading">
+                <p className="dash-panel-kicker">Leading the build</p>
+                <h2 className="dash-panel-title">Project leader</h2>
+              </div>
+            </div>
+            <div className="dash-panel-body">
+              {project.owner ? (
+                <div className="dash-profile-card-mini">
+                  <Avatar className="dash-avatar-xl">
+                    <AvatarImage src={project.owner.profilePictureUrl || ""} />
+                    <AvatarFallback className="dash-avatar-fallback">
+                      {getInitials(project.owner.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="dash-mini-title">{project.owner.name}</h3>
+                  <div className="dash-list" style={{ width: "100%", marginTop: 12 }}>
+                    <div className="dash-list-item">
+                      <span className="dash-list-icon">
+                        <Building size={12} aria-hidden="true" />
+                      </span>
+                      <div className="dash-list-copy">
+                        <span className="dash-list-sub">
+                          {project.owner.department || "Department not listed"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="dash-list-item">
+                      <span className="dash-list-icon">
+                        <Mortarboard size={12} aria-hidden="true" />
+                      </span>
+                      <div className="dash-list-copy">
+                        <span className="dash-list-sub">
+                          Class of {project.owner.graduationYear || "Unknown"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="dash-btn dash-btn-ghost"
+                    onClick={() =>
+                      navigate(
+                        `/messages?userId=${project.ownerId}&name=${encodeURIComponent(
+                          project.owner?.name || "Project Leader"
+                        )}`
+                      )
+                    }
+                  >
+                    <Send size={11} aria-hidden="true" />
+                    Message
+                  </button>
+                </div>
+              ) : (
+                <p className="dash-mini-sub">Owner information unavailable.</p>
+              )}
+            </div>
+          </section>
+
+          <section className="dash-panel">
+            <div className="dash-panel-head">
+              <div className="dash-panel-heading">
+                <p className="dash-panel-kicker">Capacity</p>
+                <h2 className="dash-panel-title">Team status</h2>
+              </div>
+              <GeoAlt size={13} color="#8a5a3f" aria-hidden="true" />
+            </div>
+            <div className="dash-panel-body">
+              <div className="dash-progress-row">
+                <span>Current size</span>
+                <strong>
+                  {project.currentMemberCount} / {project.maxTeamSize}
+                </strong>
+              </div>
+              <div className="dash-progress" aria-hidden="true">
+                <span style={{ width: `${teamCapacity}%` }} />
+              </div>
+              <p className="dash-help" style={{ marginTop: 6, textAlign: "right" }}>
+                {Math.max(0, project.maxTeamSize - project.currentMemberCount)} spots
+                remaining
+              </p>
+
+              <div className="dash-kv" style={{ marginTop: 12 }}>
+                <span>Application deadline</span>
+                <strong>{deadline.label}</strong>
+              </div>
+              <div className="dash-kv">
+                <span>Status</span>
+                <strong>{formatProjectStatus(project.status)}</strong>
+              </div>
+              <div className="dash-kv">
+                <span>Skills sought</span>
+                <strong>{project.requiredSkills?.length || 0}</strong>
+              </div>
+            </div>
+          </section>
+        </aside>
       </div>
-      
+
       {project && (
-        <ApplicationFormModal 
-          project={project} 
-          isOpen={isApplyModalOpen} 
-          onClose={() => setIsApplyModalOpen(false)} 
+        <ApplicationFormModal
+          project={project}
+          isOpen={isApplyModalOpen}
+          onClose={() => setIsApplyModalOpen(false)}
         />
       )}
     </div>

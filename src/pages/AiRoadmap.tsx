@@ -1,11 +1,24 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { generateCustomRoadmap, Roadmap, CustomRoadmapPayload, chatWithRoadmap, getActiveRoadmap } from "@/features/roadmap/api";
+import {
+  ArrowRepeat,
+  ArrowRight,
+  ChatDots,
+  CheckCircleFill,
+  Circle,
+  ListTask,
+  Send,
+  SignpostSplit,
+  Stars,
+} from "react-bootstrap-icons";
+import {
+  generateCustomRoadmap,
+  Roadmap,
+  CustomRoadmapPayload,
+  chatWithRoadmap,
+  getActiveRoadmap,
+} from "@/features/roadmap/api";
 import { getMyTodos, updateTodoStatus, toggleSubtask } from "@/features/todo/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/text-area";
-import { Loader2, Route, ArrowRight, CheckCircle2, Circle, ListTodo, Sparkles, Send, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 export function AiRoadmap() {
@@ -14,9 +27,11 @@ export function AiRoadmap() {
   const [currentKnowledge, setCurrentKnowledge] = useState("");
   const [knowledgeGaps, setKnowledgeGaps] = useState("");
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
-  
+
   // Chat state
-  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'ai', content: string }[]>([]);
+  const [chatMessages, setChatMessages] = useState<
+    { role: "user" | "ai"; content: string }[]
+  >([]);
   const [chatInput, setChatInput] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
 
@@ -41,11 +56,14 @@ export function AiRoadmap() {
     mutationFn: generateCustomRoadmap,
     onSuccess: (data) => {
       setRoadmap(data);
-      toast.success("Your personalized AI Roadmap is ready!");
+      toast.success("Your personalized AI roadmap is ready!");
       queryClient.invalidateQueries({ queryKey: ["todos"] });
       // Todo generation is event-driven on the backend; refresh once after it
       // has had time to finish instead of polling every few seconds.
-      window.setTimeout(() => queryClient.invalidateQueries({ queryKey: ["todos"] }), 2500);
+      window.setTimeout(
+        () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
+        2500
+      );
     },
     onError: (error) => {
       console.error("Roadmap generation failed:", error);
@@ -54,7 +72,8 @@ export function AiRoadmap() {
   });
 
   const todoMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string, status: string }) => updateTodoStatus(id, status),
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      updateTodoStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
       toast.success("Task updated!");
@@ -62,7 +81,8 @@ export function AiRoadmap() {
   });
 
   const subtaskMutation = useMutation({
-    mutationFn: ({ todoId, subtaskId }: { todoId: string, subtaskId: string }) => toggleSubtask(todoId, subtaskId),
+    mutationFn: ({ todoId, subtaskId }: { todoId: string; subtaskId: string }) =>
+      toggleSubtask(todoId, subtaskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
@@ -88,13 +108,13 @@ export function AiRoadmap() {
     if (!chatInput.trim() || !roadmap) return;
 
     const userMsg = chatInput.trim();
-    setChatMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setChatMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setChatInput("");
     setIsChatLoading(true);
 
     try {
       const reply = await chatWithRoadmap(roadmap.id, userMsg);
-      setChatMessages(prev => [...prev, { role: 'ai', content: reply }]);
+      setChatMessages((prev) => [...prev, { role: "ai", content: reply }]);
     } catch (error) {
       toast.error("Failed to send message to AI.");
     } finally {
@@ -103,272 +123,357 @@ export function AiRoadmap() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 min-h-screen">
-      <div className="flex items-start sm:items-center gap-3 mb-8">
-        <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl shrink-0">
-          <Route className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+    <div className="dash-page">
+      <header className="dash-page-head">
+        <div className="dash-page-heading">
+          <p className="dash-eyebrow">Career roadmap</p>
+          <h1 className="dash-title">
+            A path <em>built for you.</em>
+          </h1>
+          <p className="dash-sub">
+            Get a personalized learning path, break it into tasks, and ask the
+            assistant when you get stuck.
+          </p>
         </div>
-        <div className="min-w-0">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">AI Career <span className="font-handwriting text-primary text-4xl sm:text-5xl inline-block -rotate-2">Roadmap</span></h1>
-          <p className="text-base sm:text-lg font-medium text-muted-foreground mt-2">Get a personalized learning path and track your progress.</p>
+      </header>
+
+      {isActiveRoadmapLoading && !roadmap ? (
+        <div className="dash-page-loader" role="status" aria-label="Loading roadmap">
+          <span className="dash-spinner" aria-hidden="true" />
+          <span>Finding your roadmap</span>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {isActiveRoadmapLoading && !roadmap ? (
-          <div className="col-span-full flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          <>
-            {/* Left Column: Roadmap Generator or Display */}
-            <div className="lg:col-span-2 space-y-6">
-          {!roadmap && (
-            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden transition-all duration-300">
-              <div className="bg-primary/5 px-5 py-6 sm:px-8 sm:py-8 border-b border-primary/10">
-                <h2 className="text-xl sm:text-2xl font-black text-foreground">Plan Your Next Move</h2>
-                <p className="text-muted-foreground font-medium mt-2">
-                  Tell us where you are and where you want to go. Leave the target role blank if you want the AI to recommend a path for you!
-                </p>
-              </div>
-              <div className="p-5 sm:p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold leading-none">Target Role (What I want to know/do)</label>
-                    <Input
-                      placeholder="e.g. Full Stack Developer... (Leave blank for recommendations)"
-                      value={targetRole}
-                      onChange={(e) => setTargetRole(e.target.value)}
-                      className="text-base h-14 px-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
-                    />
+      ) : (
+        <div className="dash-roadmap-layout">
+          <div className="dash-roadmap-main">
+            {!roadmap && (
+              <section className="dash-panel">
+                <div className="dash-panel-head">
+                  <div className="dash-panel-heading">
+                    <p className="dash-panel-kicker">Plan your next move</p>
+                    <h2 className="dash-panel-title">
+                      Tell us where you are, and where you want to go.
+                    </h2>
+                    <p className="dash-panel-sub">
+                      Leave the target role blank if you want the AI to recommend
+                      a path for you.
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold leading-none">Current Knowledge (What I know)</label>
-                    <Textarea
-                      placeholder="e.g. I know basic React and Python, but have never built a full app."
-                      value={currentKnowledge}
-                      onChange={(e) => setCurrentKnowledge(e.target.value)}
-                      className="resize-none text-base p-4 sm:p-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold leading-none">Knowledge Gaps (What I don't know)</label>
-                    <Textarea
-                      placeholder="e.g. I struggle with databases and backend deployment."
-                      value={knowledgeGaps}
-                      onChange={(e) => setKnowledgeGaps(e.target.value)}
-                      className="resize-none text-base p-4 sm:p-6 rounded-2xl bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
-                      rows={3}
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full h-14 rounded-full bg-primary hover:bg-primary/90 text-white text-lg font-bold gap-2 shadow-xl shadow-primary/20 transition-transform hover:-translate-y-1"
-                    disabled={generateMutation.isPending}
-                  >
-                    {generateMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Generating your roadmap...
-                      </>
-                    ) : targetRole.trim() ? (
-                      <>
-                        Generate My Roadmap <ArrowRight className="w-5 h-5" />
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-5 h-5 text-yellow-300" /> Recommend a Path for Me
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {roadmap && (
-            <div className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-700">
-              <div className="bg-primary/5 px-5 py-6 sm:px-8 sm:py-8 border-b border-primary/10">
-                <h2 className="text-2xl sm:text-3xl font-black text-foreground break-words">{roadmap.title}</h2>
-                <p className="text-base font-medium text-muted-foreground mt-3">{roadmap.description}</p>
-              </div>
-              <div className="p-5 sm:p-8">
-                <div className="relative border-l-4 border-primary/20 pl-5 sm:pl-8 ml-2 sm:ml-4 space-y-8 sm:space-y-10">
-                  {roadmap.checkpoints?.sort((a, b) => a.orderIndex - b.orderIndex).map((checkpoint, index) => (
-                    <div key={checkpoint.id} className="relative">
-                      <div className="absolute -left-[29px] sm:-left-[45px] bg-white p-1 rounded-full shadow-sm">
-                        {checkpoint.status === "COMPLETED" ? (
-                          <CheckCircle2 className="w-8 h-8 text-green-500 bg-white rounded-full" />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full border-4 border-primary bg-white" />
-                        )}
-                      </div>
-                      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all">
-                        <div className="flex justify-between items-start mb-3">
-                          <h3 className="font-black text-lg sm:text-xl flex flex-wrap items-center gap-2 sm:gap-3">
-                            <span className="text-primary font-bold text-sm bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">Step {index + 1}</span>
-                            {checkpoint.title}
-                          </h3>
-                        </div>
-                        <p className="text-muted-foreground font-medium whitespace-pre-wrap">{checkpoint.description}</p>
-                      </div>
-                    </div>
-                  ))}
                 </div>
-              </div>
-              <div className="bg-gray-50 px-5 sm:px-8 py-4 sm:py-6 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                  <p className="text-sm font-bold text-muted-foreground">Tasks have been automatically added to your To-Do list!</p>
-                  <Button variant="outline" className="w-full sm:w-auto rounded-full font-bold bg-white hover:bg-gray-50" onClick={() => setRoadmap(null)}>Generate New Roadmap</Button>
-              </div>
-            </div>
-          )}
 
-          {roadmap && (
-            <div className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 mt-8 overflow-hidden animate-in slide-in-from-bottom-6 duration-700">
-              <div className="bg-primary/5 px-5 sm:px-8 py-5 sm:py-6 border-b border-primary/10">
-                <h2 className="text-2xl font-black flex items-center gap-3">
-                  <MessageSquare className="w-6 h-6 text-primary" /> Roadmap Assistant
-                </h2>
-                <p className="text-muted-foreground font-medium mt-1">Stuck on a topic? Ask the AI for help.</p>
-              </div>
-              <div className="p-4 sm:p-6 h-[400px] overflow-y-auto space-y-4 bg-gray-50/50">
-                {chatMessages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground opacity-50">
-                    <MessageSquare className="w-12 h-12 mb-2" />
-                    <p>Ask anything about your current tasks!</p>
+                <div className="dash-panel-body">
+                  <form className="dash-form" onSubmit={handleSubmit}>
+                    <div className="dash-field">
+                      <label className="dash-label" htmlFor="roadmap-role">
+                        Target role <small>What I want to know / do</small>
+                      </label>
+                      <input
+                        id="roadmap-role"
+                        className="dash-input"
+                        placeholder="e.g. Full Stack Developer... (leave blank for recommendations)"
+                        value={targetRole}
+                        onChange={(e) => setTargetRole(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="dash-field">
+                      <label className="dash-label" htmlFor="roadmap-knowledge">
+                        Current knowledge <small>What I know</small>
+                      </label>
+                      <textarea
+                        id="roadmap-knowledge"
+                        className="dash-textarea"
+                        placeholder="e.g. I know basic React and Python, but have never built a full app."
+                        value={currentKnowledge}
+                        onChange={(e) => setCurrentKnowledge(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="dash-field">
+                      <label className="dash-label" htmlFor="roadmap-gaps">
+                        Knowledge gaps <small>What I don't know</small>
+                      </label>
+                      <textarea
+                        id="roadmap-gaps"
+                        className="dash-textarea"
+                        placeholder="e.g. I struggle with databases and backend deployment."
+                        value={knowledgeGaps}
+                        onChange={(e) => setKnowledgeGaps(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="dash-form-actions">
+                      <button
+                        type="submit"
+                        className="dash-btn dash-btn-solid dash-btn-lg"
+                        disabled={generateMutation.isPending}
+                      >
+                        {generateMutation.isPending ? (
+                          <>
+                            <ArrowRepeat
+                              size={13}
+                              className="dash-icon-spin"
+                              aria-hidden="true"
+                            />
+                            Generating your roadmap
+                          </>
+                        ) : targetRole.trim() ? (
+                          <>
+                            Generate my roadmap
+                            <ArrowRight size={13} aria-hidden="true" />
+                          </>
+                        ) : (
+                          <>
+                            <Stars size={13} aria-hidden="true" />
+                            Recommend a path for me
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </section>
+            )}
+
+            {roadmap && (
+              <section className="dash-panel">
+                <div className="dash-panel-head">
+                  <div className="dash-panel-heading">
+                    <p className="dash-panel-kicker">Your path</p>
+                    <h2 className="dash-panel-title">{roadmap.title}</h2>
+                    <p className="dash-panel-sub">{roadmap.description}</p>
                   </div>
-                ) : (
-                  chatMessages.map((msg, i) => (
-                    <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
-                        <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
+                  <span className="dash-badge dash-badge-ai">
+                    <Stars size={9} aria-hidden="true" />
+                    AI generated
+                  </span>
+                </div>
+
+                <div className="dash-panel-body">
+                  <ol className="dash-timeline">
+                    {roadmap.checkpoints
+                      ?.sort((a, b) => a.orderIndex - b.orderIndex)
+                      .map((checkpoint, index) => (
+                        <li
+                          key={checkpoint.id}
+                          className={`dash-timeline-item${
+                            checkpoint.status === "COMPLETED" ? " is-complete" : ""
+                          }`}
+                        >
+                          <div className="dash-timeline-rail">
+                            <span className="dash-timeline-marker">
+                              {checkpoint.status === "COMPLETED" ? (
+                                <CheckCircleFill size={12} aria-hidden="true" />
+                              ) : (
+                                index + 1
+                              )}
+                            </span>
+                            {index !== roadmap.checkpoints.length - 1 && (
+                              <span className="dash-timeline-line" aria-hidden="true" />
+                            )}
+                          </div>
+                          <div className="dash-timeline-card">
+                            <p className="dash-timeline-kicker">Step {index + 1}</p>
+                            <h3 className="dash-timeline-title">{checkpoint.title}</h3>
+                            <p className="dash-timeline-text">
+                              {checkpoint.description}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                  </ol>
+                </div>
+
+                <div className="dash-panel-foot">
+                  <span>Tasks were added to your to-do list automatically.</span>
+                  <button
+                    type="button"
+                    className="dash-btn dash-btn-ghost dash-btn-sm"
+                    onClick={() => setRoadmap(null)}
+                  >
+                    Generate new roadmap
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {roadmap && (
+              <section className="dash-panel dash-chat">
+                <div className="dash-panel-head">
+                  <div className="dash-panel-heading">
+                    <p className="dash-panel-kicker">Ask the assistant</p>
+                    <h2 className="dash-panel-title">Roadmap assistant</h2>
+                    <p className="dash-panel-sub">
+                      Stuck on a topic? Ask the AI for help.
+                    </p>
+                  </div>
+                  <ChatDots size={15} color="#8a5a3f" aria-hidden="true" />
+                </div>
+
+                <div className="dash-chat-scroll">
+                  {chatMessages.length === 0 ? (
+                    <div className="dash-chat-placeholder">
+                      <span className="dash-chat-placeholder-icon">
+                        <ChatDots size={18} aria-hidden="true" />
+                      </span>
+                      <h3>Ask anything</h3>
+                      <p>Your roadmap is the context. Start with the task that feels stuck.</p>
+                    </div>
+                  ) : (
+                    chatMessages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`dash-chat-msg ${
+                          msg.role === "user" ? "is-user" : "is-ai"
+                        }`}
+                      >
+                        <div className="dash-chat-bubble">{msg.content}</div>
                       </div>
+                    ))
+                  )}
+
+                  {isChatLoading && (
+                    <div className="dash-typing" aria-label="AI is typing">
+                      <span />
+                      <span />
+                      <span />
                     </div>
-                  ))
-                )}
-                {isChatLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-muted rounded-2xl px-4 py-3 flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-75" />
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-150" />
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-4 sm:p-6 bg-white border-t border-gray-100">
-                <form onSubmit={handleSendMessage} className="flex w-full gap-3">
-                  <Input 
-                    placeholder="Type your question..." 
+                  )}
+                </div>
+
+                <form className="dash-chat-form" onSubmit={handleSendMessage}>
+                  <input
+                    className="dash-input"
+                    placeholder="Type your question..."
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     disabled={isChatLoading}
-                    className="flex-1 h-12 rounded-full px-6 bg-gray-50 border-gray-200 focus-visible:ring-primary/20 shadow-inner font-medium"
+                    aria-label="Message the roadmap assistant"
                   />
-                  <Button type="submit" size="icon" disabled={isChatLoading || !chatInput.trim()} className="rounded-full h-12 w-12 bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 text-white">
-                    <Send className="w-5 h-5 ml-0.5" />
-                  </Button>
+                  <button
+                    type="submit"
+                    className="dash-chat-send"
+                    disabled={isChatLoading || !chatInput.trim()}
+                    aria-label="Send message"
+                  >
+                    <Send size={13} aria-hidden="true" />
+                  </button>
                 </form>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column: To-Do List Widget */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 h-[fit-content] lg:sticky lg:top-24 overflow-hidden">
-            <div className="bg-primary/5 px-6 py-6 border-b border-primary/10">
-              <h2 className="text-xl font-black flex items-center gap-3">
-                <ListTodo className="w-6 h-6 text-primary" /> {roadmap?.currentTopic ? `Topic: ${roadmap.currentTopic}` : 'My To-Do List'}
-              </h2>
-              <p className="text-muted-foreground font-medium mt-2">Track your roadmap milestones and tasks.</p>
-            </div>
-            <div className="p-6 max-h-[600px] overflow-y-auto">
-              {isTodosLoading ? (
-                <div className="flex justify-center p-4">
-                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : !todos || todos.length === 0 ? (
-                <div className="text-center p-6 text-muted-foreground">
-                  <CheckCircle2 className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                  <p>All caught up!</p>
-                  <p className="text-sm mt-1">Generate a roadmap to get new tasks.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {todos
-                    .filter(todo => todo.status !== 'CANCELLED')
-                    // Filter to only show tasks belonging to the current topic
-                    .filter(todo => {
-                      if (!roadmap?.currentTopic) return true; // Show all if no topic (e.g. initial generation)
-                      return todo.sourceTitle?.includes(roadmap.currentTopic);
-                    })
-                    // Sort by dueDate to ensure they appear in chronological order (Step 1, Step 2, etc.)
-                    .sort((a, b) => {
-                      if (!a.dueDate) return 1;
-                      if (!b.dueDate) return -1;
-                      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-                    })
-                    .map(todo => (
-                    <div 
-                      key={todo.id} 
-                      className={`flex flex-col p-4 rounded-2xl border transition-all ${todo.status === 'COMPLETED' ? 'bg-gray-50 border-gray-100 opacity-60' : 'bg-white border-gray-200 shadow-sm hover:shadow-md'}`}
-                    >
-                      <div className="flex items-start gap-4 cursor-pointer" onClick={() => handleToggleTodo(todo.id, todo.status)}>
-                        <div className="mt-0.5">
-                          {todo.status === 'COMPLETED' ? (
-                            <CheckCircle2 className="w-6 h-6 text-green-500" />
-                          ) : (
-                            <Circle className="w-6 h-6 text-gray-300 hover:text-primary transition-colors" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className={`text-base font-bold ${todo.status === 'COMPLETED' ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
-                            {todo.title}
-                          </h4>
-                          {todo.sourceTitle && (
-                            <p className="text-sm font-medium text-muted-foreground mt-1">{todo.sourceTitle}</p>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Subtasks rendering */}
-                      {todo.subtasks && todo.subtasks.length > 0 && (
-                        <div className="mt-3 ml-8 space-y-2 border-l-2 border-muted pl-4">
-                          {todo.subtasks.map(subtask => (
-                            <div 
-                              key={subtask.id} 
-                              className="flex items-center gap-2 cursor-pointer group"
-                              onClick={() => subtaskMutation.mutate({ todoId: todo.id, subtaskId: subtask.id })}
-                            >
-                              <div className="mt-0.5">
-                                {subtask.completed ? (
-                                  <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                ) : (
-                                  <Circle className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                )}
-                              </div>
-                              <span className={`text-xs ${subtask.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
-                                {subtask.title}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+              </section>
+            )}
           </div>
+
+          <aside className="dash-roadmap-side">
+            <section className="dash-panel">
+              <div className="dash-panel-head">
+                <div className="dash-panel-heading">
+                  <p className="dash-panel-kicker">Track the work</p>
+                  <h2 className="dash-panel-title">
+                    {roadmap?.currentTopic
+                      ? `Topic: ${roadmap.currentTopic}`
+                      : "My to-do list"}
+                  </h2>
+                  <p className="dash-panel-sub">
+                    Roadmap milestones and the tasks beneath them.
+                  </p>
+                </div>
+                <ListTask size={15} color="#8a5a3f" aria-hidden="true" />
+              </div>
+
+              <div className="dash-panel-body" style={{ maxHeight: 620, overflowY: "auto" }}>
+                {isTodosLoading ? (
+                  <div className="dash-loader-row" role="status" style={{ minHeight: 120 }}>
+                    <span className="dash-spinner" aria-hidden="true" />
+                  </div>
+                ) : !todos || todos.length === 0 ? (
+                  <div className="dash-empty-inline">
+                    <CheckCircleFill size={20} color="#8f8d6e" aria-hidden="true" />
+                    <h4>All caught up</h4>
+                    <p>Generate a roadmap to get new tasks.</p>
+                  </div>
+                ) : (
+                  <ul className="dash-todo-list">
+                    {todos
+                      // Filter to only show tasks belonging to the current topic
+                      .filter((todo) => {
+                        if (!roadmap?.currentTopic) return true;
+                        return todo.sourceTitle?.includes(roadmap.currentTopic);
+                      })
+                      // Sort by dueDate to ensure they appear in chronological order
+                      .sort((a, b) => {
+                        if (!a.dueDate) return 1;
+                        if (!b.dueDate) return -1;
+                        return (
+                          new Date(a.dueDate).getTime() -
+                          new Date(b.dueDate).getTime()
+                        );
+                      })
+                      .map((todo) => (
+                        <li
+                          key={todo.id}
+                          className={`dash-todo${
+                            todo.status === "COMPLETED" ? " is-done" : ""
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            className="dash-todo-head"
+                            onClick={() => handleToggleTodo(todo.id, todo.status)}
+                            aria-pressed={todo.status === "COMPLETED"}
+                          >
+                            <span className="dash-todo-check">
+                              {todo.status === "COMPLETED" ? (
+                                <CheckCircleFill size={14} aria-hidden="true" />
+                              ) : (
+                                <Circle size={14} aria-hidden="true" />
+                              )}
+                            </span>
+                            <span style={{ minWidth: 0 }}>
+                              <span className="dash-todo-title">{todo.title}</span>
+                              {todo.sourceTitle && (
+                                <span className="dash-todo-source">
+                                  {todo.sourceTitle}
+                                </span>
+                              )}
+                            </span>
+                          </button>
+
+                          {todo.subtasks && todo.subtasks.length > 0 && (
+                            <div className="dash-subtasks">
+                              {todo.subtasks.map((subtask) => (
+                                <button
+                                  type="button"
+                                  key={subtask.id}
+                                  className={`dash-subtask${
+                                    subtask.completed ? " is-done" : ""
+                                  }`}
+                                  onClick={() =>
+                                    subtaskMutation.mutate({
+                                      todoId: todo.id,
+                                      subtaskId: subtask.id,
+                                    })
+                                  }
+                                >
+                                  {subtask.completed ? (
+                                    <CheckCircleFill size={10} aria-hidden="true" />
+                                  ) : (
+                                    <Circle size={10} aria-hidden="true" />
+                                  )}
+                                  {subtask.title}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+          </aside>
         </div>
-          </>
-        )}
-      </div>
+      )}
     </div>
   );
 }

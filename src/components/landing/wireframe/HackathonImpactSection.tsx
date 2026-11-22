@@ -1,45 +1,56 @@
 import React from "react";
+import { motion } from "framer-motion";
+import { SparklesIcon } from "./icons";
 import { ImpactStatCard } from "./ImpactStatCard";
 import { HackathonImpactSectionProps, ImpactStat } from "./types";
+import "./impact.css";
 
 const DEFAULT_IMPACT_STATS: ImpactStat[] = [
   {
     id: "tech-learning",
-    value: "80%",
-    label: "Learn a new technology",
+    value: "Learn",
+    label: "Ship to learn",
     desc: "Hackathons are the fastest way to pick up a new stack.",
-    badge: "Skill Acceleration",
+    badge: "Skill acceleration",
     iconType: "lightning",
   },
   {
     id: "interview-prep",
-    value: "3x",
-    label: "Faster Interview Prep",
-    desc: "Real-world projects stand out more than leetcode.",
+    value: "Build",
+    label: "Proof over practice",
+    desc: "Real-world projects stand out more than another practice set.",
     badge: "Career ROI",
     iconType: "briefcase",
   },
   {
     id: "connections",
-    value: "10k+",
-    label: "Connections Made",
+    value: "Belong",
+    label: "Find your people",
     desc: "Meet co-founders, mentors, and lifelong friends.",
-    badge: "Network Growth",
+    badge: "Network growth",
     iconType: "people",
   },
 ];
 
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
+};
+
 /**
- * HackathonImpactSection renders the "The true Impact of Hackathons" stats section:
- * - Headline: The true [Impact] of Hackathons
- * - Subtitle: It's not just about winning prizes...
- * - 3 Metric Cards (80%, 3x, 10k+)
+ * Editorial impact section. The old numeric claims are replaced with three
+ * honest outcomes: learning by shipping, proof of work, and community.
  */
 export const HackathonImpactSection: React.FC<HackathonImpactSectionProps> = ({
-  badge = "04 / Measurable Impact",
+  badge = "Why it matters",
   titlePrefix = "The true",
-  highlightText = "Impact",
-  titleSuffix = "of Hackathons",
+  highlightText = "impact",
+  titleSuffix = "of hackathons.",
   subtitle = "It's not just about winning prizes. It's about building a portfolio, accelerating your career, and finding your tribe in the tech ecosystem.",
   stats = DEFAULT_IMPACT_STATS,
   className = "",
@@ -47,38 +58,64 @@ export const HackathonImpactSection: React.FC<HackathonImpactSectionProps> = ({
 }) => {
   return (
     <section
-      role="region"
-      aria-label="Hackathon impact statistics"
-      className={`relative z-10 w-full max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-16 sm:py-24 md:py-28 flex flex-col gap-12 sm:gap-16 select-none ${className}`}
+      id="impact"
+      aria-labelledby="impact-title"
+      className={`impact-section ${className}`}
     >
-      {/* 1. Section Header */}
-      <div className="flex flex-col items-center text-center space-y-4 sm:space-y-5 max-w-3xl mx-auto">
-        {/* Category Pill Tag */}
-        <div className="inline-flex items-center gap-2 bg-[#4A121A] text-[#EFE6D8] px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider shadow-sm border border-[#8A5A62]/40">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#A75D43]" />
-          {badge}
-        </div>
-
-        {/* Main Title with Wireframe Dark Capsule Highlight */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#4A121A] leading-tight m-0">
-          {titlePrefix}{" "}
-          <span className="inline-block bg-[#4A121A] text-[#EFE6D8] px-5 sm:px-7 py-1 sm:py-1.5 rounded-full shadow-md my-1 border border-[#5E1A23]">
-            {highlightText}
-          </span>{" "}
-          {titleSuffix}
-        </h2>
-
-        {/* Subtitle Body */}
-        <p className="text-sm sm:text-base md:text-lg text-[#4A121A]/85 font-medium leading-relaxed max-w-2xl m-0 pt-1">
-          {subtitle}
-        </p>
+      <div className="impact-backdrop" aria-hidden="true">
+        <span className="impact-sun" />
+        <span className="impact-hills" />
+        <span className="impact-grain" />
       </div>
 
-      {/* 2. Three Metric Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 w-full items-stretch">
-        {stats.map((stat) => (
-          <ImpactStatCard key={stat.id} stat={stat} onClick={() => onStatClick?.(stat.id)} />
-        ))}
+      <div className="impact-inner">
+        <motion.header
+          initial={{ opacity: 0, y: 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.65, ease: "easeOut" }}
+          className="impact-header"
+        >
+          <span className="impact-eyebrow">
+            <SparklesIcon className="h-3 w-3" />
+            {badge}
+          </span>
+
+          <h2 id="impact-title" className="impact-title">
+            {titlePrefix} <span className="impact-title-accent">{highlightText}</span>{" "}
+            {titleSuffix}
+          </h2>
+
+          <p className="impact-subtitle">{subtitle}</p>
+        </motion.header>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          className="impact-grid"
+        >
+          {stats.map((stat) => (
+            <motion.div key={stat.id} variants={cardVariants} className="impact-card-wrap">
+              <ImpactStatCard
+                stat={stat}
+                onClick={() => onStatClick?.(stat.id)}
+                className="h-full"
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="impact-note"
+        >
+          The outcome is the portfolio, the people, and the proof you can ship.
+        </motion.p>
       </div>
     </section>
   );

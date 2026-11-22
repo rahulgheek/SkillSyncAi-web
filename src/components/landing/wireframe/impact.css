@@ -1,0 +1,406 @@
+/* ==========================================================================
+   Impact section
+   The landscape comes forward again: cool sky at the top, warm cream through
+   the middle, and an olive field at the bottom that hands off to the closing
+   call to action. Three standard editorial cards replace the old metric tiles.
+   ========================================================================== */
+
+.impact-section {
+  --impact-ink: #241d18;
+  --impact-ink-soft: rgba(36, 29, 24, 0.64);
+  --impact-ink-faint: rgba(36, 29, 24, 0.55);
+  --impact-cream: #fbf7f0;
+  --impact-cream-deep: #f3ebdd;
+  --impact-terracotta: #8a5a3f;
+  --impact-field: #8f9474;
+  --impact-line: rgba(36, 29, 24, 0.14);
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: clamp(86px, 10vw, 124px) 0 clamp(90px, 10vw, 120px);
+  scroll-margin-top: 78px;
+  background:
+    radial-gradient(
+      72% 40% at 50% 0%,
+      rgba(255, 251, 238, 0.9) 0%,
+      rgba(255, 251, 238, 0) 72%
+    ),
+    linear-gradient(
+      180deg,
+      #d6dedd 0%,
+      #e4e5dc 10%,
+      #f1eadc 22%,
+      #f7f0e4 42%,
+      #f5eee1 68%,
+      #e2dcc7 84%,
+      #c6c2a9 94%,
+      #b5b39b 100%
+    );
+  color: var(--impact-ink);
+  font-family: "Manrope", "Segoe UI", system-ui, sans-serif;
+  isolation: isolate;
+}
+
+/* ---------- Landscape backdrop ---------- */
+
+.impact-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.impact-sun {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  width: min(840px, 88vw);
+  height: min(840px, 88vw);
+  translate: -50% 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 251, 238, 0.95) 0%,
+    rgba(255, 246, 226, 0.42) 42%,
+    rgba(255, 246, 226, 0) 72%
+  );
+  filter: blur(14px);
+}
+
+.impact-hills {
+  position: absolute;
+  right: -8%;
+  bottom: -70px;
+  left: -8%;
+  height: clamp(190px, 22vw, 300px);
+  opacity: 0.8;
+  mask-image: linear-gradient(180deg, #000 calc(100% - 200px), transparent calc(100% - 70px));
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 200px), transparent calc(100% - 70px));
+}
+
+.impact-hills::before,
+.impact-hills::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+
+.impact-hills::before {
+  left: -2%;
+  width: 60%;
+  height: 86%;
+  background: linear-gradient(180deg, rgba(168, 170, 147, 0.34), rgba(143, 148, 116, 0.48));
+  transform: rotate(-2deg);
+  filter: blur(1.5px);
+}
+
+.impact-hills::after {
+  right: -3%;
+  width: 62%;
+  height: 70%;
+  background: linear-gradient(180deg, rgba(156, 154, 121, 0.28), rgba(128, 132, 102, 0.38));
+  transform: rotate(1.8deg);
+  filter: blur(1px);
+}
+
+.impact-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+}
+
+.impact-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(22px, 3.6vw, 48px);
+}
+
+/* ---------- Header ---------- */
+
+.impact-header {
+  max-width: 820px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.impact-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border: 1px solid rgba(36, 29, 24, 0.16);
+  border-radius: 999px;
+  background: rgba(251, 247, 240, 0.7);
+  color: var(--impact-ink-soft);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px -22px rgba(36, 29, 24, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.impact-eyebrow svg {
+  color: var(--impact-terracotta);
+}
+
+.impact-title {
+  margin: 24px 0 0;
+  font-family: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.7rem, 4.6vw, 4.3rem);
+  font-weight: 500;
+  line-height: 1.03;
+  letter-spacing: -0.025em;
+  color: var(--impact-ink);
+  text-wrap: balance;
+}
+
+.impact-title-accent {
+  font-style: italic;
+  color: var(--impact-terracotta);
+}
+
+.impact-subtitle {
+  max-width: 600px;
+  margin: 20px auto 0;
+  color: var(--impact-ink-soft);
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 500;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+/* ---------- Cards ---------- */
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(16px, 2vw, 26px);
+  max-width: 1120px;
+  margin: clamp(42px, 5vw, 62px) auto 0;
+}
+
+.impact-card-wrap {
+  display: flex;
+  min-width: 0;
+}
+
+.impact-card {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 26px 24px 20px;
+  border: 1px solid rgba(36, 29, 24, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 253, 247, 0.94);
+  box-shadow:
+    0 28px 54px -42px rgba(36, 29, 24, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.impact-card:hover {
+  border-color: rgba(36, 29, 24, 0.24);
+  box-shadow:
+    0 34px 64px -42px rgba(36, 29, 24, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.impact-card.is-clickable {
+  cursor: pointer;
+}
+
+.impact-card:focus-visible {
+  outline: 2px solid var(--impact-terracotta);
+  outline-offset: 3px;
+}
+
+.impact-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.impact-card-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--impact-cream-deep);
+  color: var(--impact-terracotta);
+  box-shadow: inset 0 0 0 1px rgba(36, 29, 24, 0.06);
+}
+
+.impact-card-badge {
+  color: var(--impact-ink-faint);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.impact-card-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  margin-top: 26px;
+}
+
+.impact-card-value {
+  display: block;
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-size: clamp(2.7rem, 3.6vw, 3.8rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--impact-terracotta);
+}
+
+.impact-card-title {
+  margin: 14px 0 0;
+  color: var(--impact-ink);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.impact-card-copy {
+  margin: 10px 0 0;
+  color: var(--impact-ink-soft);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.impact-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--impact-line);
+}
+
+.impact-card-engine {
+  color: var(--impact-ink-faint);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.impact-card-arrow {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--impact-cream-deep);
+  color: var(--impact-terracotta);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.impact-card:hover .impact-card-arrow {
+  transform: translate(2px, -2px);
+  background: #eadfcd;
+}
+
+/* ---------- Closing note ---------- */
+
+.impact-note {
+  max-width: 620px;
+  margin: clamp(26px, 3vw, 36px) auto 0;
+  color: var(--impact-ink-soft);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1000px) {
+  .impact-grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 520px;
+  }
+
+  .impact-card {
+    padding: 24px 22px 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .impact-section {
+    padding-top: 72px;
+    padding-bottom: 88px;
+  }
+
+  .impact-inner {
+    padding-inline: 18px;
+  }
+
+  .impact-title {
+    margin-top: 20px;
+    font-size: clamp(2.2rem, 10.5vw, 3.1rem);
+  }
+
+  .impact-subtitle {
+    margin-top: 16px;
+    font-size: 12.5px;
+  }
+
+  .impact-grid {
+    margin-top: 34px;
+    gap: 14px;
+  }
+
+  .impact-card {
+    padding: 22px 20px 18px;
+  }
+
+  .impact-card-value {
+    font-size: 3rem;
+  }
+
+  .impact-note {
+    margin-top: 24px;
+    font-size: 11.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .impact-card,
+  .impact-card-arrow {
+    transition: none;
+  }
+}

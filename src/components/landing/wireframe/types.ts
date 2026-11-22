@@ -1,4 +1,5 @@
 import React from "react";
+import type { Tone } from "./tones";
 
 export interface PlaceholderPillProps {
   width?: string | number;
@@ -43,6 +44,7 @@ export interface HeroContentCardProps {
   description?: string;
   tagline?: string;
   ctaText?: string;
+  secondaryCtaText?: string;
   className?: string;
   style?: React.CSSProperties;
   onCtaClick?: () => void;
@@ -78,6 +80,7 @@ export interface FeatureCardData {
 export interface FeatureCardProps {
   index?: number;
   data?: FeatureCardData;
+  tone?: Tone;
   className?: string;
   onClick?: () => void;
   children?: React.ReactNode;
@@ -138,6 +141,7 @@ export interface MissionImpactSectionProps {
   titlePrefix?: string;
   highlightText?: string;
   titleSuffix?: string;
+  subtitle?: string;
   pillars?: MissionPillar[];
   className?: string;
   onPillarClick?: (pillarId: string) => void;

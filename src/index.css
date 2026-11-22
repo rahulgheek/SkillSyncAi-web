@@ -26,14 +26,15 @@
 body {
   margin: 0;
   overflow-x: hidden;
-  background-color: #FFFFFF;
+  background-color: #FFF8F7;
+  color: #281719;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--heading);
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #1F2937;
+  color: #2D0006;
 }
 
 h1 {
@@ -69,11 +70,11 @@ code, .counter {
 @keyframes anti-gravity {
   0%, 100% {
     transform: translateY(0);
-    box-shadow: 0 10px 30px -10px var(--hover-shadow-color, rgba(139, 92, 246, 0.3));
+    box-shadow: 0 10px 30px -10px var(--hover-shadow-color, rgba(167, 93, 67, 0.25));
   }
   50% {
     transform: translateY(-15px);
-    box-shadow: 0 25px 40px -15px var(--hover-shadow-color, rgba(139, 92, 246, 0.5));
+    box-shadow: 0 25px 40px -15px var(--hover-shadow-color, rgba(167, 93, 67, 0.4));
   }
 }
 
@@ -83,8 +84,6 @@ code, .counter {
 
 .hover-anti-gravity:hover {
   animation: anti-gravity 3s ease-in-out infinite;
-  /* Start the animation immediately with the "up" state to feel responsive */
   transform: translateY(-15px);
-  box-shadow: 0 25px 40px -15px var(--hover-shadow-color, rgba(139, 92, 246, 0.5));
+  box-shadow: 0 25px 40px -15px var(--hover-shadow-color, rgba(167, 93, 67, 0.4));
 }
-

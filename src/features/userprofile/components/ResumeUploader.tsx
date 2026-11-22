@@ -1,12 +1,16 @@
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ProfileResponse } from "../schemas";
-import { FileText, UploadCloud, CheckCircle, Loader2 } from "lucide-react";
+import {
+  ArrowRepeat,
+  BoxArrowUpRight,
+  CheckCircleFill,
+  CloudUpload,
+  FileEarmarkText,
+} from "react-bootstrap-icons";
 import { toast } from "sonner";
-import { getUploadSignature, updateResume } from "../api";
 import axios from "axios";
+import { ProfileResponse } from "../schemas";
+import { getUploadSignature, updateResume } from "../api";
 
 export function ResumeUploader({ profile }: { profile: ProfileResponse }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -21,7 +25,7 @@ export function ResumeUploader({ profile }: { profile: ProfileResponse }) {
     },
     onError: () => {
       toast.error("Failed to save resume URL to profile.");
-    }
+    },
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,10 +39,8 @@ export function ResumeUploader({ profile }: { profile: ProfileResponse }) {
 
     setIsUploading(true);
     try {
-      // 1. Get signature from backend
       const sigData = await getUploadSignature("resume");
-      
-      // 2. Prepare form data for Cloudinary
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("api_key", sigData.apiKey);
@@ -46,18 +48,15 @@ export function ResumeUploader({ profile }: { profile: ProfileResponse }) {
       formData.append("signature", sigData.signature);
       formData.append("folder", sigData.folder);
 
-      // 3. Upload to Cloudinary (use raw to bypass image/PDF transformation security restrictions)
       const uploadRes = await axios.post(
         `https://api.cloudinary.com/v1_1/${sigData.cloudName}/raw/upload`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      
+
       const secureUrl = uploadRes.data.secure_url;
-      
-      // 4. Update backend profile with new URL
+
       updateResumeMutation.mutate(secureUrl);
-      
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("An error occurred during upload. Please try again.");
@@ -74,53 +73,87 @@ export function ResumeUploader({ profile }: { profile: ProfileResponse }) {
   };
 
   return (
-    <Card className="shadow-sm border-muted">
-      <CardHeader>
-        <CardTitle className="text-lg">Resume</CardTitle>
-        <CardDescription>Upload your latest resume for recruiters and teammates.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {profile.resumeUrl && (
-          <div className="flex items-center justify-between p-4 mb-4 border rounded-lg bg-primary/5 border-primary/20">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-full">
-                <FileText className="w-5 h-5 text-primary" />
-              </div>
+    <div className="dash-stack">
+      <div>
+        <h2 className="dash-mini-title">Resume</h2>
+        <p className="dash-mini-sub">
+          Keep your latest resume on hand for recruiters and teammates.
+        </p>
+      </div>
+
+      {profile.resumeUrl && (
+        <div className="dash-entry">
+          <div className="dash-spread">
+            <div className="dash-inline" style={{ flexWrap: "nowrap" }}>
+              <span className="dash-list-icon">
+                <FileEarmarkText size={14} aria-hidden="true" />
+              </span>
               <div>
-                <p className="font-medium text-sm text-foreground">Current Resume</p>
-                <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-                  View Document
+                <span className="dash-list-title">Current resume</span>
+                <a
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dash-list-sub"
+                  style={{ color: "var(--dash-terracotta)" }}
+                >
+                  View document
                 </a>
               </div>
             </div>
-            <CheckCircle className="w-5 h-5 text-green-500" />
+            <span className="dash-inline" style={{ color: "#6f7a56" }}>
+              <CheckCircleFill size={14} aria-label="Resume uploaded" />
+            </span>
           </div>
-        )}
-        
-        <div className="border-2 border-dashed border-muted rounded-lg p-8 flex flex-col items-center justify-center text-center space-y-3 bg-muted/20 transition-colors hover:bg-muted/30">
-          <div className="p-3 bg-secondary/20 rounded-full">
-            <UploadCloud className="w-6 h-6 text-secondary-foreground" />
-          </div>
-          <div>
-            <p className="font-medium text-sm">Click to upload or drag and drop</p>
-            <p className="text-xs text-muted-foreground mt-1">PDF, DOCX up to 5MB</p>
-          </div>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            accept=".pdf,.doc,.docx" 
-            className="hidden" 
-          />
-          <Button onClick={handleUploadClick} disabled={isUploading || updateResumeMutation.isPending} variant="outline" className="mt-2 w-32">
-            {(isUploading || updateResumeMutation.isPending) ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              profile.resumeUrl ? "Replace File" : "Select File"
-            )}
-          </Button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+
+      <div className="dash-dropzone">
+        <span className="dash-dropzone-icon">
+          <CloudUpload size={16} aria-hidden="true" />
+        </span>
+        <div>
+          <strong>Click to upload or drop a file</strong>
+          <p>PDF, DOC or DOCX · up to 5MB</p>
+        </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".pdf,.doc,.docx"
+          className="hidden"
+        />
+        <button
+          type="button"
+          className="dash-btn dash-btn-ghost dash-btn-sm"
+          onClick={handleUploadClick}
+          disabled={isUploading || updateResumeMutation.isPending}
+        >
+          {isUploading || updateResumeMutation.isPending ? (
+            <>
+              <ArrowRepeat size={11} className="dash-icon-spin" aria-hidden="true" />
+              Uploading
+            </>
+          ) : (
+            <>
+              <CloudUpload size={11} aria-hidden="true" />
+              {profile.resumeUrl ? "Replace file" : "Select file"}
+            </>
+          )}
+        </button>
+        {profile.resumeUrl && (
+          <a
+            href={profile.resumeUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="dash-help"
+            style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
+          >
+            Open current resume
+            <BoxArrowUpRight size={9} aria-hidden="true" />
+          </a>
+        )}
+      </div>
+    </div>
   );
 }

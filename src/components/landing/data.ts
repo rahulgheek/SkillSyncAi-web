@@ -4,52 +4,74 @@ import {
 } from "lucide-react";
 
 /**
- * Every accent color used across the landing page lives here.
- * Sections reference a `tone` key instead of hardcoding Tailwind classes,
- * so the palette stays consistent and is only defined in one place.
+ * SkillSync Brand Color Palette Tones.
+ * Foundation:
+ * - Primary: Deep Burgundy (#4A121A)
+ * - Secondary: Warm Terracotta (#A75D43)
+ * - Tertiary: Muted Rose (#8A5A62)
+ * - Neutral: Warm Cream (#EFE6D8)
  */
 export const TONES = {
-  indigo: {
-    text: "text-indigo-400",
-    ring: "border-indigo-500/50",
-    glow: "shadow-[0_0_30px_rgba(99,102,241,0.15)]",
-    bg: "bg-indigo-500/20",
+  burgundy: {
+    text: "text-[#4A121A]",
+    ring: "border-[#4A121A]/40",
+    glow: "shadow-[0_0_30px_rgba(74,18,26,0.18)]",
+    bg: "bg-[#4A121A]/10",
   },
-  purple: {
-    text: "text-purple-400",
-    ring: "border-purple-500/50",
-    glow: "shadow-[0_0_30px_rgba(168,85,247,0.15)]",
-    bg: "bg-purple-500/20",
-  },
-  pink: {
-    text: "text-pink-400",
-    ring: "border-pink-500/50",
-    glow: "shadow-[0_0_30px_rgba(236,72,153,0.15)]",
-    bg: "bg-pink-500/20",
-  },
-  emerald: {
-    text: "text-emerald-400",
-    ring: "border-emerald-500/50",
-    glow: "shadow-[0_0_30px_rgba(52,211,153,0.15)]",
-    bg: "bg-emerald-500/20",
-  },
-  blue: {
-    text: "text-blue-400",
-    ring: "border-blue-500/50",
-    glow: "shadow-[0_0_30px_rgba(59,130,246,0.15)]",
-    bg: "bg-blue-500/20",
+  terracotta: {
+    text: "text-[#A75D43]",
+    ring: "border-[#A75D43]/40",
+    glow: "shadow-[0_0_30px_rgba(167,93,67,0.2)]",
+    bg: "bg-[#A75D43]/10",
   },
   rose: {
-    text: "text-rose-400",
-    ring: "border-rose-500/50",
-    glow: "shadow-[0_0_30px_rgba(251,113,133,0.15)]",
-    bg: "bg-rose-500/20",
+    text: "text-[#8A5A62]",
+    ring: "border-[#8A5A62]/40",
+    glow: "shadow-[0_0_30px_rgba(138,90,98,0.2)]",
+    bg: "bg-[#8A5A62]/10",
+  },
+  cream: {
+    text: "text-[#340C12]",
+    ring: "border-[#E2D5C3]",
+    glow: "shadow-[0_0_30px_rgba(239,230,216,0.25)]",
+    bg: "bg-[#EFE6D8]",
+  },
+  // Legacy aliases mapped to the brand palette
+  indigo: {
+    text: "text-[#4A121A]",
+    ring: "border-[#4A121A]/40",
+    glow: "shadow-[0_0_30px_rgba(74,18,26,0.18)]",
+    bg: "bg-[#4A121A]/10",
+  },
+  purple: {
+    text: "text-[#8A5A62]",
+    ring: "border-[#8A5A62]/40",
+    glow: "shadow-[0_0_30px_rgba(138,90,98,0.2)]",
+    bg: "bg-[#8A5A62]/10",
+  },
+  pink: {
+    text: "text-[#8A5A62]",
+    ring: "border-[#8A5A62]/40",
+    glow: "shadow-[0_0_30px_rgba(138,90,98,0.2)]",
+    bg: "bg-[#8A5A62]/10",
+  },
+  emerald: {
+    text: "text-[#A75D43]",
+    ring: "border-[#A75D43]/40",
+    glow: "shadow-[0_0_30px_rgba(167,93,67,0.2)]",
+    bg: "bg-[#A75D43]/10",
+  },
+  blue: {
+    text: "text-[#4A121A]",
+    ring: "border-[#4A121A]/40",
+    glow: "shadow-[0_0_30px_rgba(74,18,26,0.18)]",
+    bg: "bg-[#4A121A]/10",
   },
   amber: {
-    text: "text-amber-400",
-    ring: "border-amber-500/50",
-    glow: "shadow-[0_0_30px_rgba(251,191,36,0.15)]",
-    bg: "bg-amber-500/20",
+    text: "text-[#A75D43]",
+    ring: "border-[#A75D43]/40",
+    glow: "shadow-[0_0_30px_rgba(167,93,67,0.2)]",
+    bg: "bg-[#A75D43]/10",
   },
 } as const;
 
@@ -65,21 +87,21 @@ export interface StepItem {
 export const HOW_IT_WORKS: StepItem[] = [
   {
     icon: Brain,
-    tone: "indigo",
+    tone: "burgundy",
     title: "1. AI Profile Parsing",
     description:
       "Upload your resume and let our Gemini-powered AI automatically extract your skills, experiences, and core competencies.",
   },
   {
     icon: Target,
-    tone: "purple",
+    tone: "terracotta",
     title: "2. Smart Matching",
     description:
       "Our orchestrator analyzes project requirements and finds the exact talent needed, ensuring the perfect fit for every role.",
   },
   {
     icon: Layers,
-    tone: "pink",
+    tone: "rose",
     title: "3. Collaborate & Ship",
     description:
       "Manage tasks, roles, and deadlines within our immersive workspace. Focus on building while we handle the orchestration.",
@@ -96,21 +118,21 @@ export interface ValueProp {
 export const WHY_CHOOSE: ValueProp[] = [
   {
     icon: Zap,
-    tone: "amber",
+    tone: "terracotta",
     title: "Instant Synergy",
     description:
       "No more endless searching. Get matched with peers whose skills perfectly complement yours in milliseconds.",
   },
   {
     icon: Shield,
-    tone: "emerald",
+    tone: "burgundy",
     title: "Privacy First",
     description:
       "Your data belongs to you. We use AI to generate insights for your profile, not to train global language models.",
   },
   {
     icon: Globe,
-    tone: "blue",
+    tone: "rose",
     title: "Campus to Global",
     description:
       "Start by finding collaborators within your university, then scale your network to top talent worldwide.",
@@ -127,35 +149,35 @@ export interface FeatureCardItem {
 export const PLATFORM_FEATURES: FeatureCardItem[] = [
   {
     icon: Brain,
-    tone: "indigo",
+    tone: "burgundy",
     title: "AI Resume Parsing",
     description:
       "Upload your resume and let our Gemini-powered AI extract your core skills, strengths, and weaknesses instantly.",
   },
   {
     icon: Users,
-    tone: "purple",
+    tone: "terracotta",
     title: "Smart Matchmaking",
     description:
       "Create projects with specific requirements and let the orchestrator find the best students across your campus.",
   },
   {
     icon: Target,
-    tone: "emerald",
+    tone: "rose",
     title: "AI Career Roadmap",
     description:
       "Get personalized step-by-step guidance based on your dream role. Let AI break down complex goals into manageable tasks.",
   },
   {
     icon: Code,
-    tone: "blue",
+    tone: "burgundy",
     title: "Project Orchestration",
     description:
       "Manage roles, tasks, and deadlines in one place. Streamline your collaboration from ideation to deployment.",
   },
   {
     icon: Lock,
-    tone: "rose",
+    tone: "terracotta",
     title: "Secure & Private",
     description:
       "Your data is kept safe. Resume content is processed securely to generate insights for you, never to train global models.",

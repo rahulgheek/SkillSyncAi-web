@@ -1,11 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import { ArrowRightIcon, ArrowUpIcon, PeopleIcon } from "./icons";
+import "./footer.css";
 
-const PLATFORM_LINKS = [
-  { to: "/explore", label: "Explore Projects" },
+const PRODUCT_LINKS = [
+  { to: "/explore", label: "Explore Projects", external: false },
+  { to: "#features", label: "Features", external: true },
+  { to: "#impact", label: "Impact", external: true },
+  { to: "/register", label: "Create Account", external: false },
+];
+
+const COMPANY_LINKS = [
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
   { to: "/login", label: "Sign In" },
-  { to: "/register", label: "Create Account" },
 ];
 
 const LEGAL_LINKS = [
@@ -14,88 +22,119 @@ const LEGAL_LINKS = [
   { to: "/cookie-policy", label: "Cookie Policy" },
 ];
 
-const SOCIAL_LINKS = ["Twitter", "LinkedIn", "GitHub"];
+const scrollToTop = () => {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+};
 
 /**
- * LandingFooter is the landing-page-specific footer adhering strictly
- * to the warm palette (Deep Burgundy #4A121A, Warm Terracotta #A75D43,
- * Muted Rose #8A5A62, Warm Cream #EFE6D8).
+ * Dark closing footer. Deep espresso, cream type, and a cropped serif
+ * wordmark keep it consistent with the hero's dark trust strip.
  */
 export const LandingFooter: React.FC = () => {
   return (
-    <footer className="relative z-10 border-t border-[#4A121A]/80 bg-[#340C12] pt-16 sm:pt-20 pb-12 select-none">
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-6 sm:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-14">
-        {/* Brand Column */}
-        <div className="col-span-1 md:col-span-2 space-y-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#A75D43] text-[#EFE6D8] shadow-md shadow-[#A75D43]/20">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <span className="font-extrabold text-2xl text-[#EFE6D8] tracking-tight">SkillSync AI</span>
-          </div>
+    <footer className="landing-footer">
+      <div className="footer-grain" aria-hidden="true" />
 
-          <p className="text-[#EFE6D8]/70 text-sm sm:text-base max-w-md leading-relaxed font-medium">
-            The premier platform for connecting student builders, engineers, and creators. Assemble balanced teams and turn ideas into real hackathon wins.
-          </p>
+      <div className="footer-inner">
+        <div className="footer-grid">
+          <div>
+            <Link to="/" className="footer-brand" aria-label="SkillSync home">
+              <span className="footer-brand-mark">
+                <PeopleIcon className="h-4 w-4" />
+              </span>
+              <span className="footer-brand-word">
+                SkillSync
+                <span className="footer-brand-ai">AI</span>
+              </span>
+            </Link>
 
-          <div className="bg-[#28090E] border border-[#8A5A62]/30 rounded-xl p-4 inline-block shadow-sm">
-            <p className="text-xs sm:text-sm text-[#EFE6D8]/80 font-medium">
-              <strong className="text-[#EFE6D8] font-bold">Live Demo:</strong> Anyone can sign in to explore. Testing credentials available at{" "}
-              <a
-                href="mailto:demotesting2200@gmail.com"
-                className="text-[#D98268] hover:underline font-semibold"
-              >
-                demotesting2200@gmail.com
-              </a>
+            <p className="footer-copy">
+              The platform for connecting student builders, engineers, and creators.
+              Assemble balanced teams and turn ideas into real hackathon wins.
             </p>
+
+            <div className="footer-demo">
+              <p>
+                <strong>Live demo:</strong> Anyone can sign in to explore. Testing
+                credentials available at{" "}
+                <a href="mailto:demotesting2200@gmail.com">demotesting2200@gmail.com</a>
+              </p>
+            </div>
+
+            <div className="footer-status">
+              <span className="footer-status-dot" aria-hidden="true" />
+              Built for student builders
+            </div>
           </div>
+
+          <FooterColumn title="Product" dotClass="is-terracotta" links={PRODUCT_LINKS} />
+          <FooterColumn title="Company" dotClass="is-olive" links={COMPANY_LINKS} />
+          <FooterColumn title="Legal" dotClass="is-peach" links={LEGAL_LINKS} />
         </div>
 
-        {/* Platform Links */}
-        <div>
-          <h4 className="text-[#EFE6D8] font-bold text-sm uppercase tracking-wider mb-5">Platform</h4>
-          <ul className="space-y-3 text-sm text-[#EFE6D8]/70 font-medium">
-            {PLATFORM_LINKS.map((link) => (
-              <li key={link.to}>
-                <Link to={link.to} className="hover:text-[#D98268] transition-colors">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="footer-bottom">
+          <div className="footer-meta">
+            <span>
+              <span className="footer-dot" aria-hidden="true" />
+              SkillSync AI ecosystem
+            </span>
+            <span className="footer-sep" aria-hidden="true" />
+            <span>Built with care for student builders.</span>
+            <span className="footer-sep" aria-hidden="true" />
+            <span>© {new Date().getFullYear()} SkillSync. All rights reserved.</span>
+          </div>
 
-        {/* Legal Links */}
-        <div>
-          <h4 className="text-[#EFE6D8] font-bold text-sm uppercase tracking-wider mb-5">Legal & Policies</h4>
-          <ul className="space-y-3 text-sm text-[#EFE6D8]/70 font-medium">
-            {LEGAL_LINKS.map((link) => (
-              <li key={link.to}>
-                <Link to={link.to} className="hover:text-[#D98268] transition-colors">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <button type="button" onClick={scrollToTop} className="footer-top">
+            Back to top
+            <span>
+              <ArrowUpIcon className="h-3 w-3" />
+            </span>
+          </button>
         </div>
       </div>
 
-      {/* Bottom Legal / Status Bar */}
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-6 sm:px-8 pt-8 border-t border-[#4A121A]/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#8A5A62]">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#A75D43]" />
-          <span>SkillSync AI Ecosystem • Production Ready</span>
-        </div>
-
-        <div className="flex items-center gap-6">
-          {SOCIAL_LINKS.map((social) => (
-            <span key={social} className="hover:text-[#EFE6D8] transition-colors cursor-pointer">
-              {social}
-            </span>
-          ))}
-          <span>© {new Date().getFullYear()} SkillSync. All rights reserved.</span>
-        </div>
+      <div className="footer-wordmark" aria-hidden="true">
+        SkillSync
       </div>
     </footer>
+  );
+};
+
+interface FooterLink {
+  to: string;
+  label: string;
+  external?: boolean;
+}
+
+const FooterColumn: React.FC<{
+  title: string;
+  dotClass: string;
+  links: FooterLink[];
+}> = ({ title, dotClass, links }) => {
+  return (
+    <div>
+      <h4 className="footer-col-title">
+        <span className={dotClass} aria-hidden="true" />
+        {title}
+      </h4>
+      <ul className="footer-links">
+        {links.map((link) => (
+          <li key={link.label}>
+            {link.external ? (
+              <a href={link.to} className="footer-link">
+                {link.label}
+                <ArrowRightIcon className="h-3 w-3" />
+              </a>
+            ) : (
+              <Link to={link.to} className="footer-link">
+                {link.label}
+                <ArrowRightIcon className="h-3 w-3" />
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
