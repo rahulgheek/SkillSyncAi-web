@@ -19,6 +19,7 @@ import {
   getActiveRoadmap,
 } from "@/features/roadmap/api";
 import { getMyTodos, updateTodoStatus, toggleSubtask } from "@/features/todo/api";
+import { normalizeError } from "@/lib/api/errors";
 import { toast } from "sonner";
 
 export function AiRoadmap() {
@@ -67,7 +68,7 @@ export function AiRoadmap() {
     },
     onError: (error) => {
       console.error("Roadmap generation failed:", error);
-      toast.error("Failed to generate roadmap. Please try again.");
+      toast.error(normalizeError(error).message);
     },
   });
 
@@ -90,6 +91,8 @@ export function AiRoadmap() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (generateMutation.isPending) return;
+
     const payload: CustomRoadmapPayload = {
       targetRole: targetRole.trim(),
       currentKnowledge: currentKnowledge.trim(),
@@ -116,7 +119,7 @@ export function AiRoadmap() {
       const reply = await chatWithRoadmap(roadmap.id, userMsg);
       setChatMessages((prev) => [...prev, { role: "ai", content: reply }]);
     } catch (error) {
-      toast.error("Failed to send message to AI.");
+      toast.error(normalizeError(error).message);
     } finally {
       setIsChatLoading(false);
     }
@@ -172,6 +175,7 @@ export function AiRoadmap() {
                         placeholder="e.g. Full Stack Developer... (leave blank for recommendations)"
                         value={targetRole}
                         onChange={(e) => setTargetRole(e.target.value)}
+                        disabled={generateMutation.isPending}
                       />
                     </div>
 
@@ -186,6 +190,7 @@ export function AiRoadmap() {
                         value={currentKnowledge}
                         onChange={(e) => setCurrentKnowledge(e.target.value)}
                         rows={3}
+                        disabled={generateMutation.isPending}
                       />
                     </div>
 
@@ -200,6 +205,7 @@ export function AiRoadmap() {
                         value={knowledgeGaps}
                         onChange={(e) => setKnowledgeGaps(e.target.value)}
                         rows={3}
+                        disabled={generateMutation.isPending}
                       />
                     </div>
 
@@ -208,6 +214,7 @@ export function AiRoadmap() {
                         type="submit"
                         className="dash-btn dash-btn-solid dash-btn-lg"
                         disabled={generateMutation.isPending}
+                        aria-busy={generateMutation.isPending}
                       >
                         {generateMutation.isPending ? (
                           <>
@@ -230,6 +237,17 @@ export function AiRoadmap() {
                           </>
                         )}
                       </button>
+                      {generateMutation.isPending && (
+                        <p
+                          className="dash-help"
+                          role="status"
+                          aria-live="polite"
+                          style={{ margin: 0, display: "flex", alignItems: "center", gap: 8 }}
+                        >
+                          <ArrowRepeat size={11} className="dash-icon-spin" aria-hidden="true" />
+                          Building your roadmap. This can take up to a minute...
+                        </p>
+                      )}
                     </div>
                   </form>
                 </div>

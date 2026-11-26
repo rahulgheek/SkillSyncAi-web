@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowRepeat,
   PinAngle,
@@ -13,16 +13,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { NoteResponse, NoteRequest, summarizeNote } from "../api";
+import { normalizeError } from "@/lib/api/errors";
+import { NoteResponse, NoteRequest, getNote, summarizeNote } from "../api";
+
+const SUMMARY_POLL_INTERVAL_MS = 2000;
+const SUMMARY_POLL_ATTEMPTS = 45;
 
 interface NoteEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   note: NoteResponse | null;
   onSave: (note: NoteRequest, id?: string) => Promise<void>;
+  onSummaryUpdated?: () => void;
 }
 
-export function NoteEditorModal({ isOpen, onClose, note, onSave }: NoteEditorModalProps) {
+export function NoteEditorModal({
+  isOpen,
+  onClose,
+  note,
+  onSave,
+  onSummaryUpdated,
+}: NoteEditorModalProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [pinned, setPinned] = useState(false);
@@ -30,6 +41,16 @@ export function NoteEditorModal({ isOpen, onClose, note, onSave }: NoteEditorMod
   const [tagInput, setTagInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [summaryStatus, setSummaryStatus] =
+    useState<NoteResponse["summaryStatus"]>("IDLE");
+
+  const pollToken = useRef(0);
+  const onSummaryUpdatedRef = useRef(onSummaryUpdated);
+
+  useEffect(() => {
+    onSummaryUpdatedRef.current = onSummaryUpdated;
+  }, [onSummaryUpdated]);
 
   useEffect(() => {
     if (note) {
@@ -37,13 +58,76 @@ export function NoteEditorModal({ isOpen, onClose, note, onSave }: NoteEditorMod
       setContent(note.content);
       setPinned(note.pinned);
       setTags(note.tags || []);
+      setSummary(note.aiSummary || "");
+      setSummaryStatus(note.summaryStatus);
     } else {
       setTitle("");
       setContent("");
       setPinned(false);
       setTags([]);
+      setSummary("");
+      setSummaryStatus("IDLE");
     }
   }, [note, isOpen]);
+
+  const pollSummary = useCallback(async (noteId: string, announce: boolean) => {
+    const token = ++pollToken.current;
+
+    for (let attempt = 0; attempt < SUMMARY_POLL_ATTEMPTS; attempt += 1) {
+      await new Promise((resolve) => setTimeout(resolve, SUMMARY_POLL_INTERVAL_MS));
+      if (pollToken.current !== token) return;
+
+      try {
+        const latest = await getNote(noteId);
+        if (pollToken.current !== token) return;
+
+        if (latest.summaryStatus === "COMPLETED") {
+          setSummary(latest.aiSummary || "");
+          setSummaryStatus("COMPLETED");
+          onSummaryUpdatedRef.current?.();
+          if (announce) toast.success("AI summary is ready.");
+          return;
+        }
+
+        if (latest.summaryStatus === "FAILED") {
+          setSummaryStatus("FAILED");
+          if (announce) {
+            toast.error("AI could not summarize this note. Please try again.");
+          }
+          return;
+        }
+      } catch {
+        // A transient read failure should not stop the polling loop.
+      }
+    }
+
+    if (pollToken.current === token) {
+      setSummaryStatus("FAILED");
+      if (announce) {
+        toast.error("Summarization is taking too long. Please try again.");
+      }
+    }
+  }, []);
+
+  // A summarization may already be running when the modal is opened.
+  useEffect(() => {
+    if (!isOpen || !note?.id || note.summaryStatus !== "PROCESSING") {
+      return;
+    }
+
+    let active = true;
+    setIsSummarizing(true);
+    pollSummary(note.id, false).finally(() => {
+      if (active) setIsSummarizing(false);
+    });
+
+    return () => {
+      active = false;
+      pollToken.current += 1;
+    };
+  }, [isOpen, note?.id, note?.summaryStatus, pollSummary]);
+
+  const isSummaryPending = isSummarizing || summaryStatus === "PROCESSING";
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim()) {
@@ -70,21 +154,26 @@ export function NoteEditorModal({ isOpen, onClose, note, onSave }: NoteEditorMod
       await onSave({ title, content, pinned, tags }, note?.id);
       toast.success(note ? "Note updated" : "Note created");
       onClose();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to save note");
+    } catch (err) {
+      toast.error(normalizeError(err).message);
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleSummarize = async () => {
-    if (!note?.id) return;
+    if (!note?.id || isSummaryPending) return;
+
     setIsSummarizing(true);
+    setSummaryStatus("PROCESSING");
+
     try {
       await summarizeNote(note.id);
-      toast.success("AI summarization started. It will appear shortly.");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to start summarization");
+      toast.success("AI is summarizing your note...");
+      await pollSummary(note.id, true);
+    } catch (err) {
+      setSummaryStatus("FAILED");
+      toast.error(normalizeError(err).message);
     } finally {
       setIsSummarizing(false);
     }
@@ -183,15 +272,35 @@ export function NoteEditorModal({ isOpen, onClose, note, onSave }: NoteEditorMod
             />
           </div>
 
-          {note && note.aiSummary && (
+          {note && summaryStatus === "PROCESSING" && (
+            <div className="dash-note-ai" role="status" aria-live="polite">
+              <strong>AI summary</strong>
+              <p
+                className="dash-help"
+                style={{ margin: "5px 0 0", display: "flex", alignItems: "center", gap: 8 }}
+              >
+                <ArrowRepeat size={11} className="dash-icon-spin" aria-hidden="true" />
+                Summarizing your note...
+              </p>
+            </div>
+          )}
+
+          {note && summaryStatus === "FAILED" && !summary && (
             <div className="dash-note-ai">
               <strong>AI summary</strong>
-              <p style={{ margin: "5px 0 0", whiteSpace: "pre-wrap" }}>
-                {note.aiSummary}
+              <p className="dash-help" style={{ margin: "5px 0 0" }}>
+                The last summarization failed. You can try again.
               </p>
-              {note.summaryStatus === "OUTDATED" && (
+            </div>
+          )}
+
+          {note && summary && (
+            <div className="dash-note-ai">
+              <strong>AI summary</strong>
+              <p style={{ margin: "5px 0 0", whiteSpace: "pre-wrap" }}>{summary}</p>
+              {summaryStatus === "FAILED" && (
                 <p className="dash-help" style={{ marginTop: 6 }}>
-                  Note was updated since the last summary.
+                  A newer summary could not be generated. Showing the last saved one.
                 </p>
               )}
             </div>
@@ -205,14 +314,20 @@ export function NoteEditorModal({ isOpen, onClose, note, onSave }: NoteEditorMod
                 type="button"
                 className="dash-btn dash-btn-ghost dash-btn-sm"
                 onClick={handleSummarize}
-                disabled={isSummarizing || note.summaryStatus === "PENDING"}
+                disabled={isSummaryPending}
+                aria-busy={isSummaryPending}
               >
-                {isSummarizing || note.summaryStatus === "PENDING" ? (
-                  <ArrowRepeat size={11} className="dash-icon-spin" aria-hidden="true" />
+                {isSummaryPending ? (
+                  <>
+                    <ArrowRepeat size={11} className="dash-icon-spin" aria-hidden="true" />
+                    Summarizing...
+                  </>
                 ) : (
-                  <Stars size={11} aria-hidden="true" />
+                  <>
+                    <Stars size={11} aria-hidden="true" />
+                    {summaryStatus === "FAILED" ? "Retry summary" : "Summarize with AI"}
+                  </>
                 )}
-                Summarize with AI
               </button>
             )}
           </div>

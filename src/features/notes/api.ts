@@ -5,7 +5,7 @@ export interface NoteResponse {
   title: string;
   content: string;
   aiSummary?: string;
-  summaryStatus: "NONE" | "PENDING" | "COMPLETED" | "FAILED" | "OUTDATED";
+  summaryStatus: "IDLE" | "PROCESSING" | "COMPLETED" | "FAILED";
   summaryUpdatedAt?: string;
   projectId?: string;
   pinned: boolean;

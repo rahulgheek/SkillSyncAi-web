@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import {
+  ArrowRepeat,
   Clock,
   FileEarmarkText,
   JournalText,
@@ -111,6 +112,27 @@ export function NotesDashboard() {
       </div>
 
       <p className="dash-note-body">{note.content}</p>
+
+      {note.summaryStatus === "PROCESSING" && (
+        <div className="dash-note-ai" role="status" aria-live="polite">
+          <strong>AI summary</strong>
+          <br />
+          <span className="dash-help">
+            <ArrowRepeat size={10} className="dash-icon-spin" aria-hidden="true" />{" "}
+            Summarizing...
+          </span>
+        </div>
+      )}
+
+      {note.summaryStatus === "FAILED" && !note.aiSummary && (
+        <div className="dash-note-ai">
+          <strong>AI summary</strong>
+          <br />
+          <span className="dash-help">
+            Summarization failed. Open the note to retry.
+          </span>
+        </div>
+      )}
 
       {note.aiSummary && (
         <div className="dash-note-ai">
@@ -239,6 +261,9 @@ export function NotesDashboard() {
         onClose={() => setIsEditorOpen(false)}
         note={editingNote}
         onSave={handleSave}
+        onSummaryUpdated={() => {
+          queryClient.invalidateQueries({ queryKey: ["notes"] });
+        }}
       />
     </div>
   );

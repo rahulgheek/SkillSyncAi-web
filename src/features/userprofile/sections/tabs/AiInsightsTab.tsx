@@ -8,6 +8,7 @@ import {
 } from "react-bootstrap-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { normalizeError } from "@/lib/api/errors";
 import { ProfileResponse } from "../../schemas";
 import { generateAiInsights } from "../../api";
 
@@ -20,12 +21,17 @@ export function AiInsightsTab({ profile }: { profile: ProfileResponse }) {
       queryClient.setQueryData(["profile"], updatedProfile);
       toast.success("AI insights generated successfully!");
     },
-    onError: () => {
-      toast.error("Failed to generate AI insights. Please try again.");
+    onError: (error) => {
+      toast.error(normalizeError(error).message);
     },
   });
 
   const ai = profile.aiInsights;
+
+  const handleGenerate = () => {
+    if (generateMutation.isPending) return;
+    generateMutation.mutate();
+  };
 
   if (!ai) {
     return (
@@ -42,8 +48,9 @@ export function AiInsightsTab({ profile }: { profile: ProfileResponse }) {
           type="button"
           className="dash-btn dash-btn-solid"
           style={{ marginTop: 14 }}
-          onClick={() => generateMutation.mutate()}
+          onClick={handleGenerate}
           disabled={generateMutation.isPending}
+          aria-busy={generateMutation.isPending}
         >
           {generateMutation.isPending ? (
             <>
@@ -63,6 +70,13 @@ export function AiInsightsTab({ profile }: { profile: ProfileResponse }) {
 
   return (
     <div className="dash-stack">
+      {generateMutation.isPending && (
+        <div className="dash-loader-row" role="status" aria-live="polite">
+          <span className="dash-spinner" aria-hidden="true" />
+          <span>Analyzing your profile with AI...</span>
+        </div>
+      )}
+
       <section className="dash-panel">
         <div className="dash-panel-head">
           <div className="dash-panel-heading">
@@ -77,8 +91,9 @@ export function AiInsightsTab({ profile }: { profile: ProfileResponse }) {
             <button
               type="button"
               className="dash-btn dash-btn-ghost dash-btn-sm"
-              onClick={() => generateMutation.mutate()}
+              onClick={handleGenerate}
               disabled={generateMutation.isPending}
+              aria-busy={generateMutation.isPending}
             >
               <ArrowRepeat
                 size={11}
