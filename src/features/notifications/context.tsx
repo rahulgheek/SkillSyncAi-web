@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Client } from "@stomp/stompjs";
 import { getMyNotifications, getUnreadCount, markAsRead, markAllAsRead, NotificationResponse } from "./api";
 import { useAuth } from "@/features/auth/context";
 import { toast } from "sonner";
-import { API_BASE_URL } from "@/lib/api/axios";
+import { WS_BASE_URL } from "@/lib/api/axios";
 
 interface NotificationContextType {
   notifications: NotificationResponse[];
@@ -20,6 +21,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const { isAuthenticated, token } = useAuth();
   const queryClient = useQueryClient();
   const [liveUnreadCount, setLiveUnreadCount] = useState<number>(0);
+  const hasConnectedRef = useRef(false);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["notifications"],
@@ -40,62 +42,78 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [initialUnreadCount]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !token) return;
 
-    // We must pass the auth token. EventSource doesn't support headers natively in browser API.
-    // However, the browser sends cookies automatically if we set up session cookies.
-    // If using JWT in localStorage, we can append it as a query param (if backend supports it)
-    // or use a custom EventSource library. Assuming standard cookie-based or interceptor setup,
-    // wait, we are using JWT. EventSource doesn't send Authorization header.
-    // A trick is to use a polyfill or just let the backend accept a token query param.
-    // For this boilerplate, let's assume it works with cookies or we append the token.
-    const sse = new EventSource(
-      `${API_BASE_URL}/api/v1/notifications/stream?token=${encodeURIComponent(token ?? "")}`,
-    );
+    const client = new Client({
+      brokerURL: WS_BASE_URL,
+      connectHeaders: { Authorization: `Bearer ${token}` },
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      onConnect: () => {
+        // Notifications are pushed over the same authenticated STOMP
+        // connection as chat. The backend sends them to
+        // /user/queue/notifications after the notification row commits.
+        client.subscribe("/user/queue/notifications", (message) => {
+          if (!message.body) return;
 
-    sse.addEventListener("notification", (event) => {
-      try {
-        const newNotification: NotificationResponse = JSON.parse(event.data);
-        
-        // Update unread count
-        setLiveUnreadCount((prev) => prev + 1);
+          try {
+            const newNotification: NotificationResponse = JSON.parse(message.body);
 
-        // If this is a resume analysis notification, automatically refresh the profile
-        if (newNotification.type === "RESUME_ANALYZED") {
-          queryClient.invalidateQueries({ queryKey: ["profile"] });
+            setLiveUnreadCount((prev) => prev + 1);
+
+            // If this is a resume analysis notification, automatically refresh the profile
+            if (newNotification.type === "RESUME_ANALYZED") {
+              queryClient.invalidateQueries({ queryKey: ["profile"] });
+            }
+
+            toast(newNotification.title, {
+              description: newNotification.message,
+              action: {
+                label: "View",
+                onClick: () => {
+                  /* Add navigation logic if needed based on relatedEntityId */
+                },
+              },
+            });
+
+            // Update the react-query cache directly to show the new notification instantly
+            queryClient.setQueryData(["notifications"], (oldData: any) => {
+              if (!oldData) return oldData;
+              if (oldData.content.some((n: NotificationResponse) => n.id === newNotification.id)) {
+                return oldData;
+              }
+              return {
+                ...oldData,
+                content: [newNotification, ...oldData.content],
+              };
+            });
+          } catch (err) {
+            console.error("Failed to parse STOMP notification:", err);
+          }
+        });
+
+        // A reconnect can miss pushes that happened while the socket was down.
+        // The REST endpoints remain the source of truth, so resync on every
+        // connection after the first one.
+        if (hasConnectedRef.current) {
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+          queryClient.invalidateQueries({ queryKey: ["unreadCount"] });
         }
-        
-        // Show a live toast
-        toast(newNotification.title, {
-          description: newNotification.message,
-          action: {
-            label: "View",
-            onClick: () => {
-              /* Add navigation logic if needed based on relatedEntityId */
-            },
-          },
-        });
-
-        // Update the react-query cache directly to show the new notification instantly
-        queryClient.setQueryData(["notifications"], (oldData: any) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            content: [newNotification, ...oldData.content],
-          };
-        });
-      } catch (err) {
-        console.error("Failed to parse SSE notification:", err);
-      }
+        hasConnectedRef.current = true;
+      },
+      onStompError: (frame) => {
+        console.error("STOMP notification error:", frame.headers["message"], frame.body);
+      },
+      onWebSocketError: (event) => {
+        console.error("Notification WebSocket error:", event);
+      },
     });
 
-    sse.onerror = (err) => {
-      console.error("SSE Error:", err);
-      sse.close();
-    };
+    client.activate();
 
     return () => {
-      sse.close();
+      void client.deactivate();
     };
   }, [isAuthenticated, token, queryClient]);
 
