@@ -13,14 +13,7 @@ import {
   Trash3,
 } from "react-bootstrap-icons";
 import { toast } from "sonner";
-import {
-  getMyNotes,
-  deleteNote,
-  createNote,
-  updateNote,
-  NoteResponse,
-  NoteRequest,
-} from "../api";
+import { getMyNotes, deleteNote, createNote, updateNote, NoteResponse, NoteRequest } from "../api";
 import { NoteEditorModal } from "../components/NoteEditorModal";
 
 export function NotesDashboard() {
@@ -56,7 +49,7 @@ export function NotesDashboard() {
     (note) =>
       note.title.toLowerCase().includes(search.toLowerCase()) ||
       note.content.toLowerCase().includes(search.toLowerCase()) ||
-      note.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()))
+      note.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase())),
   );
 
   const pinnedNotes = filteredNotes.filter((note) => note.pinned);
@@ -116,10 +109,8 @@ export function NotesDashboard() {
       {note.summaryStatus === "PROCESSING" && (
         <div className="dash-note-ai" role="status" aria-live="polite">
           <strong>AI summary</strong>
-          <br />
-          <span className="dash-help">
-            <ArrowRepeat size={10} className="dash-icon-spin" aria-hidden="true" />{" "}
-            Summarizing...
+          <span className="dash-note-ai-text dash-help">
+            <ArrowRepeat size={10} className="dash-icon-spin" aria-hidden="true" /> Summarizing...
           </span>
         </div>
       )}
@@ -127,8 +118,7 @@ export function NotesDashboard() {
       {note.summaryStatus === "FAILED" && !note.aiSummary && (
         <div className="dash-note-ai">
           <strong>AI summary</strong>
-          <br />
-          <span className="dash-help">
+          <span className="dash-note-ai-text dash-help">
             Summarization failed. Open the note to retry.
           </span>
         </div>
@@ -137,8 +127,7 @@ export function NotesDashboard() {
       {note.aiSummary && (
         <div className="dash-note-ai">
           <strong>AI summary</strong>
-          <br />
-          {note.aiSummary}
+          <span className="dash-note-ai-text">{note.aiSummary}</span>
         </div>
       )}
 
@@ -149,9 +138,7 @@ export function NotesDashboard() {
               {tag}
             </span>
           ))}
-          {note.tags.length > 2 && (
-            <span className="dash-tag">+{note.tags.length - 2}</span>
-          )}
+          {note.tags.length > 2 && <span className="dash-tag">+{note.tags.length - 2}</span>}
         </div>
         <span className="dash-note-time">
           <Clock size={9} aria-hidden="true" />
@@ -213,8 +200,8 @@ export function NotesDashboard() {
           </span>
           <h3>No notes yet</h3>
           <p>
-            Create your first note to start organizing your thoughts. You can
-            even ask AI to summarize the long ones.
+            Create your first note to start organizing your thoughts. You can even ask AI to
+            summarize the long ones.
           </p>
           <button
             type="button"
@@ -247,9 +234,7 @@ export function NotesDashboard() {
 
           {otherNotes.length > 0 && (
             <section>
-              {pinnedNotes.length > 0 && (
-                <h2 className="dash-note-section-head">Others</h2>
-              )}
+              {pinnedNotes.length > 0 && <h2 className="dash-note-section-head">Others</h2>}
               <div className="dash-notes-grid">{otherNotes.map(renderNoteCard)}</div>
             </section>
           )}

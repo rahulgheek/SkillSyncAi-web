@@ -9,6 +9,7 @@ export interface Todo {
   dueDate?: string;
   completedAt?: string;
   relatedEntityId?: string;
+  roadmapSessionId?: string;
   sourceTitle?: string;
   createdAt: string;
   subtasks?: {

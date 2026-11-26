@@ -1401,6 +1401,154 @@
 
 /* ---------- Roadmap ---------- */
 
+.dash-session-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin-bottom: 18px;
+  padding: 12px 15px;
+  border: 1px solid var(--dash-line-soft);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.72);
+  box-shadow: var(--dash-shadow);
+}
+
+.dash-session-picker {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 300px;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-session-picker label {
+  flex-shrink: 0;
+  color: var(--dash-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dash-session-select {
+  max-width: 460px;
+  min-height: 38px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.dash-session-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 12px;
+  color: var(--dash-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.dash-session-progress {
+  display: flex;
+  min-width: 150px;
+  flex: 0 1 210px;
+  align-items: center;
+  gap: 9px;
+}
+
+.dash-session-progress .dash-progress {
+  flex: 1;
+  margin-top: 0;
+}
+
+.dash-session-progress > span {
+  color: var(--dash-muted);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dash-badge-active {
+  background: rgba(143, 141, 110, 0.18);
+  color: #5c6044;
+}
+
+.dash-badge-complete {
+  background: rgba(76, 83, 66, 0.12);
+  color: var(--dash-olive-deep);
+}
+
+.dash-roadmap-block + .dash-roadmap-block {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--dash-line-soft);
+}
+
+.dash-roadmap-block-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-bottom: 14px;
+}
+
+.dash-roadmap-block-title {
+  margin: 0 0 3px;
+  color: var(--dash-ink);
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.dash-roadmap-topic {
+  margin: 0;
+  color: var(--dash-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.dash-roadmap-block-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dash-sync-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 9px 11px;
+  border: 1px dashed rgba(138, 90, 63, 0.24);
+  border-radius: 10px;
+  background: rgba(138, 90, 63, 0.05);
+  color: var(--dash-ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.dash-todo-scroll {
+  max-height: 660px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(36, 29, 24, 0.24) transparent;
+}
+
+.dash-todo-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dash-todo-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(36, 29, 24, 0.24);
+}
+
 .dash-roadmap-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
@@ -1788,7 +1936,7 @@
 
 .dash-notes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 11px;
 }
 
@@ -1833,39 +1981,50 @@
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.18;
+  overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
 .dash-note-body {
   display: -webkit-box;
-  margin: 7px 0 0;
+  margin: 9px 0 0;
   overflow: hidden;
   color: var(--dash-muted);
   font-size: 9px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
 }
 
 .dash-note-ai {
-  margin-top: 9px;
-  padding: 8px 9px;
+  margin-top: 12px;
+  padding: 10px 12px;
   border: 1px solid rgba(138, 90, 63, 0.16);
   border-radius: 8px;
   background: rgba(138, 90, 63, 0.06);
   color: var(--dash-ink-soft);
   font-size: 8.5px;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .dash-note-ai strong {
+  display: block;
+  margin-bottom: 4px;
   color: var(--dash-terracotta);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.dash-note-ai-text {
+  display: block;
 }
 
 .dash-note-foot {
@@ -3091,6 +3250,282 @@
 .public-contact {
   max-width: 640px;
   padding: clamp(20px, 3vw, 34px);
+}
+
+/* ---------- Legibility & spacing ----------
+   The editorial layout intentionally uses small caps, but several labels and
+   body lines were below a comfortable reading size. These overrides raise the
+   floor without changing the type hierarchy, and give card-like surfaces
+   consistent breathing room. */
+
+.dash-panel-kicker,
+.dash-timeline-kicker,
+.dash-note-section-head,
+.dash-stat-label,
+.dash-section-kicker,
+.dash-tag,
+.dash-badge,
+.dash-label,
+.dash-tab,
+.dash-chip,
+.dash-table th,
+.dash-completion-row,
+.dash-profile-metric span,
+.dash-deadline-kind,
+.dash-session-picker label,
+.dash-date-chip span:first-child,
+.dash-avatar-xs .dash-avatar-fallback,
+.dash-bell-badge,
+.dash-brand-ai,
+.dash-mobile-brand-ai,
+.dash-tab-count,
+.dash-rank {
+  font-size: 10px;
+}
+
+.dash-panel-foot,
+.dash-mini-sub,
+.dash-help,
+.dash-error,
+.dash-list-sub,
+.dash-list-meta,
+.dash-switch-row p,
+.dash-label small,
+.dash-suggest button small,
+.dash-alert,
+.dash-note-time,
+.dash-profile-role,
+.dash-profile-hero-email,
+.dash-profile-hero-meta,
+.dash-completion p,
+.dash-completion-task,
+.dash-person-role,
+.dash-person-fact,
+.dash-person-foot,
+.dash-project-deadline,
+.dash-project-team,
+.dash-skill,
+.dash-table-sub,
+.dash-table-muted,
+.dash-rail-empty,
+.dash-deadline-footer,
+.dash-detail-meta,
+.dash-member-role,
+.dash-member-meta,
+.dash-progress-row,
+.dash-modal-desc,
+.dash-onboarding p,
+.dash-session-meta,
+.dash-roadmap-topic,
+.dash-sync-note,
+.dash-todo-source,
+.dash-stat-hint,
+.dash-profile-meta small,
+.dash-completion-title {
+  font-size: 11.5px;
+}
+
+.dash-panel-sub,
+.dash-timeline-text,
+.dash-note-body,
+.dash-note-ai,
+.dash-subtask,
+.dash-chat-bubble,
+.dash-detail-desc,
+.dash-empty-inline p,
+.dash-person-bio,
+.dash-project-desc,
+.dash-input,
+.dash-textarea,
+.dash-select,
+.dash-search input,
+.dash-profile-hero-role,
+.dash-profile-meta strong,
+.dash-table td,
+.dash-table-title,
+.dash-deadline-title,
+.dash-member-name,
+.dash-menu-label small {
+  font-size: 12.5px;
+}
+
+.dash-sub {
+  font-size: 13px;
+}
+
+.dash-eyebrow {
+  font-size: 10.5px;
+}
+
+.dash-btn {
+  font-size: 11px;
+}
+
+.dash-btn-sm {
+  font-size: 10.5px;
+}
+
+.dash-btn-lg {
+  font-size: 11.5px;
+}
+
+.dash-new-btn {
+  font-size: 11px;
+}
+
+.dash-timeline-title {
+  font-size: 14px;
+}
+
+.dash-todo-title,
+.dash-list-title,
+.dash-prose {
+  font-size: 13px;
+}
+
+.dash-note-title {
+  font-size: 19px;
+}
+
+.dash-boot,
+.dash-page-loader {
+  font-size: 11.5px;
+}
+
+.dash-search kbd {
+  font-size: 9.5px;
+}
+
+/* Spacing between card-like surfaces */
+
+.dash-panel + .dash-panel {
+  margin-top: 18px;
+}
+
+.dash-grid-2,
+.dash-grid-3 {
+  gap: 16px;
+}
+
+.dash-grid-4 {
+  gap: 14px;
+}
+
+.dash-stack {
+  gap: 18px;
+}
+
+.dash-stack-sm {
+  gap: 10px;
+}
+
+.dash-panel-head {
+  padding: 18px 20px 15px;
+}
+
+.dash-panel-body {
+  padding: 20px;
+}
+
+.dash-panel-foot {
+  padding: 14px 20px;
+}
+
+.dash-page-head {
+  margin-bottom: 24px;
+}
+
+.dash-roadmap-layout,
+.dash-roadmap-main,
+.dash-roadmap-side,
+.dash-detail-layout,
+.dash-detail-main,
+.dash-detail-side {
+  gap: 18px;
+}
+
+.dash-timeline-item {
+  padding-bottom: 20px;
+}
+
+.dash-timeline-card {
+  padding: 15px 16px;
+}
+
+.dash-todo-list {
+  gap: 10px;
+}
+
+.dash-todo {
+  padding: 12px 13px;
+}
+
+.dash-subtasks {
+  gap: 7px;
+  margin: 9px 0 0 22px;
+}
+
+.dash-notes-grid,
+.dash-people-grid,
+.dash-project-grid-page {
+  gap: 16px;
+}
+
+.dash-note-card {
+  min-height: 200px;
+  padding: 18px;
+}
+
+.dash-note-ai {
+  margin-top: 12px;
+  padding: 10px 12px;
+}
+
+.dash-note-foot {
+  padding-top: 12px;
+}
+
+.dash-searchbar {
+  margin-bottom: 18px;
+}
+
+.dash-stats {
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.dash-stat {
+  padding: 16px;
+}
+
+.dash-section {
+  margin-bottom: 28px;
+}
+
+.dash-section-head {
+  margin-bottom: 14px;
+}
+
+.dash-completion {
+  margin-top: 18px;
+  padding: 18px 20px;
+}
+
+.dash-completion-list {
+  gap: 9px 20px;
+  margin-top: 14px;
+}
+
+.dash-form {
+  gap: 16px;
+}
+
+.dash-form-grid {
+  gap: 14px;
+}
+
+.dash-member-grid {
+  gap: 10px;
 }
 
 /* ---------- Responsive ---------- */

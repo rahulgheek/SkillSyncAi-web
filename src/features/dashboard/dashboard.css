@@ -2278,6 +2278,136 @@
   color: var(--dash-ink);
 }
 
+/* ---------- Legibility & spacing ----------
+   Raise the smallest dashboard text to a readable floor and give the rail,
+   stats and card grids consistent breathing room. */
+
+.dash-boot,
+.dash-page-loader {
+  font-size: 11.5px;
+}
+
+.dash-eyebrow {
+  font-size: 10.5px;
+}
+
+.dash-sub {
+  font-size: 13px;
+}
+
+.dash-nav-label,
+.dash-stat-label,
+.dash-section-kicker,
+.dash-hero-kicker,
+.dash-hero-note-label,
+.dash-notif-head strong,
+.dash-notif-mark,
+.dash-section-link,
+.dash-chip,
+.dash-skill,
+.dash-table th,
+.dash-completion-row,
+.dash-profile-metric span,
+.dash-deadline-kind,
+.dash-bell-badge,
+.dash-brand-ai,
+.dash-date-chip span:first-child {
+  font-size: 10px;
+}
+
+.dash-stat-hint,
+.dash-hero-note-row span,
+.dash-hero-note-foot,
+.dash-notif-time,
+.dash-notif-msg,
+.dash-project-owner,
+.dash-project-team,
+.dash-project-deadline,
+.dash-table-sub,
+.dash-table-muted,
+.dash-deadline-kind,
+.dash-rail-empty,
+.dash-deadline-footer,
+.dash-completion p,
+.dash-profile-meta small,
+.dash-menu-label small,
+.dash-notif-empty {
+  font-size: 11.5px;
+}
+
+.dash-hero-text,
+.dash-project-desc,
+.dash-table td,
+.dash-table-title,
+.dash-deadline-title,
+.dash-notif-title,
+.dash-profile-meta strong,
+.dash-profile-role,
+.dash-profile-hero-role,
+.dash-profile-hero-meta,
+.dash-profile-hero-email {
+  font-size: 12.5px;
+}
+
+.dash-new-btn,
+.dash-btn {
+  font-size: 11px;
+}
+
+.dash-search input {
+  font-size: 13px;
+}
+
+.dash-search kbd {
+  font-size: 9.5px;
+}
+
+.dash-completion-row strong {
+  font-size: 12px;
+}
+
+.dash-stat {
+  padding: 16px;
+}
+
+.dash-stats {
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.dash-section {
+  margin-bottom: 28px;
+}
+
+.dash-section-head {
+  margin-bottom: 14px;
+}
+
+.dash-project-grid {
+  gap: 14px;
+}
+
+.dash-project-card {
+  min-height: 220px;
+  padding: 18px;
+}
+
+.dash-rail {
+  gap: 16px;
+}
+
+.dash-rail-head {
+  padding: 15px 16px 11px;
+}
+
+.dash-profile-body {
+  padding: 0 16px 16px;
+}
+
+.dash-page-head {
+  margin-bottom: 24px;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1200px) and (min-width: 1001px) {
